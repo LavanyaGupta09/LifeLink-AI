@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+env/
+venv/
+.env
+.venv/
+env.bak/
+venv.bak/
+
+# Build
+dist/
+build/
+.next/
+out/
+.vite/
+web/dev-dist/
+
+# System
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
