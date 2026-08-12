@@ -42,7 +42,7 @@ const MedicineRemindersPage: React.FC = () => {
   const adherence = getAdherenceRate();
 
   return (
-    <div className="page-content bg-[#060B14] min-h-screen pb-24">
+    <div className="page-content bg-[#060B14] min-h-[100dvh] pb-24">
       <div className="flex items-center gap-4 mb-6">
         <button className="back-btn" onClick={() => navigate(-1)}>
           <ChevronLeft size={24} />

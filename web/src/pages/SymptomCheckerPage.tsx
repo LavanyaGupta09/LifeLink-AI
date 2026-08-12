@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mic, MicOff, Send, Loader2, AlertTriangle, CheckCircle, Phone, Navigation, Shield } from 'lucide-react';
+import { ArrowLeft, Mic, MicOff, Send, Loader2, AlertTriangle, CheckCircle, Phone, Navigation, Shield, X, Plus } from 'lucide-react';
 import { useTriageStore } from '../store/triageStore';
 import { useSOSStore } from '../store/sosStore';
 import type { TriageLevel } from '../types/health.types';
@@ -13,30 +13,90 @@ const triageMeta: Record<TriageLevel, { icon: string; color: string; bgColor: st
 };
 
 const symptomSuggestions = [
-  'Chest pain and shortness of breath',
-  'High fever with severe headache',
-  'Vomiting and stomach pain',
-  'Dizziness and blurred vision',
-  'Rash with itching',
-  'Mild cough and sore throat',
+  'Chest pain',
+  'Shortness of breath',
+  'High fever',
+  'Severe headache',
+  'Vomiting',
+  'Stomach pain',
+  'Dizziness',
+  'Blurred vision',
+  'Rash',
+  'Mild cough',
 ];
 
 const SymptomCheckerPage: React.FC = () => {
   const navigate = useNavigate();
-  const { symptoms, setSymptoms, isAnalyzing, currentSession, analyzeSymptoms, clearSession } = useTriageStore();
+  const { setSymptoms, isAnalyzing, currentSession, analyzeSymptoms, clearSession } = useTriageStore();
   const { triggerSOS } = useSOSStore();
+  
   const [isListening, setIsListening] = useState(false);
   const [waveActive, setWaveActive] = useState(false);
-  const [language, setLanguage] = useState<'en' | 'hi'>('en');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [inputError, setInputError] = useState('');
+  
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     return () => { /* keep session on unmount for review */ };
   }, []);
 
-  const handleAnalyze = async () => {
-    if (!symptoms.trim()) return;
-    await analyzeSymptoms(symptoms, language);
+  const handleAnalyze = async (symptomsList: string[]) => {
+    if (symptomsList.length === 0) return;
+    const combined = symptomsList.join(', ');
+    setSymptoms(combined);
+    await analyzeSymptoms(combined, 'en');
+  };
+
+  const handleAddSymptom = (symptom: string) => {
+    const trimmed = symptom.trim();
+    if (!trimmed) return;
+    if (selectedSymptoms.includes(trimmed)) {
+      setInputValue('');
+      return;
+    }
+    
+    const newList = [...selectedSymptoms, trimmed];
+    setSelectedSymptoms(newList);
+    setInputValue('');
+    setInputError('');
+    
+    // Auto-analyze if we already have a session
+    if (currentSession) {
+      handleAnalyze(newList);
+    }
+  };
+
+  const handleRemoveSymptom = (symptomToRemove: string) => {
+    const newList = selectedSymptoms.filter(s => s !== symptomToRemove);
+    setSelectedSymptoms(newList);
+    
+    if (newList.length === 0) {
+      clearSession();
+    } else if (currentSession) {
+      // Auto-analyze with updated list
+      handleAnalyze(newList);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddSymptom(inputValue);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    // Strict English validation regex
+    if (val === '' || /^[A-Za-z\s\-]*$/.test(val)) {
+      setInputValue(val);
+      setInputError('');
+    } else {
+      setInputError('Please type symptoms in English only.');
+    }
   };
 
   const handleVoice = () => {
@@ -48,10 +108,10 @@ const SymptomCheckerPage: React.FC = () => {
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
-        recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+        recognition.lang = 'en-US';
         recognition.onresult = (e: any) => {
           const text = e.results[0][0].transcript;
-          setSymptoms(text);
+          handleAddSymptom(text);
           setIsListening(false);
           setWaveActive(false);
         };
@@ -72,12 +132,19 @@ const SymptomCheckerPage: React.FC = () => {
     navigate('/sos');
   };
 
+  const handleStartNewCheck = () => {
+    setSelectedSymptoms([]);
+    setInputValue('');
+    setInputError('');
+    clearSession();
+  };
+
   const meta = currentSession ? triageMeta[currentSession.triageLevel] : null;
 
   return (
     <div className="app-shell symptom-page">
       {/* Header */}
-      <div className="page-header flex justify-between items-center">
+      <div className="page-header flex justify-between items-center pt-[env(safe-area-inset-top)]">
         <div className="flex items-center gap-3">
           <button className="back-btn" onClick={() => { clearSession(); navigate('/dashboard'); }}>
             <ArrowLeft size={18} />
@@ -86,22 +153,6 @@ const SymptomCheckerPage: React.FC = () => {
             <h2 className="page-title">AI Symptom Checker</h2>
             <p className="text-xs text-secondary">Powered by LifeLink AI</p>
           </div>
-        </div>
-        
-        {/* Language Toggle */}
-        <div className="flex items-center bg-[var(--bg-elevated)] border border-[var(--border)] rounded-full p-1">
-          <button 
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${language === 'en' ? 'bg-[var(--primary)] text-[var(--bg-base)]' : 'text-[var(--text-secondary)]'}`}
-            onClick={() => setLanguage('en')}
-          >
-            EN
-          </button>
-          <button 
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${language === 'hi' ? 'bg-[var(--primary)] text-[var(--bg-base)]' : 'text-[var(--text-secondary)]'}`}
-            onClick={() => setLanguage('hi')}
-          >
-            HI
-          </button>
         </div>
       </div>
 
@@ -114,62 +165,78 @@ const SymptomCheckerPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Voice Section */}
-        <div className="voice-section animate-fade-in">
-          <div className={`voice-orb ${waveActive ? 'listening' : ''}`} onClick={handleVoice}>
-            <div className="voice-rings">
-              {waveActive && [1,2,3].map(i => <div key={i} className={`voice-ring vr${i}`} />)}
-            </div>
-            {isListening ? <Mic size={28} color="#00C9A7" /> : <MicOff size={28} color="var(--text-tertiary)" />}
+        {/* Dynamic Multi-Symptom Input Section - Persistent */}
+        <div className="input-section animate-fade-in mx-4 mt-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
+          
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold text-white mb-1">Select Symptoms</h3>
+            <p className="text-xs text-secondary">Type symptoms in English and press Enter</p>
           </div>
-          <p className="text-sm text-secondary mt-2">
-            {isListening 
-              ? (language === 'hi' ? 'सुन रहा हूँ... अपने लक्षण बताएं' : 'Listening... speak your symptoms') 
-              : (language === 'hi' ? 'आवाज़ से लक्षण बताने के लिए टैप करें' : 'Tap to describe symptoms by voice')}
-          </p>
 
-          {/* Waveform bars */}
-          {waveActive && (
-            <div className="waveform">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <div key={i} className="wave-bar" style={{ animationDelay: `${i * 80}ms` }} />
+          <div className="symptom-input-container">
+            {/* Selected Chips */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {selectedSymptoms.map((s, idx) => (
+                <div key={idx} className="flex items-center gap-1 bg-[rgba(0,201,167,0.15)] border border-[rgba(0,201,167,0.3)] text-[var(--primary)] px-3 py-1.5 rounded-full text-sm font-medium animate-scale-in">
+                  <span>{s}</span>
+                  <button onClick={() => handleRemoveSymptom(s)} className="p-0.5 hover:bg-[rgba(0,201,167,0.2)] rounded-full transition-colors">
+                    <X size={14} />
+                  </button>
+                </div>
               ))}
             </div>
-          )}
-        </div>
 
-        <div className="divider"><span className="divider-text">or type your symptoms</span></div>
+            {/* Input Field */}
+            <div className="relative">
+              <input
+                ref={inputRef}
+                type="text"
+                className="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg py-3 px-4 text-white text-sm focus:border-[var(--primary)] outline-none transition-colors"
+                placeholder="e.g., Chest Pain, Headache..."
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                disabled={isAnalyzing}
+              />
+              <button 
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-[var(--primary)] text-black rounded-md hover:opacity-90 disabled:opacity-50 transition-opacity"
+                onClick={() => handleAddSymptom(inputValue)}
+                disabled={!inputValue.trim() || isAnalyzing}
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            
+            {/* English Only Error */}
+            {inputError && (
+              <p className="text-red-500 text-xs mt-2 animate-fade-in flex items-center gap-1">
+                <AlertTriangle size={12} /> {inputError}
+              </p>
+            )}
+          </div>
 
-        {/* Text input */}
-        {!currentSession && (
-          <div className="input-section animate-fade-in delay-200">
-            <textarea
-              ref={textareaRef}
-              className="input symptom-input"
-              placeholder={language === 'hi' ? "आप कैसा महसूस कर रहे हैं, वर्णन करें..." : "Describe what you're feeling... (e.g., 'sharp chest pain radiating to left arm')"}
-              value={symptoms}
-              onChange={(e) => setSymptoms(e.target.value)}
-              rows={4}
-              id="symptom-textarea"
-            />
-
-            {/* Quick suggestions */}
-            <div className="suggestions">
+          {/* Quick suggestions - Only show if no session exists yet to save space */}
+          {!currentSession && (
+            <div className="suggestions mt-4">
               {symptomSuggestions.map((s, i) => (
                 <button
                   key={i}
                   className="suggestion-pill"
-                  onClick={() => setSymptoms(s)}
+                  onClick={() => handleAddSymptom(s)}
+                  disabled={selectedSymptoms.includes(s) || isAnalyzing}
                 >
                   {s}
                 </button>
               ))}
             </div>
+          )}
 
+          {/* Initial Analyze Button */}
+          {!currentSession && (
             <button
-              className="btn btn-primary btn-block btn-lg mt-4"
-              onClick={handleAnalyze}
-              disabled={!symptoms.trim() || isAnalyzing}
+              className="btn btn-primary btn-block btn-lg mt-5"
+              onClick={() => handleAnalyze(selectedSymptoms)}
+              disabled={selectedSymptoms.length === 0 || isAnalyzing}
               id="analyze-btn"
             >
               {isAnalyzing ? (
@@ -184,12 +251,35 @@ const SymptomCheckerPage: React.FC = () => {
                 </>
               )}
             </button>
+          )}
+        </div>
+
+        {/* Voice Section - Hidden if results are showing to save vertical space */}
+        {!currentSession && (
+          <div className="voice-section animate-fade-in mt-2">
+            <div className="divider mx-6 mb-4"><span className="divider-text">or use voice</span></div>
+            <div className={`voice-orb ${waveActive ? 'listening' : ''}`} onClick={handleVoice}>
+              <div className="voice-rings">
+                {waveActive && [1,2,3].map(i => <div key={i} className={`voice-ring vr${i}`} />)}
+              </div>
+              {isListening ? <Mic size={28} color="#00C9A7" /> : <MicOff size={28} color="var(--text-tertiary)" />}
+            </div>
+            <p className="text-sm text-secondary mt-2">
+              {isListening ? 'Listening... speak your symptoms' : 'Tap to describe symptoms by voice'}
+            </p>
+            {waveActive && (
+              <div className="waveform">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <div key={i} className="wave-bar" style={{ animationDelay: `${i * 80}ms` }} />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {/* AI Processing Animation */}
         {isAnalyzing && (
-          <div className="ai-thinking animate-fade-in">
+          <div className="ai-thinking animate-fade-in mx-4">
             <div className="thinking-dots">
               <div className="dot-bounce d1" />
               <div className="dot-bounce d2" />
@@ -208,8 +298,8 @@ const SymptomCheckerPage: React.FC = () => {
         )}
 
         {/* Triage Result */}
-        {currentSession && meta && (
-          <div className="triage-result animate-scale-in">
+        {currentSession && meta && !isAnalyzing && (
+          <div className="triage-result animate-scale-in mx-4 mb-8">
             <div className="triage-header" style={{ borderColor: meta.color, background: meta.bgColor }}>
               <div className="triage-icon">{meta.icon}</div>
               <div>
@@ -293,8 +383,9 @@ const SymptomCheckerPage: React.FC = () => {
                   </>
                 )}
 
-                <button className="btn btn-ghost btn-block btn-sm mt-2" onClick={clearSession}>
-                  Re-analyze different symptoms
+                {/* Clear All / Start New Check */}
+                <button className="btn btn-block mt-4 bg-[var(--bg-elevated)] border border-[var(--border)] text-white hover:bg-[var(--border)] transition-colors" onClick={handleStartNewCheck}>
+                  Start New Check
                 </button>
               </div>
             </div>
@@ -368,7 +459,6 @@ const SymptomCheckerPage: React.FC = () => {
           background: var(--border);
         }
         .divider-text { font-size: 0.75rem; color: var(--text-tertiary); white-space: nowrap; }
-        .symptom-input { min-height: 110px; font-size: 0.9375rem; }
         .suggestions {
           display: flex;
           flex-wrap: wrap;
@@ -386,7 +476,8 @@ const SymptomCheckerPage: React.FC = () => {
           font-family: var(--font-body);
           transition: all var(--duration-fast);
         }
-        .suggestion-pill:hover { border-color: var(--primary); color: var(--primary); }
+        .suggestion-pill:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+        .suggestion-pill:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .ai-thinking {
           display: flex;

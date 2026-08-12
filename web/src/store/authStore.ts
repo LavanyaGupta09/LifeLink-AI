@@ -15,12 +15,18 @@ interface AuthState {
   setOnboarded: () => void;
   updateUser: (updates: Partial<User>) => void;
   updatePrimaryContact: (updates: Partial<EmergencyContact>) => void;
-  // For demo: auto-login
   demoLogin: () => void;
   providerLogin: (role: string, verificationStatus?: 'pending_approval' | 'verified' | 'rejected') => void;
   superAdminLogin: () => void;
   toggleEasyMode: (enabled: boolean) => void;
 }
+
+const REAL_USER: User = {
+  ...MOCK_USER,
+  fullName: 'Lavanya Gupta',
+  email: 'lavanyagupta136@gmail.com',
+  phone: '+91 98765 43210',
+};
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
@@ -32,17 +38,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: (user) => set({ user, isAuthenticated: true }),
   logout: async () => {
     try {
-      // 1. Invalidate session on the backend
       await fetch('/api/v1/auth/logout', { method: 'POST' }).catch(() => {});
     } catch (error) {
       console.error('Logout error:', error);
     }
-    
-    // 2. Wipe frontend storage completely
     localStorage.clear();
     sessionStorage.clear();
-    
-    // 3. Clear Zustand state completely
     set({ user: null, healthProfile: null, emergencyContacts: [], isAuthenticated: false, isOnboarded: false });
   },
   setHealthProfile: (profile) => set({ healthProfile: profile }),
@@ -59,7 +60,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   }),
   demoLogin: () =>
     set({
-      user: MOCK_USER,
+      user: REAL_USER,
       healthProfile: MOCK_HEALTH_PROFILE,
       emergencyContacts: MOCK_EMERGENCY_CONTACTS,
       isAuthenticated: true,
@@ -68,7 +69,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   providerLogin: (role, verificationStatus = 'verified') =>
     set({
       user: { 
-        ...MOCK_USER, 
+        ...REAL_USER, 
         id: `usr_${role}`, 
         fullName: `${role.replace('_', ' ')} Demo User`, 
         role: role as any,
@@ -80,7 +81,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   superAdminLogin: () =>
     set({
       user: {
-        ...MOCK_USER,
+        ...REAL_USER,
         id: 'usr_super_admin',
         fullName: 'System Administrator',
         role: 'super_admin' as any,

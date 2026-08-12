@@ -124,7 +124,7 @@ const B2BLabDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex">
+    <div className="min-h-[100dvh] bg-slate-50 text-slate-800 font-sans flex">
       {/* Sidebar */}
       <aside className="w-64 bg-fuchsia-900 text-white p-6 flex flex-col shrink-0">
         <div className="flex items-center gap-2 mb-10">
@@ -309,7 +309,7 @@ const B2BLabDashboard: React.FC = () => {
               </div>
 
               {/* Agent List */}
-              <div className="w-80 flex flex-col gap-3 overflow-y-auto pr-2">
+              <div className="w-full max-w-md mx-auto flex flex-col gap-3 overflow-y-auto pr-2">
                 {MOCK_FLEET.map(agent => (
                   <div key={agent.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                     <div className="flex items-center justify-between mb-2">

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Video, Phone, Star, Clock, Award, Filter } from 'lucide-react';
-import { MOCK_DOCTORS } from '../data/mockData';
 import type { Doctor } from '../types/health.types';
 
 const statusColors: Record<string, string> = {
@@ -16,8 +16,46 @@ const DoctorPage: React.FC = () => {
   const [activeCall, setActiveCall] = useState<Doctor | null>(null);
   const [callElapsed, setCallElapsed] = useState(0);
 
-  const specializations = ['All', ...Array.from(new Set(MOCK_DOCTORS.map(d => d.specialization)))];
-  const filtered = selectedSpec === 'All' ? MOCK_DOCTORS : MOCK_DOCTORS.filter(d => d.specialization === selectedSpec);
+  const [doctors, setDoctors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const { data, error } = await supabase.from('doctors').select('*, users(full_name)');
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          const formatted = data.map(d => ({
+            id: d.id,
+            name: d.users?.full_name || 'Dr. Unknown',
+            specialization: d.specialization || 'General',
+            hospitalName: 'Apollo Hospitals',
+            status: d.status || 'available',
+            rating: d.rating || 4.5,
+            consultationFee: d.consultation_fee || 500,
+            experienceYears: d.experience_years || 5,
+            videoCallAvailable: d.video_call_available
+          }));
+          setDoctors(formatted);
+        } else {
+          const { MOCK_DOCTORS } = await import('../data/mockData');
+          setDoctors(MOCK_DOCTORS);
+        }
+      } catch (err) {
+        console.error('Error fetching doctors:', err);
+        const { MOCK_DOCTORS } = await import('../data/mockData');
+        setDoctors(MOCK_DOCTORS);
+        console.error('Error fetching doctors:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  const specializations = ['All', ...Array.from(new Set(doctors.map(d => d.specialization)))];
+  const filtered = selectedSpec === 'All' ? doctors : doctors.filter(d => d.specialization === selectedSpec);
 
   const startCall = (doc: Doctor) => {
     setActiveCall(doc);
@@ -43,7 +81,7 @@ const DoctorPage: React.FC = () => {
         <div className="vc-self">
           <div className="vc-self-avatar">PS</div>
         </div>
-        <div className="vc-header">
+        <div className="vc-header pt-[env(safe-area-inset-top)]">
           <div className="vc-status">
             <div className="status-dot online" />
             <span className="text-xs text-success font-semibold">Connected · {fmt(callElapsed)}</span>
@@ -65,7 +103,7 @@ const DoctorPage: React.FC = () => {
           <p className="text-xs text-secondary">Follow Dr. {activeCall.name.split(' ')[1]}'s instructions carefully</p>
         </div>
         <style>{`
-          .video-call-screen { background: #000; overflow: hidden; min-height: 100vh; position: relative; }
+          .video-call-screen { background: #000; overflow: hidden; min-height: 100dvh; position: relative; }
           .vc-remote {
             position: absolute;
             inset: 0;
@@ -184,16 +222,32 @@ const DoctorPage: React.FC = () => {
 
   return (
     <div className="app-shell">
-      <div className="page-header">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Doctor On-Call</h2>
-          <p className="text-xs text-secondary">{MOCK_DOCTORS.filter(d => d.status === 'available').length} doctors available now</p>
+          <p className="text-xs text-secondary">{doctors.filter(d => d.status === 'available').length} doctors available now</p>
         </div>
         <Filter size={18} color="var(--text-secondary)" style={{ marginLeft: 'auto' }} />
       </div>
 
       <div className="page-content">
+        {loading ? (
+          <div className="animate-pulse">
+            <div className="card mb-4" style={{ height: 100, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>
+            <div style={{ height: 40, width: '100%', background: 'var(--bg-elevated)', borderRadius: 20, marginBottom: 16 }}></div>
+            {[1,2,3].map(i => <div key={i} className="card mb-3" style={{ height: 120, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
+          </div>
+        ) : doctors.length === 0 ? (
+          <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
+            <div style={{ width: 64, height: 64, margin: '0 auto 16px', background: 'var(--bg-elevated)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <span style={{ fontSize: '1.5rem' }}>🩺</span>
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>No Doctors Available</h3>
+            <p style={{ fontSize: '0.85rem' }}>There are currently no active doctors on the network. Please check back later.</p>
+          </div>
+        ) : (
+        <>
         {/* Family Doctor highlight */}
         <div className="card card-primary family-doc-card animate-fade-in mb-4">
           <div className="flex items-center gap-3">
@@ -209,7 +263,7 @@ const DoctorPage: React.FC = () => {
                 <span className="text-xs text-success">Available now</span>
               </div>
             </div>
-            <button className="btn btn-primary btn-sm" onClick={() => startCall(MOCK_DOCTORS[0])} id="call-family-doctor">
+            <button className="btn btn-primary btn-sm" onClick={() => doctors.length > 0 && startCall(doctors[0])} id="call-family-doctor">
               <Video size={14} />
               Call
             </button>
@@ -292,6 +346,9 @@ const DoctorPage: React.FC = () => {
             )}
           </div>
         ))}
+        {/* End of real doctors */}
+        </>
+        )}
       </div>
 
       <style>{`

@@ -65,8 +65,8 @@ const OfflineGuidePage: React.FC = () => {
   };
 
   return (
-    <div className="app-shell" style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
-      <div className="page-header border-b border-[var(--border)] pb-3 flex justify-between items-center">
+    <div className="app-shell" style={{ minHeight: '100dvh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
+      <div className="page-header border-b border-[var(--border)] pb-3 flex justify-between items-center pt-[env(safe-area-inset-top)]">
         <div className="flex items-center gap-3">
           <button className="back-btn" onClick={() => navigate(-1)}><ArrowLeft size={18} /></button>
           <div>

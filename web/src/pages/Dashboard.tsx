@@ -9,6 +9,7 @@ import { useAuthStore } from '../store/authStore';
 import { useSOSStore } from '../store/sosStore';
 import { useAuditStore } from '../store/auditStore';
 import { useSOSGuardStore } from '../store/sosGuardStore';
+import { useTriageStore } from '../store/triageStore';
 
 const quickActions = [
   { icon: <Activity size={22} />,   label: 'Symptom Check', route: '/symptoms',  color: '#3D91FF', bg: 'rgba(61,145,255,0.12)' },
@@ -24,11 +25,31 @@ const quickActions = [
 ];
 
 
-const vitalsMock = [
-  { label: 'Heart Rate', value: '78', unit: 'BPM', icon: <Heart size={14} />, color: '#FF4757', trend: '+2' },
-  { label: 'SpO₂', value: '98', unit: '%', icon: <Activity size={14} />, color: '#3D91FF', trend: 'stable' },
-  { label: 'Steps Today', value: '4,231', unit: 'steps', icon: <Zap size={14} />, color: '#00C9A7', trend: '+12%' },
-];
+// Live animated vitals (simulated wearable data stream)
+function useLiveVitals() {
+  const [hr, setHr] = useState(78);
+  const [spo2, setSpo2] = useState(98);
+  const [steps, setSteps] = useState(4231);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHr(prev => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        return Math.max(72, Math.min(84, prev + delta));
+      });
+      setSpo2(prev => {
+        const delta = Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+        return Math.max(96, Math.min(99, prev + delta));
+      });
+      setSteps(prev => prev + Math.floor(Math.random() * 15) + 3);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+  return [
+    { label: 'Heart Rate', value: String(hr), unit: 'BPM', icon: <Heart size={14} />, color: '#FF4757', trend: hr >= 78 ? `+${hr - 76}` : `${hr - 78}` },
+    { label: 'SpO₂', value: String(spo2), unit: '%', icon: <Activity size={14} />, color: '#3D91FF', trend: spo2 >= 98 ? 'stable' : '-1' },
+    { label: 'Steps Today', value: steps.toLocaleString(), unit: 'steps', icon: <Zap size={14} />, color: '#00C9A7', trend: '+12%' },
+  ];
+}
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -36,10 +57,17 @@ const Dashboard: React.FC = () => {
   const { triggerSOS, isSOSActive, isCounting, countdown, startCountdown, stopCountdown, decrementCountdown } = useSOSStore();
   const { auditStatus, auditDaysSince } = useAuditStore();
   const { strikeCount } = useSOSGuardStore();
+  const { setSymptoms, analyzeSymptoms } = useTriageStore();
+  
+  const vitals = useLiveVitals();
   const [isListening, setIsListening] = useState(false);
+  const [isProcessingIntent, setIsProcessingIntent] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [greeting, setGreeting] = useState('');
+  
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sosTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const h = new Date().getHours();
@@ -79,11 +107,104 @@ const Dashboard: React.FC = () => {
     }
   }, [countdown, isCounting]);
 
-  const handleSOSPress = () => {
-    if (isCounting) {
-      stopCountdown();
+  const handleSOSDown = () => {
+    setIsHolding(true);
+    sosTimeoutRef.current = setTimeout(() => {
+      setIsHolding(false);
+      handleSOSTrigger();
+    }, 3000);
+  };
+
+  const handleSOSUp = () => {
+    if (sosTimeoutRef.current) clearTimeout(sosTimeoutRef.current);
+    setIsHolding(false);
+  };
+  
+  const handleVoice = () => {
+    if (!isListening && !isProcessingIntent) {
+      setIsListening(true);
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.onresult = async (e: any) => {
+          const text = e.results[0][0].transcript;
+          setIsListening(false);
+          setIsProcessingIntent(true);
+          
+          try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const response = await fetch(`${API_URL}/api/v1/voice/parse-intent`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text })
+            });
+            const data = await response.json();
+            const { intent, action_payload } = data;
+            
+            switch (intent) {
+              case 'EMERGENCY':
+                handleSOSTrigger();
+                break;
+              case 'SYMPTOMS':
+                setSymptoms(action_payload || text);
+                await analyzeSymptoms(action_payload || text, 'en');
+                navigate('/symptoms');
+                break;
+              case 'NAVIGATION':
+                navigate('/' + (action_payload || '').replace(/^\/+/, ''));
+                break;
+              case 'GENERAL':
+              default:
+                alert(`AI Assistant: ${action_payload || 'I could not understand that command.'}`);
+                break;
+            }
+          } catch (err) {
+            console.warn('Backend unavailable, using simulated NLP logic', err);
+            let intent = 'GENERAL';
+            let action_payload = 'I heard: ' + text;
+            
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes('emergency') || lowerText.includes('help') || lowerText.includes('sos')) {
+              intent = 'EMERGENCY';
+            } else if (lowerText.includes('pain') || lowerText.includes('hurt') || lowerText.includes('symptom')) {
+              intent = 'SYMPTOMS';
+              action_payload = text;
+            } else if (lowerText.includes('hospital') || lowerText.includes('ambulance') || lowerText.includes('navigate')) {
+              intent = 'NAVIGATION';
+              action_payload = 'hospitals';
+            }
+
+            switch (intent) {
+              case 'EMERGENCY':
+                handleSOSTrigger();
+                break;
+              case 'SYMPTOMS':
+                setSymptoms(action_payload || text);
+                await analyzeSymptoms(action_payload || text, 'en');
+                navigate('/symptoms');
+                break;
+              case 'NAVIGATION':
+                navigate('/' + (action_payload || '').replace(/^\/+/, ''));
+                break;
+              case 'GENERAL':
+              default:
+                alert(`AI Assistant (Simulated): I could not understand that command. Did you mean 'help' or 'hospital'?`);
+                break;
+            }
+          } finally {
+            setIsProcessingIntent(false);
+          }
+        };
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+        recognition.start();
+      } else {
+        setTimeout(() => setIsListening(false), 3000);
+      }
     } else {
-      startCountdown();
+      setIsListening(false);
     }
   };
 
@@ -118,17 +239,30 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--bg-elevated)] min-w-[50px] min-h-[50px]" onClick={() => setIsListening(!isListening)}>
-                {isListening ? <Mic size={18} color="#00C9A7" /> : <MicOff size={18} color="var(--text-secondary)" />}
-                <span className="text-[9px] uppercase mt-1 text-secondary font-bold">Voice</span>
+              <button 
+                className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors" 
+                onClick={handleVoice}
+                disabled={isProcessingIntent}
+              >
+                {isProcessingIntent ? (
+                  <Activity size={20} className="text-[#3D91FF] animate-pulse" />
+                ) : isListening ? (
+                  <Mic size={20} className="text-emerald-400 animate-pulse" />
+                ) : (
+                  <Mic size={20} />
+                )}
               </button>
-              <button className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--bg-elevated)] min-w-[50px] min-h-[50px]" onClick={() => navigate('/settings')}>
-                <Settings size={18} color="var(--text-secondary)" />
-                <span className="text-[9px] uppercase mt-1 text-secondary font-bold">Settings</span>
+              <button 
+                className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors" 
+                onClick={() => navigate('/settings')}
+              >
+                <Settings size={20} />
               </button>
-              <button className="flex flex-col items-center justify-center p-2 rounded-lg bg-red-500/10 border border-red-500/30 min-w-[50px] min-h-[50px]" onClick={() => navigate('/logout')}>
-                <LogOut size={18} className="text-red-500" />
-                <span className="text-[9px] uppercase mt-1 text-red-500 font-bold">Log Out</span>
+              <button 
+                className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-red-400 hover:bg-slate-700 transition-colors" 
+                onClick={() => navigate('/logout')}
+              >
+                <LogOut size={20} />
               </button>
             </div>
           </div>
@@ -201,14 +335,14 @@ const Dashboard: React.FC = () => {
 
         {/* Health badge strip */}
         <div className="vitals-strip">
-          {vitalsMock.map((v, i) => (
-            <div key={i} className="vital-chip">
+          {vitals.map((v, i) => (
+            <div key={i} className="vital-chip" style={{ transition: 'all 0.5s ease' }}>
               <span style={{ color: v.color }}>{v.icon}</span>
               <div>
                 <span className="vital-value">{v.value}</span>
                 <span className="vital-unit">{v.unit}</span>
               </div>
-              <span className="vital-trend" style={{ color: v.trend.startsWith('+') ? '#2ED573' : '#8B9CC5' }}>
+              <span className="vital-trend" style={{ color: v.trend.startsWith('+') ? '#2ED573' : v.trend === 'stable' ? '#8B9CC5' : '#FF4757' }}>
                 {v.trend}
               </span>
             </div>
@@ -218,21 +352,21 @@ const Dashboard: React.FC = () => {
         {/* SOS Button */}
         <div className="sos-section">
           <div className="sos-bg-glow" />
-          <div className={`sos-ring-wrap ${isCounting ? 'counting' : ''}`}>
+          <div className={`sos-ring-wrap ${isHolding ? 'counting' : ''}`}>
             <div className="sos-ripple r1" />
             <div className="sos-ripple r2" />
             <div className="sos-ripple r3" />
             <button
-              className={`sos-btn ${isCounting ? 'counting' : ''} ${isSOSActive ? 'active' : ''}`}
-              onClick={handleSOSPress}
+              className={`sos-btn ${isHolding ? 'counting active:scale-95' : ''} ${isSOSActive ? 'active' : ''}`}
+              onMouseDown={handleSOSDown}
+              onMouseUp={handleSOSUp}
+              onMouseLeave={handleSOSUp}
+              onTouchStart={handleSOSDown}
+              onTouchEnd={handleSOSUp}
               id="sos-main-btn"
             >
               <AlertTriangle size={32} fill="white" />
-              {isCounting ? (
-                <span className="sos-countdown">{countdown}</span>
-              ) : (
-                <span className="sos-label">SOS</span>
-              )}
+              <span className="sos-label">SOS</span>
             </button>
             {strikeCount > 0 && (
               <div className="absolute -top-1 -right-1 bg-black border border-[#FF4757] text-[#FF4757] text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full z-10 shadow-[0_0_10px_rgba(255,71,87,0.5)]">
@@ -240,10 +374,9 @@ const Dashboard: React.FC = () => {
               </div>
             )}
           </div>
-          {isCounting ? (
+          {isHolding ? (
             <div className="sos-status-text">
-              <p className="text-danger font-semibold">Sending SOS in {countdown}s...</p>
-              <button className="btn btn-ghost btn-sm" onClick={stopCountdown}>Cancel</button>
+              <p className="text-danger font-semibold text-lg animate-pulse">Keep holding to send SOS...</p>
             </div>
           ) : (
             <p className="sos-hint">Hold for 3 seconds or press 3× power button</p>
@@ -270,7 +403,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="section-header">
+        <div className="section-header pt-[env(safe-area-inset-top)]">
           <span className="section-title">Quick Actions</span>
           <button className="see-all-btn">See all</button>
         </div>
@@ -292,7 +425,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Health card */}
-        <div className="section-header">
+        <div className="section-header pt-[env(safe-area-inset-top)]">
           <span className="section-title">Health Profile</span>
         </div>
         <div className="card card-primary health-card" onClick={() => navigate('/passport')}>
@@ -317,7 +450,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Family quick-peek */}
-        <div className="section-header">
+        <div className="section-header pt-[env(safe-area-inset-top)]">
           <span className="section-title">Family Status</span>
           <button className="see-all-btn" onClick={() => navigate('/family')}>View all</button>
         </div>
@@ -344,7 +477,7 @@ const Dashboard: React.FC = () => {
 
       <style>{`
         .dash-container {
-          min-height: 100vh;
+          min-height: 100dvh;
           padding-bottom: 90px;
           background: var(--bg-base);
         }

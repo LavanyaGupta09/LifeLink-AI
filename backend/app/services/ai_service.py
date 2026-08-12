@@ -79,6 +79,8 @@ GEMINI_PROMPT_TEMPLATE = """
 You are a medical triage AI assistant for LifeLink AI emergency platform.
 Analyze the following patient symptoms and provide a structured triage assessment.
 
+SYSTEM DIRECTIVE: You MUST evaluate symptoms and output all clinical summaries, risk assessments, and recommendations STRICTLY in English. Reject non-English inputs and respond in clear, accessible English.
+
 Patient Symptoms: {symptoms}
 
 Respond ONLY with a JSON object in this exact format:
@@ -233,6 +235,67 @@ def parse_voice_command(text: str) -> dict:
             return {"intent": intent, "confidence": 0.88, "raw_text": text}
     return {"intent": "unknown", "confidence": 0.3, "raw_text": text}
 
+INTENT_PROMPT_TEMPLATE = """
+SYSTEM: You are the routing brain for a healthcare app. Analyze the user's text and classify their intent into one of four categories. Return strictly in JSON format: {{ "intent": "EMERGENCY" | "SYMPTOMS" | "NAVIGATION" | "GENERAL", "action_payload": "extracted details" }}
+
+Categories:
+* EMERGENCY: E.g., "Help", "Heart attack", "Ambulance". Payload: The emergency type.
+* SYMPTOMS: E.g., "I have a fever", "My stomach hurts". Payload: Comma-separated list of symptoms.
+* NAVIGATION: E.g., "Show my records", "Find hospitals". Payload: Target route (e.g., "hospitals", "vault").
+* GENERAL: Any generic health query.
+
+User text: {text}
+"""
+
+async def parse_voice_intent_ai(text: str) -> dict:
+    """Uses LLM to intelligently classify intent from voice transcription"""
+    if settings.GROQ_API_KEY:
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "llama-3.1-8b-instant",
+            "messages": [
+                {"role": "system", "content": "You are a routing AI. Respond only in JSON."},
+                {"role": "user", "content": INTENT_PROMPT_TEMPLATE.format(text=text)}
+            ],
+            "temperature": 0.1,
+            "response_format": {"type": "json_object"}
+        }
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(url, json=payload, headers=headers)
+                if resp.status_code == 200:
+                    import json
+                    return json.loads(resp.json()["choices"][0]["message"]["content"])
+        except Exception as e:
+            print(f"Groq intent error: {e}")
+            pass
+
+    if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "your-gemini-api-key-here":
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent"
+        payload = {
+            "contents": [{"parts": [{"text": INTENT_PROMPT_TEMPLATE.format(text=text)}]}],
+            "generationConfig": {"temperature": 0.1, "response_mime_type": "application/json"}
+        }
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(url, json=payload, params={"key": settings.GEMINI_API_KEY})
+                if resp.status_code == 200:
+                    import json, re
+                    text_resp = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                    match = re.search(r'\{.*\}', text_resp, re.DOTALL)
+                    if match:
+                        return json.loads(match.group())
+        except Exception as e:
+            print(f"Gemini intent error: {e}")
+            pass
+            
+    # Fallback if APIs fail
+    return {"intent": "GENERAL", "action_payload": "I'm having trouble connecting to my AI brain. Please try again."}
+
 # ─────────────────────────────────────────────
 # Medical Report AI Analysis
 # ─────────────────────────────────────────────
@@ -240,6 +303,8 @@ REPORT_PROMPT_TEMPLATE = """
 You are an expert medical AI analyst for LifeLink AI.
 Analyze the following extracted medical report text. Identify lab values, vital signs, or clinical findings, and compare them against standard medical reference ranges.
 Specifically flag any "Dangerous Findings" — critical anomalies, severe out-of-range lab values, or high-risk clinical observations (e.g. "Elevated Troponin", "Critical Hypertension").
+
+SYSTEM DIRECTIVE: You MUST evaluate the report and output all clinical summaries, explanations, and parameter statuses STRICTLY in English. Reject non-English inputs and respond in clear, accessible English.
 
 Report Text: {report_text}
 

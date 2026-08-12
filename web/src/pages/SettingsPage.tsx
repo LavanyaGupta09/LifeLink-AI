@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, User, Phone, Calendar, AlertTriangle, LogOut, HeartPulse, Droplets } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { bloodAPI } from '../services/api';
+import { supabase } from '../lib/supabase';
+import { ScanFace } from 'lucide-react';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -27,6 +29,60 @@ const SettingsPage: React.FC = () => {
   const handleLogout = async () => {
     await logout();
     navigate('/role-select', { replace: true });
+  };
+  
+  const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
+  const [passkeyStatus, setPasskeyStatus] = useState('');
+
+  const handleRegisterPasskey = async () => {
+    setIsRegisteringPasskey(true);
+    setPasskeyStatus('');
+    try {
+      if (!window.PublicKeyCredential) {
+        throw new Error('WebAuthn not supported on this browser.');
+      }
+
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+
+      const userId = new Uint8Array(16);
+      window.crypto.getRandomValues(userId);
+
+      const credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: {
+            name: "LifeLink AI",
+            id: window.location.hostname
+          },
+          user: {
+            id: userId,
+            name: user?.phone || "user@lifelink.com",
+            displayName: user?.fullName || "LifeLink User"
+          },
+          pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform", 
+            userVerification: "required"
+          },
+          timeout: 60000,
+          attestation: "none"
+        }
+      });
+
+      if (credential) {
+        setPasskeyStatus('Passkey registered successfully! You can now use Face ID / Fingerprint to log in.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err.name === 'NotAllowedError') {
+        setPasskeyStatus('Registration canceled.');
+      } else {
+        setPasskeyStatus(err.message || 'Failed to register passkey. Ensure your device supports WebAuthn.');
+      }
+    } finally {
+      setIsRegisteringPasskey(false);
+    }
   };
   
   const primaryContact = emergencyContacts[0] || { name: '', relationship: '', phone: '' };
@@ -86,11 +142,11 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="page-container">
       {/* Header */}
-      <div className="header sticky">
+      <div className="header sticky pt-[env(safe-area-inset-top)]">
         <button className="icon-btn-raw" onClick={() => navigate(-1)}>
           <ArrowLeft size={24} />
         </button>
-        <h2 className="header-title">Edit Profile</h2>
+        <h2 className="header-title pt-[env(safe-area-inset-top)]">Edit Profile</h2>
         <div style={{ width: 24 }} />
       </div>
 
@@ -252,6 +308,30 @@ const SettingsPage: React.FC = () => {
             />
             <div className="w-11 h-6 bg-[var(--bg-elevated)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF4757]"></div>
           </label>
+        </div>
+
+        <h3 className="text-secondary text-sm font-semibold mb-4 mt-8 uppercase tracking-wider">Security</h3>
+        
+        <div className="flex flex-col gap-2 p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
+          <div className="flex items-center gap-2 mb-2">
+            <ScanFace size={18} color="var(--primary)" />
+            <h4 className="font-semibold text-white">Biometric Login</h4>
+          </div>
+          <p className="text-xs text-secondary mb-4">Set up Face ID or Fingerprint for instant, passwordless access to your account.</p>
+          
+          <button 
+            className="btn btn-ghost w-full border border-[var(--primary)] text-[var(--primary)] text-sm py-2"
+            onClick={handleRegisterPasskey}
+            disabled={isRegisteringPasskey}
+          >
+            {isRegisteringPasskey ? 'Registering...' : 'Register Face ID / Fingerprint'}
+          </button>
+          
+          {passkeyStatus && (
+            <p className={`text-xs mt-2 ${passkeyStatus.includes('success') ? 'text-green-400' : 'text-red-400'}`}>
+              {passkeyStatus}
+            </p>
+          )}
         </div>
 
         <button className="btn btn-primary w-full mt-8 flex items-center justify-center gap-2" onClick={handleSave}>

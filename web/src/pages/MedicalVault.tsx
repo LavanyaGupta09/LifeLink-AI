@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload, FileText, Shield, Eye, Trash2, Share2, Lock, Bot, AlertTriangle, CheckCircle, Activity, PhoneCall, X, ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { MOCK_MEDICAL_RECORDS } from '../data/mockData';
+import { supabase } from '../lib/supabase';
+import { useAuthStore } from '../store/authStore';
+
 
 const fileTypeIcons: Record<string, string> = {
   report: '📊',
@@ -36,7 +38,59 @@ const ANALYSIS_STEPS = [
 
 const MedicalVault: React.FC = () => {
   const navigate = useNavigate();
-  const [records, setRecords] = useState(MOCK_MEDICAL_RECORDS);
+
+  const { user } = useAuthStore();
+  const [records, setRecords] = useState<any[]>([]);
+  const [loadingRecords, setLoadingRecords] = useState(true);
+  
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        if (!user?.id) {
+          const { MOCK_HEALTH_RECORDS } = await import('../data/mockData');
+          setRecords(MOCK_HEALTH_RECORDS);
+          setLoadingRecords(false);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('medical_records')
+          .select('*')
+          .eq('patient_id', user.id)
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        // Map Supabase records to local format
+        if (data && data.length > 0) {
+          const mapped = data.map(d => ({
+            id: d.id,
+            fileName: d.file_name,
+            fileType: d.record_type || 'other',
+            description: d.description || 'Medical Document',
+            uploadDate: new Date(d.created_at).toLocaleDateString(),
+            fileSize: '1.2 MB', // Mock size
+            iconColor: '#3D91FF',
+            isSharedWithDoctor: false
+          }));
+          setRecords(mapped);
+        } else {
+          // Fallback to mock data
+          const { MOCK_HEALTH_RECORDS } = await import('../data/mockData');
+          setRecords(MOCK_HEALTH_RECORDS);
+        }
+      } catch (err) {
+        console.error('Error fetching vault records:', err);
+        const { MOCK_HEALTH_RECORDS } = await import('../data/mockData');
+        setRecords(MOCK_HEALTH_RECORDS);
+      } finally {
+        setLoadingRecords(false);
+      }
+    };
+    
+    fetchRecords();
+  }, [user]);
+
   const [filter, setFilter] = useState('All');
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -140,7 +194,7 @@ const MedicalVault: React.FC = () => {
 
   return (
     <div className="app-shell">
-      <div className="page-header">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/passport')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Medical Vault</h2>
@@ -202,7 +256,7 @@ const MedicalVault: React.FC = () => {
         {/* ═══════════════════════════════════════════ */}
         {analyzing && (
           <div className="ai-analyzing-card animate-fade-in">
-            <div className="ai-analyzing-header">
+            <div className="ai-analyzing-header pt-[env(safe-area-inset-top)]">
               <Bot size={22} className="ai-analyzing-icon" />
               <div>
                 <p className="ai-analyzing-title">AI Analysis in Progress</p>
@@ -238,8 +292,8 @@ const MedicalVault: React.FC = () => {
         {aiAnalysis && !analyzing && (
           <div className="ai-summary-card animate-fade-in">
             {/* Header */}
-            <div className="ai-summary-header">
-              <div className="ai-summary-header-left">
+            <div className="ai-summary-header pt-[env(safe-area-inset-top)]">
+              <div className="ai-summary-header-left pt-[env(safe-area-inset-top)]">
                 <div className="ai-summary-bot-icon">
                   <Bot size={20} />
                 </div>
@@ -248,7 +302,7 @@ const MedicalVault: React.FC = () => {
                   <p className="ai-summary-meta">Powered by LifeLink AI</p>
                 </div>
               </div>
-              <div className="ai-summary-header-right">
+              <div className="ai-summary-header-right pt-[env(safe-area-inset-top)]">
                 {aiAnalysis.total_red_flags > 0 && (
                   <span className="ai-redflag-badge">
                     <AlertTriangle size={12} />
@@ -269,7 +323,7 @@ const MedicalVault: React.FC = () => {
             {/* ──────────── RED FLAGS SECTION ──────────── */}
             {redFlags.length > 0 && (
               <div className="ai-redflags-section">
-                <div className="ai-section-header ai-section-header-danger">
+                <div className="ai-section-header ai-section-header-danger pt-[env(safe-area-inset-top)]">
                   <AlertTriangle size={16} />
                   <span>Abnormal Findings ({redFlags.length})</span>
                 </div>
@@ -372,8 +426,28 @@ const MedicalVault: React.FC = () => {
           </div>
         )}
 
+        
         {/* Records list */}
-        {filtered.map((record, i) => (
+        {loadingRecords ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="card animate-pulse" style={{ height: 80, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 44, height: 44, background: 'var(--bg-elevated)', borderRadius: 8 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ height: 16, background: 'var(--bg-elevated)', borderRadius: 4, width: '40%', marginBottom: 6 }} />
+                  <div style={{ height: 12, background: 'var(--bg-elevated)', borderRadius: 4, width: '60%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
+            <FileText size={48} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>Your Vault is Empty</h3>
+            <p style={{ fontSize: '0.85rem', marginBottom: 16 }}>Upload your first medical record securely.</p>
+            <button className="btn btn-primary" onClick={handleUploadClick}>Upload Document</button>
+          </div>
+        ) : filtered.map((record, i) => (
           <div
             key={record.id}
             className="card vault-record animate-fade-in"

@@ -23,6 +23,7 @@ const SOSPage: React.FC = () => {
   const [contactsNotified, setContactsNotified] = useState(false);
   const [ambulanceDispatched, setAmbulanceDispatched] = useState(false);
   const [doctorConnected, setDoctorConnected] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Address Search and Map State
   const [manualAddress, setManualAddress] = useState('');
@@ -79,6 +80,9 @@ const SOSPage: React.FC = () => {
       MOCK_EMERGENCY_CONTACTS.filter(c => c.notifyOnSOS).forEach(c => {
         generateShareLink(c.name, 'SOS Emergency — Live Tracking');
       });
+      // Show SMS toast
+      setToastMessage('📲 SMS SOS Alert sent to Emergency Contacts');
+      setTimeout(() => setToastMessage(null), 4000);
     }, 1500);
     setTimeout(() => setAmbulanceDispatched(true), 3000);
     setTimeout(() => setDoctorConnected(true), 5000);
@@ -461,6 +465,18 @@ const SOSPage: React.FC = () => {
           margin-top: 20px;
         }
       `}</style>
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div style={{
+          position: 'fixed', bottom: '80px', left: '50%', transform: 'translateX(-50%)',
+          background: 'var(--bg-elevated)', color: 'var(--text-primary)', border: '1px solid var(--border)',
+          padding: '12px 20px', borderRadius: '30px', boxShadow: 'var(--shadow-lg)',
+          zIndex: 9999, fontSize: '0.85rem', fontWeight: 600, animation: 'fadeInUp 0.3s ease'
+        }}>
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 };

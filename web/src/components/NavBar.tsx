@@ -18,9 +18,8 @@ const NavBar: React.FC = () => {
 
   const hiddenRoutes = ['/', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review'];
   if (hiddenRoutes.some(r => location.pathname === r) || location.pathname.startsWith('/b2b/') || location.pathname.startsWith('/admin/')) return null;
-
   return (
-    <div className="nav-bar">
+    <div className="nav-bar pb-[env(safe-area-inset-bottom)]">
       {isOffline && (
         <div className="offline-indicator">
           <CloudOff size={14} />

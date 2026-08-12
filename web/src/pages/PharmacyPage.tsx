@@ -1,13 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Star, Phone, MapPin, Clock, Tag } from 'lucide-react';
-import { MOCK_PHARMACIES, GENERIC_MAP } from '../data/mockData';
+import { GENERIC_MAP } from '../data/mockData';
+
+// Deterministic hash for consistent simulated data per pharmacy
+function simHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
 
 const PharmacyPage: React.FC = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const [pharmacies, setPharmacies] = useState<any[]>([]);
+  const [loadingPharmacies, setLoadingPharmacies] = useState(true);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { fetchNearbyFacilities } = await import('../lib/overpass');
+          const facilities = await fetchNearbyFacilities(pos.coords.latitude, pos.coords.longitude, 'pharmacy');
+          
+          if (facilities.length === 0) {
+            setPharmacies([]);
+            setLoadingPharmacies(false);
+            return;
+          }
+
+          const MOCK_MEDS = [
+            { name: 'Paracetamol 500mg', price: 45, available: true, quantity: 120 },
+            { name: 'Azithromycin 500mg', price: 120, available: true, quantity: 50 },
+            { name: 'Amoxicillin 250mg', price: 80, available: false, quantity: 0 },
+            { name: 'Cetirizine 10mg', price: 35, available: true, quantity: 200 },
+            { name: 'Salbutamol Inhaler', price: 150, available: true, quantity: 15 },
+            { name: 'Vitamin D3 60k', price: 95, available: true, quantity: 80 },
+            { name: 'Pantoprazole 40mg', price: 65, available: false, quantity: 0 },
+            { name: 'Metformin 500mg', price: 55, available: true, quantity: 300 }
+          ];
+
+          const mapped = facilities.map(f => {
+            const seed = simHash(f.name || f.id);
+            return {
+              id: f.id,
+              name: f.name,
+              lat: f.lat,
+              lng: f.lng,
+              address: f.address,
+              distanceKm: f.distanceKm,
+              rating: parseFloat((3.5 + (seed % 15) / 10).toFixed(1)),
+              is24h: seed % 3 === 0,
+              medicines: MOCK_MEDS.filter((_, i) => ((seed + i) % 2) !== 0).slice(0, 5)
+            };
+          });
+          
+          setPharmacies(mapped);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoadingPharmacies(false);
+        }
+      },
+      () => {
+        setLoadingPharmacies(false);
+      }
+    );
+  }, []);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,7 +84,7 @@ const PharmacyPage: React.FC = () => {
 
   const genericSuggestion = debouncedQuery ? GENERIC_MAP[debouncedQuery.toLowerCase().trim()] : null;
 
-  const filtered = MOCK_PHARMACIES.filter(p => {
+  const filtered = pharmacies.filter(p => {
     if (!debouncedQuery) return true;
     const q = debouncedQuery.toLowerCase().trim();
     const gq = genericSuggestion ? genericSuggestion.toLowerCase() : null;
@@ -27,7 +93,7 @@ const PharmacyPage: React.FC = () => {
   });
 
   const genericPharmacies = genericSuggestion
-    ? MOCK_PHARMACIES.map(p => {
+    ? pharmacies.map(p => {
         const med = p.medicines.find(m => m.name.toLowerCase() === genericSuggestion.toLowerCase());
         return med ? { pharmacy: p, med } : null;
       }).filter((item): item is NonNullable<typeof item> => item !== null && item.med.available)
@@ -35,11 +101,11 @@ const PharmacyPage: React.FC = () => {
 
   return (
     <div className="app-shell">
-      <div className="page-header">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Nearby Pharmacies</h2>
-          <p className="text-xs text-secondary">{MOCK_PHARMACIES.length} pharmacies found</p>
+          <p className="text-xs text-secondary">{pharmacies.length} pharmacies found</p>
         </div>
       </div>
 
@@ -112,6 +178,7 @@ const PharmacyPage: React.FC = () => {
           )}
         </div>
 
+        
         {/* Your prescription */}
         <div className="card card-glass rx-card animate-fade-in delay-100">
           <div className="flex items-center gap-3">
@@ -124,7 +191,22 @@ const PharmacyPage: React.FC = () => {
           </div>
         </div>
 
-        {filtered.map((pharmacy, i) => (
+        {loadingPharmacies ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="card animate-pulse" style={{ height: 180 }}>
+                <div style={{ height: 20, background: 'var(--bg-elevated)', borderRadius: 4, width: '60%', marginBottom: 12 }} />
+                <div style={{ height: 14, background: 'var(--bg-elevated)', borderRadius: 4, width: '40%', marginBottom: 20 }} />
+                <div style={{ height: 40, background: 'var(--bg-elevated)', borderRadius: 4, width: '100%' }} />
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
+            <span style={{ fontSize: '2rem', display: 'block', marginBottom: 10, opacity: 0.5 }}>🏬</span>
+            <p>No pharmacies found.</p>
+          </div>
+        ) : filtered.map((pharmacy, i) => (
           <div
             key={pharmacy.id}
             className="card pharmacy-card animate-fade-in"

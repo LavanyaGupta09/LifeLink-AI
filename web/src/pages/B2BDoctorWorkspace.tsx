@@ -133,7 +133,7 @@ PLAN: Dispatch ALS ambulance immediately. Aspirin 325mg chewed.`);
   ];
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white flex font-sans">
+    <div className="min-h-[100dvh] bg-[#0F172A] text-white flex font-sans">
       {/* Sidebar */}
       <aside className="w-60 bg-slate-900 border-r border-slate-800 p-5 flex flex-col shrink-0">
         <div className="flex items-center gap-2 mb-8">

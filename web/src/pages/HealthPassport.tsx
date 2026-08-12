@@ -34,7 +34,7 @@ const HealthPassport: React.FC = () => {
 
   return (
     <div className="app-shell">
-      <div className="page-header">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Health Passport</h2>
@@ -49,7 +49,7 @@ const HealthPassport: React.FC = () => {
       <div className="page-content">
         {/* QR Card */}
         <div className="qr-card animate-scale-in">
-          <div className="qr-card-header">
+          <div className="qr-card-header pt-[env(safe-area-inset-top)]">
             <div className="flex items-center gap-2">
               <div className="ll-badge">LifeLink AI</div>
               {auditStatus === 'fresh' && <div className="badge badge-success">Verified Fresh</div>}
@@ -334,7 +334,7 @@ interface AccordionProps {
 
 const AccordionSection: React.FC<AccordionProps> = ({ title, icon, expanded, onToggle, warning, children }) => (
   <div className={`accordion ${warning ? 'warning' : ''}`}>
-    <button className="accordion-header" onClick={onToggle}>
+    <button className="accordion-header pt-[env(safe-area-inset-top)]" onClick={onToggle}>
       <span className="accordion-icon">{icon}</span>
       <span className="text-sm font-semibold">{title}</span>
       {expanded ? <ChevronUp size={16} color="var(--text-tertiary)" /> : <ChevronDown size={16} color="var(--text-tertiary)" />}

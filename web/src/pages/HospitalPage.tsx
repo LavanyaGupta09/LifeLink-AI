@@ -6,8 +6,9 @@ import {
   CheckCircle2, AlertTriangle, Send, Zap, RefreshCw, ExternalLink,
   Share2, Activity, X, SlidersHorizontal
 } from 'lucide-react';
-import { MOCK_HOSPITALS, MOCK_ER_DASHBOARDS, MOCK_PRE_ARRIVAL_ALERT, MOCK_HOSPITAL_ROUTES, MOCK_HEALTH_PROFILE, MOCK_USER } from '../data/mockData';
+import { MOCK_ER_DASHBOARDS, MOCK_PRE_ARRIVAL_ALERT, MOCK_HOSPITAL_ROUTES, MOCK_HEALTH_PROFILE, MOCK_USER } from '../data/mockData';
 import type { HospitalExtended, ERDashboard, HospitalRoute } from '../types/health.types';
+import FreeMap from '../components/FreeMap';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'discover' | 'er' | 'alert' | 'route';
@@ -74,12 +75,105 @@ const TrafficBadge: React.FC<{ tc: 'clear' | 'moderate' | 'heavy' }> = ({ tc }) 
   return <span style={{ fontSize: '0.7rem', fontWeight: 700, color: m.color }}>{m.label}</span>;
 };
 
+// Deterministic hash for consistent simulated data per hospital
+function simHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 // ── Main Page ────────────────────────────────────────────────────────────────
 const HospitalPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Tab
   const [activeTab, setActiveTab] = useState<TabId>('discover');
+
+  // Dynamic Hospitals
+  const [hospitals, setHospitals] = useState<HospitalExtended[]>([]);
+  const [loadingHospitals, setLoadingHospitals] = useState(true);
+  const [userLoc, setUserLoc] = useState<[number, number]>([28.5355, 77.2690]);
+
+  useEffect(() => {
+    const handleGeoSuccess = async (lat: number, lng: number) => {
+      setUserLoc([lat, lng]);
+      try {
+        const { fetchNearbyFacilities } = await import('../lib/overpass');
+        const facilities = await fetchNearbyFacilities(lat, lng, 'hospital');
+        if (facilities.length === 0) {
+          setHospitals([]);
+          setLoadingHospitals(false);
+          return;
+        }
+        const mapped: HospitalExtended[] = facilities.map((f) => {
+          const seed = simHash(f.name || f.id);
+          const isGovt = seed % 2 === 0;
+          const trauma = (seed % 3) + 1;
+          return {
+            id: f.id,
+            name: f.name,
+            lat: f.lat,
+            lng: f.lng,
+            address: f.address,
+            type: isGovt ? 'government' : 'private',
+            specialties: ALL_SPECIALTIES.filter((_, i) => (seed >> i) & 1).slice(0, 3),
+            rating: parseFloat((3.5 + (seed % 15) / 10).toFixed(1)),
+            distanceKm: f.distanceKm,
+            acceptedInsurance: ALL_INSURANCE.slice(0, 2),
+            hasHelipad: seed % 5 === 0,
+            hasBloodBank: seed % 2 === 0,
+            traumaLevel: 'Level ' + trauma,
+            isPartner: seed % 4 === 0,
+          };
+        });
+        setHospitals(mapped);
+        
+        const erMapped: ERDashboard[] = mapped.map(h => {
+          const seed = simHash(h.id);
+          const erBedsTotal = 10 + (seed % 20);
+          const avail = 1 + (seed % Math.max(erBedsTotal - 2, 1));
+          return {
+            hospitalId: h.id,
+            hospitalName: h.name,
+            erBedsTotal,
+            erBedsAvailable: avail,
+            icuBedsTotal: 10 + (seed % 10),
+            icuBedsAvailable: (seed % 8),
+            erWaitMinutes: 5 + (seed % 50),
+            erOccupancyPercent: Math.round(((erBedsTotal - avail) / erBedsTotal) * 100),
+            icuOccupancyPercent: Math.round(((10 - (seed % 8)) / 10) * 100),
+            availabilityStatus: avail > (erBedsTotal * 0.5) ? 'high' : avail > (erBedsTotal * 0.2) ? 'medium' : 'critical',
+            onCallSpecialists: [],
+            hasHelipad: h.hasHelipad,
+            hasBloodBank: h.hasBloodBank,
+            traumaLevel: h.traumaLevel,
+            lastUpdated: new Date().toISOString()
+          };
+        });
+        setErData(erMapped);
+        if (erMapped.length > 0) setSelectedER(erMapped[0]);
+        if (mapped.length > 0) setAlertHosp(mapped[0]);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoadingHospitals(false);
+      }
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        handleGeoSuccess(pos.coords.latitude, pos.coords.longitude);
+      },
+      () => {
+        // Fallback to default location
+        handleGeoSuccess(28.5355, 77.2690);
+      }
+    );
+  }, []);
+
 
   // Discovery filters
   const [search, setSearch]             = useState('');
@@ -90,14 +184,14 @@ const HospitalPage: React.FC = () => {
   const [sortKey, setSortKey]           = useState<SortKey>('distance');
 
   // ER Dashboard
-  const [erData, setErData]             = useState<ERDashboard[]>(MOCK_ER_DASHBOARDS);
-  const [selectedER, setSelectedER]     = useState<ERDashboard>(MOCK_ER_DASHBOARDS[0]);
+  const [erData, setErData]             = useState<ERDashboard[]>([]);
+  const [selectedER, setSelectedER]     = useState<ERDashboard>({} as ERDashboard);
   const [lastRefresh, setLastRefresh]   = useState(new Date());
   const [refreshing, setRefreshing]     = useState(false);
 
   // Pre-Arrival Alert
   const [alertStep, setAlertStep]       = useState<AlertStep>('preparing');
-  const [alertHospital, setAlertHosp]   = useState<HospitalExtended>(MOCK_HOSPITALS[0]);
+  const [alertHospital, setAlertHosp]   = useState<HospitalExtended>({} as HospitalExtended);
   const [alertSending, setAlertSending] = useState(false);
   const [etaSeconds, setEtaSeconds]     = useState(4 * 60);
 
@@ -164,7 +258,7 @@ const HospitalPage: React.FC = () => {
   };
 
   // ── Filtered + sorted hospitals ──────────────────────────────────────────
-  const filtered = MOCK_HOSPITALS
+  const filtered = hospitals
     .filter(h => {
       if (search && !h.name.toLowerCase().includes(search.toLowerCase()) &&
           !h.address.toLowerCase().includes(search.toLowerCase())) return false;
@@ -202,13 +296,13 @@ const HospitalPage: React.FC = () => {
   return (
     <div className="app-shell">
       {/* Header */}
-      <div className="page-header" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
+      <div className="page-header pt-[env(safe-area-inset-top)]" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
         <button className="back-btn" onClick={() => navigate('/dashboard')} id="hosp-back-btn">
           <ArrowLeft size={18} />
         </button>
         <div style={{ flex: 1 }}>
           <h2 className="page-title" style={{ marginBottom: 2 }}>Hospitals & ER</h2>
-          <p className="text-xs text-secondary">Live status · {MOCK_HOSPITALS.length} hospitals nearby</p>
+          <p className="text-xs text-secondary">Live status · {hospitals.length} hospitals nearby</p>
         </div>
         <button
           onClick={handleRefresh}
@@ -342,11 +436,55 @@ const HospitalPage: React.FC = () => {
 
             {/* Results count */}
             <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 10 }}>
-              Showing <strong style={{ color: 'var(--text-primary)' }}>{filtered.length}</strong> of {MOCK_HOSPITALS.length} hospitals
+              Showing <strong style={{ color: 'var(--text-primary)' }}>{filtered.length}</strong> of {hospitals.length} hospitals
             </p>
 
+            {/* Interactive Map */}
+            {filtered.length > 0 && !loadingHospitals && (
+              <div style={{ height: '200px', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
+                <FreeMap
+                  center={userLoc}
+                  zoom={12}
+                  markers={[
+                    { id: 'you', lat: userLoc[0], lng: userLoc[1], label: '📍 You' },
+                    ...filtered.map(h => ({
+                      id: h.id,
+                      lat: h.lat,
+                      lng: h.lng,
+                      label: `🏥 ${h.name.substring(0, 12)}`,
+                      popup: (
+                        <div>
+                          <strong>{h.name}</strong><br />
+                          <span>{h.distanceKm} km away</span>
+                        </div>
+                      ),
+                    })),
+                  ]}
+                />
+              </div>
+            )}
+
             {/* Hospital cards */}
-            {filtered.length === 0 ? (
+            
+            {loadingHospitals ? (
+              <div className="space-y-4">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="card animate-pulse" style={{ height: 140 }}>
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ height: 20, background: 'var(--bg-elevated)', borderRadius: 4, width: '60%', marginBottom: 8 }} />
+                        <div style={{ height: 14, background: 'var(--bg-elevated)', borderRadius: 4, width: '40%', marginBottom: 12 }} />
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <div style={{ height: 24, width: 60, background: 'var(--bg-elevated)', borderRadius: 12 }} />
+                          <div style={{ height: 24, width: 60, background: 'var(--bg-elevated)', borderRadius: 12 }} />
+                        </div>
+                      </div>
+                      <div style={{ width: 60, height: 60, background: 'var(--bg-elevated)', borderRadius: 8 }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
                 <Building2 size={36} style={{ marginBottom: 10, opacity: 0.4 }} />
                 <p>No hospitals match your filters.</p>
@@ -446,7 +584,22 @@ const HospitalPage: React.FC = () => {
             TAB 2 · LIVE ER & BED CAPACITY DASHBOARD
             ══════════════════════════════════════════════════════════════ */}
         {activeTab === 'er' && (
+
           <div className="animate-fade-in">
+            {loadingHospitals ? (
+              <div className="card animate-pulse" style={{ height: 300, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ height: 30, background: 'var(--bg-elevated)', borderRadius: 4, width: '50%' }} />
+                <div style={{ flex: 1, background: 'var(--bg-elevated)', borderRadius: 8 }} />
+                <div style={{ height: 60, background: 'var(--bg-elevated)', borderRadius: 8 }} />
+              </div>
+            ) : hospitals.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
+                <AlertTriangle size={36} style={{ marginBottom: 10, opacity: 0.4 }} />
+                <p>No hospitals nearby to show ER status.</p>
+              </div>
+            ) : (
+              <>
+
             {/* Hospital selector */}
             <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, marginBottom: 14 }}>
               {erData.map(er => (
@@ -531,7 +684,7 @@ const HospitalPage: React.FC = () => {
               </div>
               <div
                 className="card"
-                onClick={() => { setAlertHosp(MOCK_HOSPITALS.find(h => h.id === selectedER.hospitalId) ?? MOCK_HOSPITALS[0]); setActiveTab('alert'); }}
+                onClick={() => { setAlertHosp(hospitals.find(h => h.id === selectedER.hospitalId) ?? hospitals[0]); setActiveTab('alert'); }}
                 style={{ flex: 1, textAlign: 'center', padding: '10px 8px', cursor: 'pointer', background: 'rgba(0,201,167,0.08)', border: '1px solid var(--border-primary)' }}>
                 <div style={{ fontSize: '1.1rem', marginBottom: 2 }}>🚨</div>
                 <div style={{ fontSize: '0.6rem', color: 'var(--primary)', fontWeight: 700 }}>Alert ER</div>
@@ -576,11 +729,13 @@ const HospitalPage: React.FC = () => {
                 <Phone size={14} /> Call ER
               </button>
               <button className="btn btn-primary flex-1 btn-sm" id="er-alert-btn"
-                onClick={() => { setAlertHosp(MOCK_HOSPITALS.find(h => h.id === selectedER.hospitalId) ?? MOCK_HOSPITALS[0]); setActiveTab('alert'); }}
+                onClick={() => { setAlertHosp(hospitals.find(h => h.id === selectedER.hospitalId) ?? hospitals[0]); setActiveTab('alert'); }}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                 <Send size={14} /> Send Pre-Arrival Alert
               </button>
             </div>
+          </>
+            )}
           </div>
         )}
 

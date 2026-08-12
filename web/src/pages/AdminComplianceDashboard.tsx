@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, LogOut, CheckCircle, XCircle, FileSearch, Filter, ExternalLink, Activity, Search, AlertTriangle, Building2, Stethoscope, Truck, Microscope, Menu } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +28,43 @@ const AdminComplianceDashboard: React.FC = () => {
   const { logout, user } = useAuthStore();
   const navigate = useNavigate();
   
-  const [queue, setQueue] = useState<PendingProvider[]>(MOCK_QUEUE);
+
+  const [queue, setQueue] = useState<PendingProvider[]>([]);
+  const [loadingQueue, setLoadingQueue] = useState(true);
+  
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('provider_profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        if (data) {
+          const mapped = data.map((d: any) => ({
+            id: d.id,
+            name: d.name || 'Unknown Provider',
+            type: d.provider_type || 'Doctor',
+            dateApplied: new Date(d.created_at).toLocaleDateString(),
+            licenseId: d.license_number || 'N/A',
+            status: d.verification_status || 'pending_approval',
+            contact: d.contact_email || d.contact_phone || 'N/A',
+            documentType: d.document_type || 'License Document'
+          }));
+          setQueue(mapped);
+        }
+      } catch (err) {
+        console.error('Error fetching providers:', err);
+      } finally {
+        setLoadingQueue(false);
+      }
+    };
+    
+    fetchProviders();
+  }, []);
+
   const [filterType, setFilterType] = useState<string>('All');
   const [filterStatus, setFilterStatus] = useState<string>('pending_approval');
   
@@ -87,7 +125,7 @@ const AdminComplianceDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-[100dvh] bg-slate-50 text-slate-900 font-sans flex flex-col md:flex-row overflow-hidden">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 text-white border-b border-slate-800 z-50">
         <div className="flex items-center gap-2">
@@ -100,7 +138,7 @@ const AdminComplianceDashboard: React.FC = () => {
       </div>
 
       {/* Sidebar */}
-      <aside className={`w-64 bg-slate-900 text-white p-6 flex flex-col shrink-0 fixed md:relative z-40 h-[calc(100vh-76px)] md:h-auto top-[76px] md:top-0 left-0 transition-transform duration-300 shadow-2xl md:shadow-none ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`w-64 bg-slate-900 text-white p-6 flex flex-col shrink-0 fixed md:relative z-40 h-[calc(100dvh-76px)] md:h-auto top-[76px] md:top-0 left-0 transition-transform duration-300 shadow-2xl md:shadow-none ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="hidden md:flex items-center gap-2 mb-10">
           <ShieldCheck size={28} className="text-sky-400" />
           <h1 className="text-xl font-black tracking-tight leading-tight">Master<br/><span className="text-sky-400 text-sm tracking-normal">Compliance Admin</span></h1>
@@ -128,7 +166,7 @@ const AdminComplianceDashboard: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-50 relative w-full h-[calc(100vh-76px)] md:h-screen">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-50 relative w-full h-[calc(100dvh-76px)] md:h-[100dvh]">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
           <div>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Provider Verification Queue</h2>
@@ -171,8 +209,28 @@ const AdminComplianceDashboard: React.FC = () => {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
+              
               <tbody className="divide-y divide-slate-100">
-                {filteredQueue.map(p => (
+                {loadingQueue ? (
+                  [1, 2, 3].map(i => (
+                    <tr key={i} className="animate-pulse">
+                      <td className="px-6 py-4"><div className="h-4 bg-slate-200 rounded w-3/4 mb-2"/><div className="h-3 bg-slate-200 rounded w-1/2"/></td>
+                      <td className="px-6 py-4"><div className="h-6 bg-slate-200 rounded w-16"/></td>
+                      <td className="px-6 py-4"><div className="h-4 bg-slate-200 rounded w-24 mb-2"/><div className="h-3 bg-slate-200 rounded w-20"/></td>
+                      <td className="px-6 py-4"><div className="h-4 bg-slate-200 rounded w-20"/></td>
+                      <td className="px-6 py-4"><div className="h-6 bg-slate-200 rounded w-24"/></td>
+                      <td className="px-6 py-4 text-right"><div className="h-8 bg-slate-200 rounded w-20 ml-auto"/></td>
+                    </tr>
+                  ))
+                ) : filteredQueue.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center">
+                      <Search size={40} className="mx-auto text-slate-300 mb-4" />
+                      <p className="text-lg font-bold text-slate-900">No providers found</p>
+                      <p className="text-slate-500">The verification queue is empty or filters returned no results.</p>
+                    </td>
+                  </tr>
+                ) : filteredQueue.map(p => (
                   <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <p className="font-bold text-slate-900">{p.name}</p>
@@ -210,15 +268,7 @@ const AdminComplianceDashboard: React.FC = () => {
                     </td>
                   </tr>
                 ))}
-                {filteredQueue.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center">
-                      <Search size={40} className="mx-auto text-slate-300 mb-4" />
-                      <p className="text-lg font-bold text-slate-900">No providers found</p>
-                      <p className="text-slate-500">Try adjusting your filters.</p>
-                    </td>
-                  </tr>
-                )}
+                
               </tbody>
             </table>
           </div>

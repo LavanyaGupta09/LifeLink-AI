@@ -87,7 +87,7 @@ const B2BPharmacyDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex">
+    <div className="min-h-[100dvh] bg-slate-50 text-slate-800 font-sans flex">
       <aside className="w-64 bg-emerald-900 text-white p-6 flex flex-col shrink-0">
         <div className="flex items-center gap-2 mb-10">
           <Pill size={24} className="text-emerald-400" />

@@ -1,32 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Star, Phone, ChevronRight, Navigation, Bed } from 'lucide-react';
 import FreeMap from '../components/FreeMap';
-import { MOCK_HOSPITALS } from '../data/mockData';
 import type { Hospital } from '../types/health.types';
+
+// Deterministic hash for consistent simulated data per hospital
+function simHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+const SPECIALTIES_POOL = ['Cardiology', 'Trauma', 'Neuro', 'Ortho', 'Pediatric', 'Burns', 'Pulmonology', 'Oncology'];
+
+function enrichHospital(h: any) {
+  const seed = simHash(h.name || h.id);
+  const erBedsTotal = 10 + (seed % 15);
+  const erBedsAvailable = 1 + (seed % Math.max(erBedsTotal - 2, 1));
+  const specialties = SPECIALTIES_POOL.filter((_, i) => (seed >> i) & 1).slice(0, 3);
+  return {
+    ...h,
+    erBedsTotal,
+    erBedsAvailable,
+    erWaitMinutes: 5 + (seed % 40),
+    rating: parseFloat((3.5 + (seed % 15) / 10).toFixed(1)),
+    isPartner: (seed % 3) === 0,
+    activeSpecialists: specialties.length > 0 ? specialties : ['Emergency', 'General'],
+  };
+}
 
 const AmbulancePage: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
-  const [dispatched, setDispatched] = useState(false);
-  const [eta, setEta] = useState(4);
+  const [hospitals, setHospitals] = useState<any[]>([]);
+  const [userLoc, setUserLoc] = useState<[number, number]>([28.5355, 77.2690]);
 
-  const handleDispatch = (hospital: Hospital) => {
+  // Ambulance animation state
+  const [amb1, setAmb1] = useState<[number, number]>([28.5355 + 0.008, 77.2690 - 0.006]);
+  const [amb2, setAmb2] = useState<[number, number]>([28.5355 - 0.005, 77.2690 + 0.009]);
+  const [etaMin, setEtaMin] = useState(7);
+  const [distKm, setDistKm] = useState(1.8);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      setUserLoc([lat, lng]);
+
+      // Place ambulances relative to user
+      setAmb1([lat + 0.008, lng - 0.006]);
+      setAmb2([lat - 0.005, lng + 0.009]);
+
+      const { fetchNearbyFacilities } = await import('../lib/overpass');
+      const facilities = await fetchNearbyFacilities(lat, lng, 'hospital', 15000);
+      setHospitals(facilities.map(enrichHospital));
+    }, async () => {
+      // Fallback: use default location
+      const defaultLat = 28.5355;
+      const defaultLng = 77.2650;
+      setUserLoc([defaultLat, defaultLng]);
+      setAmb1([defaultLat + 0.008, defaultLng - 0.006]);
+      setAmb2([defaultLat - 0.005, defaultLng + 0.009]);
+      
+      try {
+        const { fetchNearbyFacilities } = await import('../lib/overpass');
+        const facilities = await fetchNearbyFacilities(defaultLat, defaultLng, 'hospital', 15000);
+        setHospitals(facilities.map(enrichHospital));
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }, []);
+
+  // Animate ambulances toward user
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAmb1(prev => [
+        prev[0] + (userLoc[0] - prev[0]) * 0.02,
+        prev[1] + (userLoc[1] - prev[1]) * 0.02,
+      ]);
+      setAmb2(prev => [
+        prev[0] + (userLoc[0] - prev[0]) * 0.015,
+        prev[1] + (userLoc[1] - prev[1]) * 0.015,
+      ]);
+
+      // Update ETA based on distance to ambulance 1
+      setAmb1(prev => {
+        const dLat = userLoc[0] - prev[0];
+        const dLng = userLoc[1] - prev[1];
+        const dist = Math.sqrt(dLat * dLat + dLng * dLng) * 111; // rough km
+        setDistKm(parseFloat(dist.toFixed(1)));
+        setEtaMin(Math.max(1, Math.round(dist / 0.5)));
+        return prev;
+      });
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [userLoc]);
+
+  const [selectedHospital, setSelectedHospital] = useState<any | null>(null);
+  const [dispatched, setDispatched] = useState(false);
+
+  const handleDispatch = (hospital: any) => {
     setSelectedHospital(hospital);
     setDispatched(true);
     setTimeout(() => navigate('/sos'), 1500);
   };
 
-  const bedPercent = (h: Hospital) => Math.round((h.erBedsAvailable / h.erBedsTotal) * 100);
+  const bedPercent = (h: any) => Math.round((h.erBedsAvailable / h.erBedsTotal) * 100);
   const bedColor = (p: number) => p > 50 ? '#2ED573' : p > 25 ? '#FFA502' : '#FF4757';
 
   return (
     <div className="app-shell">
-      <div className="page-header">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Ambulance & Hospitals</h2>
-          <p className="text-xs text-secondary">4 units available nearby</p>
+          <p className="text-xs text-secondary">2 units dispatched nearby</p>
         </div>
       </div>
 
@@ -34,13 +124,11 @@ const AmbulancePage: React.FC = () => {
         {/* Real OpenStreetMap */}
         <div style={{ height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
           <FreeMap
-            center={[28.5355, 77.2690]}
-            zoom={13}
+            center={userLoc}
+            zoom={14}
             markers={[
-              // Your location
-              { id: 'you', lat: 28.5380, lng: 77.2650, label: '📍 You' },
-              // Hospitals from data
-              ...MOCK_HOSPITALS.map(h => ({
+              { id: 'you', lat: userLoc[0], lng: userLoc[1], label: '📍 You' },
+              ...hospitals.map(h => ({
                 id: h.id,
                 lat: h.lat,
                 lng: h.lng,
@@ -53,26 +141,26 @@ const AmbulancePage: React.FC = () => {
                   </div>
                 ),
               })),
-              // Ambulance markers
-              { id: 'amb_1', lat: 28.5420, lng: 77.2720, label: '🚑 Unit A-12' },
-              { id: 'amb_2', lat: 28.5300, lng: 77.2580, label: '🚑 Unit A-07' },
+              // Animated ambulance markers
+              { id: 'amb_1', lat: amb1[0], lng: amb1[1], label: '🚑 Unit A-12 (ALS)' },
+              { id: 'amb_2', lat: amb2[0], lng: amb2[1], label: '🚑 Unit A-07 (BLS)' },
             ]}
           />
         </div>
 
-        {/* ETA strip */}
+        {/* Dynamic ETA strip */}
         <div className="eta-strip animate-fade-in delay-200">
           <div className="eta-card">
             <Clock size={16} color="#00C9A7" />
             <div>
-              <span className="font-bold" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display)', color: '#00C9A7' }}>{eta}</span>
+              <span className="font-bold" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display)', color: '#00C9A7' }}>{etaMin}</span>
               <span className="text-xs text-secondary ml-1">min ETA</span>
             </div>
           </div>
           <div className="eta-card">
             <MapPin size={16} color="#3D91FF" />
             <div>
-              <span className="font-bold" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display)', color: '#3D91FF' }}>1.2</span>
+              <span className="font-bold" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display)', color: '#3D91FF' }}>{distKm}</span>
               <span className="text-xs text-secondary ml-1">km away</span>
             </div>
           </div>
@@ -84,7 +172,12 @@ const AmbulancePage: React.FC = () => {
 
         {/* Hospital list */}
         <p className="section-title mb-3 animate-fade-in delay-300">Nearby Hospitals — ER Status</p>
-        {MOCK_HOSPITALS.map((h, i) => {
+
+        {hospitals.length === 0 ? (
+          <div className="animate-pulse">
+            {[1,2,3].map(i => <div key={i} className="card mb-3" style={{ height: 140, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
+          </div>
+        ) : hospitals.map((h, i) => {
           const pct = bedPercent(h);
           const col = bedColor(pct);
           return (
@@ -102,7 +195,7 @@ const AmbulancePage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-1 mb-1">
                     <MapPin size={12} color="var(--text-tertiary)" />
-                    <span className="text-xs text-secondary">{h.distanceKm} km · {h.address.split(',')[0]}</span>
+                    <span className="text-xs text-secondary">{h.distanceKm} km · {(h.address || '').split(',')[0]}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Star size={11} color="#FFA502" fill="#FFA502" />
@@ -125,7 +218,7 @@ const AmbulancePage: React.FC = () => {
 
               {/* Specialists */}
               <div className="specialist-tags">
-                {h.activeSpecialists.slice(0, 3).map((s, si) => (
+                {h.activeSpecialists.slice(0, 3).map((s: string, si: number) => (
                   <span key={si} className="badge badge-info">{s}</span>
                 ))}
               </div>

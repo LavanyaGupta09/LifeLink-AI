@@ -36,7 +36,7 @@ const HealthAuditPage: React.FC = () => {
 
   if (isAuditComplete) {
     return (
-      <div className="app-shell flex flex-col items-center justify-center p-6 text-center" style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+      <div className="app-shell flex flex-col items-center justify-center p-6 text-center" style={{ minHeight: '100dvh', background: 'var(--bg-base)' }}>
         <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(46,213,115,0.2)', color: '#2ED573' }}>
           <ShieldCheck size={36} />
         </div>
@@ -51,8 +51,8 @@ const HealthAuditPage: React.FC = () => {
   }
 
   return (
-    <div className="app-shell" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div className="page-header border-b border-[var(--border)] pb-3">
+    <div className="app-shell" style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+      <div className="page-header border-b border-[var(--border)] pb-3 pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate(-1)}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">90-Day Health Audit</h2>

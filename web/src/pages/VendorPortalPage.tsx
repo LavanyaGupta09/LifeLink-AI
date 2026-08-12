@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Building2, Pill, Save, RefreshCw, CheckCircle2, Clock
 } from 'lucide-react';
-import { MOCK_HOSPITALS, MOCK_PHARMACIES } from '../data/mockData';
 
 const VendorPortalPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'hospital' | 'pharmacy'>('hospital');
-  const [selectedHospital, setSelectedHospital] = useState(MOCK_HOSPITALS[0].id);
+  const [selectedHospital, setSelectedHospital] = useState('');
+  const [hospitals, setHospitals] = useState<any[]>([]);
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { fetchNearbyFacilities } = await import('../lib/overpass');
+      const facilities = await fetchNearbyFacilities(pos.coords.latitude, pos.coords.longitude, 'hospital', 15000);
+      setHospitals(facilities);
+      if (facilities.length > 0) setSelectedHospital(facilities[0].id);
+    });
+  }, []);
   const [selectedPharmacy, setSelectedPharmacy] = useState(MOCK_PHARMACIES[0].id);
   
   const [saving, setSaving] = useState(false);
@@ -24,12 +32,12 @@ const VendorPortalPage: React.FC = () => {
     }, 1200);
   };
 
-  const hosp = MOCK_HOSPITALS.find(h => h.id === selectedHospital)!;
+  const hosp = hospitals.find(h => h.id === selectedHospital);
   const pharm = MOCK_PHARMACIES.find(p => p.id === selectedPharmacy)!;
 
   return (
-    <div className="app-shell" style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
-      <div className="page-header border-b border-[var(--border)] pb-3">
+    <div className="app-shell" style={{ minHeight: '100dvh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
+      <div className="page-header border-b border-[var(--border)] pb-3 pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate(-1)}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title flex items-center gap-2">
@@ -63,7 +71,7 @@ const VendorPortalPage: React.FC = () => {
               value={selectedHospital}
               onChange={(e) => setSelectedHospital(e.target.value)}
             >
-              {MOCK_HOSPITALS.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
+              {hospitals.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
             </select>
 
             <div className="card mb-4">

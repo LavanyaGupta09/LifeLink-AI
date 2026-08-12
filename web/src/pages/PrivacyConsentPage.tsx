@@ -42,8 +42,8 @@ const PrivacyConsentPage: React.FC = () => {
   const qrByteSize = new Blob([qrDataStr]).size;
 
   return (
-    <div className="app-shell" style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
-      <div className="page-header border-b border-[var(--border)] pb-3">
+    <div className="app-shell" style={{ minHeight: '100dvh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
+      <div className="page-header border-b border-[var(--border)] pb-3 pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate(-1)}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Privacy & Consent</h2>

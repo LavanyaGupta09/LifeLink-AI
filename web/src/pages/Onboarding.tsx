@@ -1,111 +1,85 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Mic, Bell, Heart, ChevronRight, Shield, Check } from 'lucide-react';
+import { Shield, ChevronRight, Activity, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-
-const steps = [
-  {
-    id: 'intro',
-    icon: <Shield size={48} color="#00C9A7" />,
-    title: 'Your AI Health Guardian',
-    description: 'LifeLink AI monitors your health in real-time and connects you to emergency care within seconds — anywhere, anytime.',
-    bg: 'radial-gradient(ellipse at 50% 30%, rgba(0,201,167,0.15) 0%, transparent 65%)',
-  },
-  {
-    id: 'location',
-    icon: <MapPin size={48} color="#3D91FF" />,
-    title: 'Live Location Sharing',
-    description: 'Share your real-time location with emergency services and family during SOS events. Always know where your loved ones are.',
-    permission: 'Allow Location Access',
-    bg: 'radial-gradient(ellipse at 50% 30%, rgba(61,145,255,0.15) 0%, transparent 65%)',
-    permColor: '#3D91FF',
-  },
-  {
-    id: 'mic',
-    icon: <Mic size={48} color="#8B5CF6" />,
-    title: 'Hands-Free Voice SOS',
-    description: 'Activate emergency mode completely hands-free. Just say "LifeLink SOS" and our AI handles the rest.',
-    permission: 'Allow Microphone Access',
-    bg: 'radial-gradient(ellipse at 50% 30%, rgba(139,92,246,0.15) 0%, transparent 65%)',
-    permColor: '#8B5CF6',
-  },
-  {
-    id: 'notif',
-    icon: <Bell size={48} color="#FFA502" />,
-    title: 'Instant Emergency Alerts',
-    description: 'Get life-saving alerts and notify your family in seconds. No setup needed — LifeLink does it automatically.',
-    permission: 'Allow Notifications',
-    bg: 'radial-gradient(ellipse at 50% 30%, rgba(255,165,2,0.15) 0%, transparent 65%)',
-    permColor: '#FFA502',
-  },
-];
+import { supabase } from '../lib/supabase';
 
 const Onboarding: React.FC = () => {
   const navigate = useNavigate();
-  const [current, setCurrent] = useState(0);
-  const [entering, setEntering] = useState(false);
-  const [permsGranted, setPermsGranted] = useState<Record<string, boolean>>({});
+  const { user, setOnboarded, updateUser } = useAuthStore();
+  
+  const [formData, setFormData] = useState({
+    fullName: user?.fullName || '',
+    dob: '',
+    bloodGroup: '',
+    ecName: '',
+    ecPhone: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const goNext = () => {
-    if (current < steps.length - 1) {
-      setEntering(true);
-      setTimeout(() => {
-        setCurrent((c) => c + 1);
-        setEntering(false);
-      }, 200);
-    } else {
-      navigate('/login');
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handlePermission = async () => {
-    const step = steps[current];
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.fullName || !formData.dob || !formData.bloodGroup || !formData.ecName || !formData.ecPhone) {
+      setError('Please fill out all required fields.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
     try {
-      if (step.id === 'location') {
-        navigator.geolocation.getCurrentPosition(
-          () => {
-            setPermsGranted(prev => ({ ...prev, [step.id]: true }));
-            goNext();
-          },
-          (err) => {
-            alert('Location permission is required for SOS routing.');
-          }
-        );
-      } else if (step.id === 'mic') {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(t => t.stop());
-        setPermsGranted(prev => ({ ...prev, [step.id]: true }));
-        goNext();
-      } else if (step.id === 'notif') {
-        if ('Notification' in window) {
-          const perm = await Notification.requestPermission();
-          if (perm === 'granted') {
-            setPermsGranted(prev => ({ ...prev, [step.id]: true }));
-          }
-        }
-        goNext();
+      const userId = user?.id || 'usr_demo';
+
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert({
+          id: userId,
+          full_name: formData.fullName,
+          dob: formData.dob,
+          blood_group: formData.bloodGroup,
+          is_onboarded: true,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+      if (profileError) throw profileError;
+
+      const { error: ecError } = await supabase
+        .from('family_members')
+        .insert({
+          patient_id: userId,
+          name: formData.ecName,
+          phone: formData.ecPhone,
+          relationship: 'Emergency Contact',
+          is_primary: true
+        });
+
+      if (ecError) throw ecError;
+
+      updateUser({ fullName: formData.fullName });
+      setOnboarded();
+      
+      navigate('/dashboard', { replace: true });
+      
+    } catch (err: any) {
+      console.error('Onboarding Error:', err);
+      if (!navigator.onLine || err.message?.includes('fetch')) {
+        updateUser({ fullName: formData.fullName });
+        setOnboarded();
+        navigate('/dashboard', { replace: true });
+      } else {
+        setError(err.message || 'An error occurred during setup.');
       }
-    } catch (e) {
-      alert('Permission denied. Please allow it to continue.');
+    } finally {
+      setLoading(false);
     }
   };
-
-  const skip = () => {
-    navigate('/login');
-  };
-
-  const step = steps[current];
-  const isLast = current === steps.length - 1;
-  const isPermGranted = permsGranted[step.id];
 
   return (
-    <div className="onboarding-screen">
-      <div className="onboard-bg" style={{ background: step.bg }} />
-
-      {/* Skip */}
-      {!isLast && (
-        <button className="skip-btn" onClick={skip}>
-          Skip
         </button>
       )}
 
@@ -179,7 +153,7 @@ const Onboarding: React.FC = () => {
 
       <style>{`
         .onboarding-screen {
-          min-height: 100vh;
+          min-height: 100dvh;
           display: flex;
           flex-direction: column;
           background: var(--bg-base);

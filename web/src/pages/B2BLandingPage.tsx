@@ -6,7 +6,7 @@ const B2BLandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans">
+    <div className="min-h-[100dvh] bg-[#F8FAFC] text-slate-800 font-sans">
       {/* Enterprise Header */}
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">

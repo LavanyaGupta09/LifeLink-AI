@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, AlertTriangle, Phone, ChevronRight, Plus, Heart } from 'lucide-react';
-import { MOCK_FAMILY_MEMBERS } from '../data/mockData';
+import { supabase } from '../lib/supabase';
+import { useAuthStore } from '../store/authStore';
+import { Users } from 'lucide-react';
+
 import type { FamilyMember } from '../types/health.types';
 
 const statusConfig = {
@@ -12,20 +15,102 @@ const statusConfig = {
 
 const FamilyDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<FamilyMember | null>(null);
+
+  const { user } = useAuthStore();
+  const [selected, setSelected] = useState<any | null>(null);
+  const [familyMembers, setFamilyMembers] = useState<any[]>([]);
+  const [loadingFamily, setLoadingFamily] = useState(true);
+
+  useEffect(() => {
+    const fetchFamily = async () => {
+      if (!user?.id) {
+        setLoadingFamily(false);
+        return;
+      }
+      try {
+        const { data, error } = await supabase
+          .from('family_members')
+          .select('*')
+          .eq('user_id', user.id);
+          
+        if (error) throw error;
+        
+        if (data) {
+          const mapped = data.map(d => ({
+            id: d.id,
+            name: d.name,
+            relationship: d.relationship,
+            age: d.age || 45,
+            status: d.status || 'safe', // safe, sos, unknown
+            bloodGroup: d.blood_group,
+            phone: d.phone,
+            lat: d.lat,
+            lng: d.lng,
+            lastSeen: d.last_seen || 'just now',
+            easyModeEnabled: d.easy_mode_enabled || false
+          }));
+          setFamilyMembers(mapped);
+        }
+      } catch (err) {
+        console.error('Error fetching family:', err);
+      } finally {
+        setLoadingFamily(false);
+      }
+    };
+    
+    fetchFamily();
+  }, [user]);
+
+
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
 
   return (
-    <div className="app-shell">
-      <div className="page-header">
+    <div className="app-shell relative">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Family Dashboard</h2>
-          <p className="text-xs text-secondary">Sharma Family Group · 3 members</p>
+          <p className="text-xs text-secondary">Sharma Family Group · {familyMembers.length} members</p>
         </div>
-        <button className="icon-btn" style={{ marginLeft: 'auto' }}>
+        <button className="icon-btn" style={{ marginLeft: 'auto' }} onClick={() => setShowInvite(true)}>
           <Plus size={18} />
         </button>
       </div>
+
+      {showInvite && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in" style={{ backdropFilter: 'blur(4px)' }}>
+          <div className="bg-[var(--bg-base)] rounded-2xl w-full max-w-sm p-6 shadow-2xl transform scale-100 transition-transform">
+            <h3 className="text-lg font-bold mb-2 font-display">Invite Family Member</h3>
+            <p className="text-sm text-secondary mb-4">Enter their email to send an invitation link to your LifeLink family group.</p>
+            <input 
+              type="email" 
+              placeholder="Email address" 
+              className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] mb-4 focus:outline-none focus:border-[var(--primary)]"
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+            />
+            <div className="flex gap-3">
+              <button 
+                className="flex-1 py-3 rounded-xl font-semibold border border-[var(--border)] text-[var(--text-primary)]"
+                onClick={() => setShowInvite(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="flex-1 py-3 rounded-xl font-semibold text-white bg-[var(--primary)]"
+                onClick={() => {
+                  alert(`Invitation sent to ${inviteEmail}!`);
+                  setShowInvite(false);
+                  setInviteEmail('');
+                }}
+              >
+                Send Invite
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="page-content">
         {/* SOS Feed banner */}
@@ -42,7 +127,27 @@ const FamilyDashboard: React.FC = () => {
 
         {/* Family members */}
         <p className="section-title mb-3 animate-fade-in delay-100">Members</p>
-        {MOCK_FAMILY_MEMBERS.map((member, i) => {
+        
+        {loadingFamily ? (
+          <div className="space-y-3">
+            {[1, 2].map(i => (
+              <div key={i} className="card animate-pulse" style={{ height: 75, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 44, height: 44, background: 'var(--bg-elevated)', borderRadius: 22 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ height: 16, background: 'var(--bg-elevated)', borderRadius: 4, width: '40%', marginBottom: 6 }} />
+                  <div style={{ height: 12, background: 'var(--bg-elevated)', borderRadius: 4, width: '60%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : familyMembers.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
+            <Users size={48} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>No Family Members Added</h3>
+            <p style={{ fontSize: '0.85rem', marginBottom: 16 }}>Invite family members to share health updates and SOS alerts.</p>
+            <button className="btn btn-primary">Invite Family</button>
+          </div>
+        ) : familyMembers.map((member, i) => {
           const sc = statusConfig[member.status];
           return (
             <div

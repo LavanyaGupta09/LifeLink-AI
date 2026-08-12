@@ -13,25 +13,17 @@ interface TriageState {
   clearSession: () => void;
 }
 
-// Keyword-based mock AI triage
-function mockTriageAI(input: string): { level: TriageLevel; confidence: number } {
+// Keyword-based fallback triage (used only when backend is unreachable)
+function keywordTriageFallback(input: string): { level: TriageLevel; confidence: number } {
   const lower = input.toLowerCase();
   const critical = ['chest pain', 'heart attack', 'stroke', 'unconscious', 'not breathing', 'cardiac', 'seizure', 'anaphylaxis'];
   const high = ['severe pain', 'difficulty breathing', 'vomiting blood', 'high fever', 'head injury', 'fracture', 'deep cut'];
   const medium = ['fever', 'vomiting', 'diarrhea', 'moderate pain', 'rash', 'dizziness', 'headache'];
 
-  // Count matching keywords to simulate confidence
-  const critCount = critical.filter(k => lower.includes(k)).length;
-  const highCount = high.filter(k => lower.includes(k)).length;
-  const medCount  = medium.filter(k => lower.includes(k)).length;
-
-  if (critCount >= 2) return { level: 'critical', confidence: 96 };
-  if (critCount === 1) return { level: 'critical', confidence: 91 };
-  if (highCount >= 2)  return { level: 'high',     confidence: 88 };
-  if (highCount === 1) return { level: 'high',     confidence: 82 };  // triggers handoff
-  if (medCount  >= 2)  return { level: 'medium',   confidence: 79 };  // triggers handoff
-  if (medCount  === 1) return { level: 'medium',   confidence: 76 };  // triggers handoff
-  return { level: 'low', confidence: 72 };                            // triggers handoff
+  if (critical.some(k => lower.includes(k))) return { level: 'critical', confidence: 93 };
+  if (high.some(k => lower.includes(k))) return { level: 'high', confidence: 85 };
+  if (medium.some(k => lower.includes(k))) return { level: 'medium', confidence: 78 };
+  return { level: 'low', confidence: 72 };
 }
 
 export const useTriageStore = create<TriageState>((set) => ({
@@ -45,15 +37,47 @@ export const useTriageStore = create<TriageState>((set) => ({
   analyzeSymptoms: async (input: string, language: string = 'en') => {
     set({ isAnalyzing: true, symptoms: input, confidenceScore: null });
 
-    // Simulate AI network delay
-    await new Promise((r) => setTimeout(r, 2200));
+    let level: TriageLevel = 'low';
+    let confidence = 72;
+    let aiSummary = '';
+    let action = '';
+    let specialist = 'General Physician';
+    let source = 'keyword_engine';
 
-    const { level, confidence } = mockTriageAI(input);
-    const response = TRIAGE_RESPONSES[level];
+    try {
+      // REAL: Call live AI triage backend (Groq/Gemini powered)
+      const res = await fetch('/api/ai/triage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symptoms: input }),
+      });
 
-    // Mock translation for Hindi Demo
-    let aiSummary = response.message;
-    let action = response.action;
+      if (res.ok) {
+        const data = await res.json();
+        level = data.triage_level || 'low';
+        confidence = Math.round((data.confidence || 0.76) * 100);
+        aiSummary = data.summary || TRIAGE_RESPONSES[level]?.message || '';
+        action = data.recommended_action || TRIAGE_RESPONSES[level]?.action || '';
+        specialist = data.recommended_specialist || 'General Physician';
+        source = data.source || 'ai_backend';
+        console.log(`✅ Live AI Triage (${source}): ${level} @ ${confidence}%`);
+      } else {
+        throw new Error(`Backend returned ${res.status}`);
+      }
+    } catch (err) {
+      // Fallback to keyword engine if backend is unreachable
+      console.warn('AI backend unreachable, using keyword fallback:', err);
+      const fallback = keywordTriageFallback(input);
+      level = fallback.level;
+      confidence = fallback.confidence;
+      const response = TRIAGE_RESPONSES[level];
+      aiSummary = response.message;
+      action = response.action;
+      specialist = response.specialist;
+      source = 'keyword_engine';
+    }
+
+    // Hindi translation for demo
     if (language === 'hi') {
       if (level === 'critical') {
         aiSummary = 'लक्षणों से जानलेवा स्थिति का संकेत मिलता है। तत्काल आपातकालीन देखभाल की आवश्यकता है।';
@@ -73,7 +97,7 @@ export const useTriageStore = create<TriageState>((set) => ({
       symptomsInput: input,
       triageLevel: level,
       recommendedAction: action,
-      recommendedSpecialist: response.specialist,
+      recommendedSpecialist: specialist,
       aiSummary: aiSummary,
       confidenceScore: confidence,
       uberEstimate:

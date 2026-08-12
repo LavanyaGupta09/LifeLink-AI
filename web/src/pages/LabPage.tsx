@@ -1,13 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Clock, CheckCircle, Calendar } from 'lucide-react';
-import { MOCK_LABS } from '../data/mockData';
 
 const LabPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedTest, setSelectedTest] = useState<{ labId: string; testId: string } | null>(null);
   const [booked, setBooked] = useState<string[]>([]);
   const [showBooking, setShowBooking] = useState(false);
+
+  const [labs, setLabs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { fetchNearbyFacilities } = await import('../lib/overpass');
+          const facilities = await fetchNearbyFacilities(pos.coords.latitude, pos.coords.longitude, 'lab');
+          if (facilities.length === 0) {
+            setLabs([]);
+          } else {
+            const mapped = facilities.map(f => ({
+              id: f.id,
+              name: f.name,
+              distanceKm: f.distanceKm,
+              openTime: '08:00 AM',
+              closeTime: '08:00 PM',
+              rating: (4 + Math.random()).toFixed(1),
+              tests: [
+                { id: 't1', name: 'Complete Blood Count (CBC)', price: 450, turnaround: '12 hrs', available: true },
+                { id: 't2', name: 'Thyroid Profile (T3, T4, TSH)', price: 750, turnaround: '24 hrs', available: Math.random() > 0.3 },
+                { id: 't3', name: 'Lipid Profile', price: 600, turnaround: '12 hrs', available: true }
+              ].sort(() => 0.5 - Math.random())
+            }));
+            setLabs(mapped);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoading(false);
+        }
+      },
+      () => setLoading(false)
+    );
+  }, []);
 
   const handleBook = (labId: string, testId: string) => {
     setBooked(prev => [...prev, testId]);
@@ -17,11 +53,11 @@ const LabPage: React.FC = () => {
 
   return (
     <div className="app-shell">
-      <div className="page-header">
+      <div className="page-header pt-[env(safe-area-inset-top)]">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>
           <h2 className="page-title">Diagnostic Labs</h2>
-          <p className="text-xs text-secondary">{MOCK_LABS.length} labs nearby</p>
+          <p className="text-xs text-secondary">{labs.length} labs nearby</p>
         </div>
       </div>
 
@@ -39,77 +75,93 @@ const LabPage: React.FC = () => {
           </div>
         )}
 
-        {MOCK_LABS.map((lab, i) => (
-          <div
-            key={lab.id}
-            className="card lab-card animate-fade-in"
-            style={{ animationDelay: `${i * 100}ms`, marginBottom: 16 }}
-          >
-            {/* Lab header */}
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-display">{lab.name}</h4>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    <MapPin size={11} color="var(--text-tertiary)" />
-                    <span className="text-xs text-secondary">{lab.distanceKm} km</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock size={11} color="var(--text-tertiary)" />
-                    <span className="text-xs text-secondary">{lab.openTime}–{lab.closeTime}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star size={11} color="#FFA502" fill="#FFA502" />
-                    <span className="text-xs font-semibold">{lab.rating}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="lab-home-badge">🏥</div>
+        {loading ? (
+          <div className="animate-pulse">
+            {[1,2,3].map(i => <div key={i} className="card mb-4" style={{ height: 200, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
+          </div>
+        ) : labs.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
+            <div style={{ width: 64, height: 64, margin: '0 auto 16px', background: 'var(--bg-elevated)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <span style={{ fontSize: '1.5rem' }}>🧪</span>
             </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>No Diagnostic Labs Found</h3>
+            <p style={{ fontSize: '0.85rem' }}>We couldn't find any laboratories near your current location.</p>
+          </div>
+        ) : (
+          <>
+          {labs.map((lab, i) => (
+            <div
+              key={lab.id}
+              className="card lab-card animate-fade-in"
+              style={{ animationDelay: `${i * 100}ms`, marginBottom: 16 }}
+            >
+              {/* Lab header */}
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-display">{lab.name}</h4>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <MapPin size={11} color="var(--text-tertiary)" />
+                      <span className="text-xs text-secondary">{lab.distanceKm} km</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock size={11} color="var(--text-tertiary)" />
+                      <span className="text-xs text-secondary">{lab.openTime}–{lab.closeTime}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Star size={11} color="#FFA502" fill="#FFA502" />
+                      <span className="text-xs font-semibold">{lab.rating}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="lab-home-badge">🏥</div>
+              </div>
 
-            {/* Tests */}
-            <p className="text-xs text-tertiary uppercase mb-2">Available Tests</p>
-            <div className="tests-list">
-              {lab.tests.map(test => {
-                const isBooked = booked.includes(test.id);
-                return (
-                  <div key={test.id} className={`test-row ${!test.available ? 'unavailable' : ''}`}>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{test.name}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-secondary">⏱ {test.turnaround}</span>
-                        {!test.available && <span className="badge badge-warning" style={{ fontSize: '0.5625rem' }}>Not Available</span>}
+              {/* Tests */}
+              <p className="text-xs text-tertiary uppercase mb-2">Available Tests</p>
+              <div className="tests-list">
+                {lab.tests.map((test: any) => {
+                  const isBooked = booked.includes(test.id);
+                  return (
+                    <div key={test.id} className={`test-row ${!test.available ? 'unavailable' : ''}`}>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{test.name}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-secondary">⏱ {test.turnaround}</span>
+                          {!test.available && <span className="badge badge-warning" style={{ fontSize: '0.5625rem' }}>Not Available</span>}
+                        </div>
+                      </div>
+                      <div className="test-action">
+                        <span className="font-bold text-brand" style={{ fontFamily: 'var(--font-display)' }}>₹{test.price}</span>
+                        {test.available && !isBooked && (
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => {
+                              setSelectedTest({ labId: lab.id, testId: test.id });
+                              setShowBooking(true);
+                            }}
+                            id={`book-test-${test.id}`}
+                          >
+                            Book
+                          </button>
+                        )}
+                        {isBooked && (
+                          <div className="flex items-center gap-1">
+                            <CheckCircle size={14} color="#2ED573" />
+                            <span className="text-xs text-success font-semibold">Booked</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="test-action">
-                      <span className="font-bold text-brand" style={{ fontFamily: 'var(--font-display)' }}>₹{test.price}</span>
-                      {test.available && !isBooked && (
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={() => {
-                            setSelectedTest({ labId: lab.id, testId: test.id });
-                            setShowBooking(true);
-                          }}
-                          id={`book-test-${test.id}`}
-                        >
-                          Book
-                        </button>
-                      )}
-                      {isBooked && (
-                        <div className="flex items-center gap-1">
-                          <CheckCircle size={14} color="#2ED573" />
-                          <span className="text-xs text-success font-semibold">Booked</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+          </>
+        )}
 
         {/* Booking modal */}
         {showBooking && selectedTest && (

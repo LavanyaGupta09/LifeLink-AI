@@ -78,7 +78,7 @@ const B2BDriverApp: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-black text-white flex flex-col font-sans overflow-hidden">
+    <div className="h-[100dvh] bg-black text-white flex flex-col font-sans overflow-hidden">
       
       {/* ── Top Bar & Shift Toggle ── */}
       <header className="bg-zinc-900 shadow-md z-20 shrink-0">

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, AlertTriangle, Clock, Activity, Video, LogOut, CheckCircle, GripVertical, Users, ShieldCheck, FileText, ChevronRight, Send, Lock, Plus, Bed } from 'lucide-react';
+import { Building2, AlertTriangle, Clock, Activity, Video, LogOut, CheckCircle, GripVertical, Users, ShieldCheck, FileText, ChevronRight, Send, Lock, Plus, Bed, XCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import FreeMap from '../components/FreeMap';
 import { fetchRoute } from '../utils/mapUtils';
+import { supabase } from '../lib/supabase';
 
 type TabId = 'alerts' | 'beds' | 'insurance' | 'handoff';
 
@@ -70,25 +71,51 @@ const B2BHospitalDashboard: React.FC = () => {
   };
 
   // ── Alerts ──
-  const [activeAlerts] = useState([
-    {
-      id: 'sos_001',
-      patientName: 'Ravi Sharma',
-      age: 62,
-      blood: 'O+',
-      triage: 'Critical',
-      condition: 'Suspected Myocardial Infarction (Chest Pain)',
-      eta: '4 mins',
-      ambulance: 'DL-01-AB-1234',
-      liveVitals: { hr: 110, spo2: 92 },
-      coords: [28.5355, 77.2650] as [number, number] // Ambulance Location
-    }
-  ]);
-
+  const [activeAlerts, setActiveAlerts] = useState<any[]>([]);
   const hospitalLoc: [number, number] = [28.5520, 77.2510];
-  const [routeCoords, setRouteCoords] = React.useState<[number, number][]>([]);
+  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      const { data } = await supabase
+        .from('emergency_requests')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (data) {
+        setActiveAlerts(data.map((req: any) => ({
+          id: req.id,
+          patientName: 'Unknown Patient', // Would join user profile in real app
+          age: 45,
+          blood: 'A+',
+          triage: 'Critical',
+          condition: req.triage_notes || 'Unknown Emergency',
+          eta: '4 mins',
+          ambulance: 'DL-01-AB-1234',
+          liveVitals: { hr: 110, spo2: 92 },
+          coords: [req.lat, req.lng] as [number, number],
+          status: req.status
+        })));
+      }
+    };
+
+    fetchAlerts();
+    const interval = setInterval(fetchAlerts, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleAccept = async (id: string) => {
+    await supabase.from('emergency_requests').update({ status: 'resolved' }).eq('id', id);
+    setActiveAlerts(prev => prev.filter(a => a.id !== id));
+  };
+
+  const handleReject = async (id: string) => {
+    await supabase.from('emergency_requests').update({ status: 'resolved' }).eq('id', id); // Reject would pass to another hospital, resolved for demo
+    setActiveAlerts(prev => prev.filter(a => a.id !== id));
+  };
+
+  useEffect(() => {
     if (activeAlerts.length > 0 && activeTab === 'alerts') {
       const alert = activeAlerts[0];
       fetchRoute(alert.coords[1], alert.coords[0], hospitalLoc[1], hospitalLoc[0]).then(route => {
@@ -181,7 +208,7 @@ const B2BHospitalDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex">
+    <div className="min-h-[100dvh] bg-slate-50 text-slate-800 font-sans flex">
       {/* Sidebar */}
       <aside className="w-64 bg-slate-900 text-white p-6 flex flex-col shrink-0">
         <div className="flex items-center gap-2 mb-10">
@@ -243,11 +270,17 @@ const B2BHospitalDashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <button className="btn bg-slate-900 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-slate-800 flex-1 justify-center">
+                      <button 
+                        className="btn bg-slate-900 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-slate-800 flex-1 justify-center"
+                        onClick={() => handleAccept(alert.id)}
+                      >
                         <CheckCircle size={20} /> Authorize ER Admission
                       </button>
-                      <button className="btn border border-slate-300 text-slate-700 px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-slate-50 flex-1 justify-center">
-                        <Video size={20} /> Join Ambulance Video Feed
+                      <button 
+                        className="btn bg-red-100 text-red-600 border border-red-200 px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-red-200 flex-1 justify-center"
+                        onClick={() => handleReject(alert.id)}
+                      >
+                        <XCircle size={20} /> Reject / Route Elsewhere
                       </button>
                     </div>
                   </div>

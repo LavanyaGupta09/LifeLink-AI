@@ -84,7 +84,7 @@ const AdminLogin: React.FC = () => {
       width: '100%',
       maxWidth: '448px',
       margin: '0 auto',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',

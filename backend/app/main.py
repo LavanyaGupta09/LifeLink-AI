@@ -23,6 +23,7 @@ from app.routers.b2b import router as b2b_router
 from app.routers.reminders import router as reminders_router
 from app.routers.admin import router as admin_router
 from app.routers.verification import router as verification_router
+from app.routers.voice import router as voice_router
 
 
 # ─────────────────────────────────────────────
@@ -118,6 +119,7 @@ app.include_router(reminders_router)
 app.include_router(vault.router)
 app.include_router(admin_router)
 app.include_router(verification_router)
+app.include_router(voice_router, prefix="/api/v1/voice", tags=["Voice AI"])
 
 # Mount static files (React Frontend Build)
 frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "web", "dist")
