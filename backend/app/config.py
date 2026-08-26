@@ -64,14 +64,21 @@ class Settings(BaseSettings):
     ENCRYPTION_KEY: str = "lifelink-aes-key-32-bytes-padding!"
 
     # CORS
-    CORS_ORIGINS: str = '["http://localhost:5173","http://localhost:3000"]'
+    CORS_ORIGINS: str = '*'
 
     @property
     def cors_origins_list(self) -> List[str]:
+        val = self.CORS_ORIGINS.strip()
+        if val == '*':
+            return ["*"]
         try:
-            return json.loads(self.CORS_ORIGINS)
+            parsed = json.loads(val)
+            if isinstance(parsed, list):
+                return parsed
+            return [str(parsed)]
         except Exception:
-            return ["http://localhost:5173"]
+            # Plain comma-separated or single URL
+            return [o.strip() for o in val.split(',') if o.strip()]
 
     class Config:
         env_file = ".env"
