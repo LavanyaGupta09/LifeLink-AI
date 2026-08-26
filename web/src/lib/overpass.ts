@@ -41,7 +41,9 @@ export async function fetchNearbyFacilities(
   type: FacilityType,
   radius: number = 5000 // default to 5000 as per directive
 ): Promise<OverpassFacility[]> {
-  const overpassUrl = 'https://overpass-api.de/api/interpreter';
+  // Use our backend proxy to avoid CORS issues with direct Overpass calls
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  const proxyUrl = `${API_BASE}/api/proxy/overpass`;
   
   // Construct Overpass QL query
   let query = '';
@@ -91,7 +93,7 @@ export async function fetchNearbyFacilities(
   }
 
   try {
-    const response = await fetch(overpassUrl, {
+    const response = await fetch(proxyUrl, {
       method: 'POST',
       body: query,
       headers: {
