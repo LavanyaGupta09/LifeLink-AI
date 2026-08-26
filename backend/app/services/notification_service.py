@@ -42,9 +42,9 @@ async def send_email_alert(to_email: str, subject: str, html_body: str) -> bool:
             msg['Subject'] = subject
             msg.attach(MIMEText(html_body, 'html'))
             try:
-                import ssl
-                context = ssl.create_default_context()
-                with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context, timeout=15) as server:
+                with smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT, timeout=15) as server:
+                    server.ehlo()
+                    server.starttls()
                     server.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
                     server.send_message(msg)
                 print(f"[SMTP] Email sent successfully to {to_email}")
