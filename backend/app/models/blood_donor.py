@@ -1,7 +1,19 @@
 """Blood Donor ORM model"""
 import uuid
+import enum
 from sqlalchemy import Column, String, Float, Boolean, Date, ForeignKey
 from app.database import Base
+
+
+class BloodGroupEnum(str, enum.Enum):
+    A_POS = "A+"
+    A_NEG = "A-"
+    B_POS = "B+"
+    B_NEG = "B-"
+    O_POS = "O+"
+    O_NEG = "O-"
+    AB_POS = "AB+"
+    AB_NEG = "AB-"
 
 class BloodDonor(Base):
     __tablename__ = "blood_donors"
