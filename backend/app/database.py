@@ -60,5 +60,6 @@ async def get_db():
 async def init_db():
     """Create all tables on startup"""
     async with engine.begin() as conn:
-        from app.models import user, health_profile, sos_event, ambulance, doctor, hospital, blood_donor, blood_request, pharmacy  # noqa
+        from app.models import user, health_profile, sos_event, ambulance, doctor, hospital, blood_donor, blood_request, pharmacy, otp  # noqa
+        from app.models import b2b  # noqa
         await conn.run_sync(Base.metadata.create_all)
