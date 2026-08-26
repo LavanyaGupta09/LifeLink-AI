@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { LogOut } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    FIRST RESPONDER COMMAND CENTER — Full Interactive Dashboard
@@ -131,6 +134,18 @@ const unitEmoji = { ambulance: '🚑', fire: '🚒', police: '🚔', bike: '🏍
 
 /* ════════════════════════════════════════════════════════════════ */
 export default function FirstResponderDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
+
   const [activeNav, setActiveNav] = useState('overview');
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
@@ -863,7 +878,7 @@ export default function FirstResponderDashboard() {
         {/* Mobile Header Layout */}
         <div className="fr-mobile-header-row fr-mobile-header-content">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
             <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #1e40af, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🛡️</div>
@@ -874,6 +889,9 @@ export default function FirstResponderDashboard() {
               🔔<span style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, borderRadius: '50%', background: '#ef4444' }} />
             </div>
             <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg, #1e3a5f, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>AS</div>
+            <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center' }}>
+              <LogOut size={18} />
+            </button>
           </div>
         </div>
 
@@ -919,6 +937,9 @@ export default function FirstResponderDashboard() {
                 <div style={{ fontSize: 10, color: '#64748b' }}>Control Officer</div>
               </div>
             </div>
+            <button onClick={handleLogout} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', padding: '8px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, transition: 'all 0.2s', marginLeft: 6 }}>
+              <LogOut size={16} /> Logout
+            </button>
           </div>
         </div>
       </header>
