@@ -41,12 +41,12 @@ async def send_email_alert(to_email: str, subject: str, html_body: str) -> bool:
         msg.attach(MIMEText(html_body, 'html'))
 
         try:
-            # 10-second timeout prevents the request from hanging forever
-            server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT, timeout=10)
-            server.starttls()
-            server.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
-            server.send_message(msg)
-            server.quit()
+            # Use SSL on port 465 — more reliable on cloud servers than STARTTLS/587
+            import ssl
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(settings.SMTP_SERVER, 465, context=context, timeout=15) as server:
+                server.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+                server.send_message(msg)
             print(f"[EMAIL] Successfully sent to {to_email}")
             return True
         except Exception as e:
