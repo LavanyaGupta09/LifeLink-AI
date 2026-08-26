@@ -9,6 +9,8 @@ import {
 import { MOCK_ER_DASHBOARDS, MOCK_PRE_ARRIVAL_ALERT, MOCK_HOSPITAL_ROUTES, MOCK_HEALTH_PROFILE, MOCK_USER } from '../data/mockData';
 import type { HospitalExtended, ERDashboard, HospitalRoute } from '../types/health.types';
 import FreeMap from '../components/FreeMap';
+import { useGeolocation } from '../hooks/useGeolocation';
+import LocationFallback from '../components/LocationFallback';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type TabId = 'discover' | 'er' | 'alert' | 'route';
@@ -89,15 +91,21 @@ function simHash(str: string): number {
 const HospitalPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Tab
   const [activeTab, setActiveTab] = useState<TabId>('discover');
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeTab]);
 
   // Dynamic Hospitals
   const [hospitals, setHospitals] = useState<HospitalExtended[]>([]);
   const [loadingHospitals, setLoadingHospitals] = useState(true);
-  const [userLoc, setUserLoc] = useState<[number, number]>([28.5355, 77.2690]);
+  const [userLoc, setUserLoc] = useState<[number, number] | null>(null);
+  
+  const { location, status, errorMessage, searchCity } = useGeolocation();
 
   useEffect(() => {
+    if (!location) return;
     const handleGeoSuccess = async (lat: number, lng: number) => {
       setUserLoc([lat, lng]);
       try {
@@ -163,16 +171,8 @@ const HospitalPage: React.FC = () => {
       }
     };
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        handleGeoSuccess(pos.coords.latitude, pos.coords.longitude);
-      },
-      () => {
-        // Fallback to default location
-        handleGeoSuccess(28.5355, 77.2690);
-      }
-    );
-  }, []);
+    handleGeoSuccess(location.lat, location.lng);
+  }, [location]);
 
 
   // Discovery filters
@@ -291,10 +291,9 @@ const HospitalPage: React.FC = () => {
   }, [activeTab, selectedRoute]);
 
   const erForHosp = (id: string) => erData.find(e => e.hospitalId === id);
-
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="app-shell">
+    <div id="hospital-top" className="app-shell">
       {/* Header */}
       <div className="page-header pt-[env(safe-area-inset-top)]" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
         <button className="back-btn" onClick={() => navigate('/dashboard')} id="hosp-back-btn">
@@ -342,7 +341,10 @@ const HospitalPage: React.FC = () => {
       </div>
 
       <div className="page-content" style={{ paddingTop: 16 }}>
-
+        {status === 'denied' || status === 'error' ? (
+           <LocationFallback onSearch={searchCity} errorMessage={errorMessage} />
+        ) : (
+          <>
         {/* ══════════════════════════════════════════════════════════════
             TAB 1 · SMART HOSPITAL DISCOVERY
             ══════════════════════════════════════════════════════════════ */}
@@ -440,10 +442,10 @@ const HospitalPage: React.FC = () => {
             </p>
 
             {/* Interactive Map */}
-            {filtered.length > 0 && !loadingHospitals && (
+            {filtered.length > 0 && !loadingHospitals && userLoc && (
               <div style={{ height: '200px', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
                 <FreeMap
-                  center={userLoc}
+                  center={[userLoc[0], userLoc[1]]}
                   zoom={12}
                   markers={[
                     { id: 'you', lat: userLoc[0], lng: userLoc[1], label: '📍 You' },
@@ -508,6 +510,15 @@ const HospitalPage: React.FC = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                         <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem' }}>{h.name}</h4>
                         {h.isPartner && <span className="badge badge-primary">Partner</span>}
+                        {h.acceptedInsurance.includes('Star Health') && (
+                          <span style={{
+                            fontSize: '0.62rem', fontWeight: 700, padding: '2px 7px',
+                            borderRadius: 'var(--radius-full)', background: 'rgba(0,201,167,0.12)', color: '#00C9A7',
+                            display: 'flex', alignItems: 'center', gap: 3
+                          }}>
+                            <ShieldCheck size={10} /> Cashless Available
+                          </span>
+                        )}
                         <span style={{
                           fontSize: '0.62rem', fontWeight: 700, padding: '2px 7px',
                           borderRadius: 'var(--radius-full)',
@@ -1088,7 +1099,8 @@ const HospitalPage: React.FC = () => {
             </div>
           </div>
         )}
-
+          </>
+        )}
       </div>
 
       <style>{`

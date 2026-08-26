@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Star, Phone, ChevronRight, Navigation, Bed } from 'lucide-react';
 import FreeMap from '../components/FreeMap';
 import type { Hospital } from '../types/health.types';
+import { useGeolocation } from '../hooks/useGeolocation';
+import LocationFallback from '../components/LocationFallback';
 
 // Deterministic hash for consistent simulated data per hospital
 function simHash(str: string): number {
@@ -35,7 +37,8 @@ function enrichHospital(h: any) {
 const AmbulancePage: React.FC = () => {
   const navigate = useNavigate();
   const [hospitals, setHospitals] = useState<any[]>([]);
-  const [userLoc, setUserLoc] = useState<[number, number]>([28.5355, 77.2690]);
+  
+  const { location, status, errorMessage, searchCity } = useGeolocation();
 
   // Ambulance animation state
   const [amb1, setAmb1] = useState<[number, number]>([28.5355 + 0.008, 77.2690 - 0.006]);
@@ -44,51 +47,42 @@ const AmbulancePage: React.FC = () => {
   const [distKm, setDistKm] = useState(1.8);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude: lat, longitude: lng } = pos.coords;
-      setUserLoc([lat, lng]);
+    if (!location) return;
 
-      // Place ambulances relative to user
+    const fetchHospitals = async () => {
+      const { lat, lng } = location;
       setAmb1([lat + 0.008, lng - 0.006]);
       setAmb2([lat - 0.005, lng + 0.009]);
 
-      const { fetchNearbyFacilities } = await import('../lib/overpass');
-      const facilities = await fetchNearbyFacilities(lat, lng, 'hospital', 15000);
-      setHospitals(facilities.map(enrichHospital));
-    }, async () => {
-      // Fallback: use default location
-      const defaultLat = 28.5355;
-      const defaultLng = 77.2650;
-      setUserLoc([defaultLat, defaultLng]);
-      setAmb1([defaultLat + 0.008, defaultLng - 0.006]);
-      setAmb2([defaultLat - 0.005, defaultLng + 0.009]);
-      
       try {
         const { fetchNearbyFacilities } = await import('../lib/overpass');
-        const facilities = await fetchNearbyFacilities(defaultLat, defaultLng, 'hospital', 15000);
+        const facilities = await fetchNearbyFacilities(lat, lng, 'hospital', 15000);
         setHospitals(facilities.map(enrichHospital));
       } catch (e) {
         console.error(e);
       }
-    });
-  }, []);
+    };
+
+    fetchHospitals();
+  }, [location]);
 
   // Animate ambulances toward user
   useEffect(() => {
+    if (!location) return;
     const interval = setInterval(() => {
       setAmb1(prev => [
-        prev[0] + (userLoc[0] - prev[0]) * 0.02,
-        prev[1] + (userLoc[1] - prev[1]) * 0.02,
+        prev[0] + (location.lat - prev[0]) * 0.02,
+        prev[1] + (location.lng - prev[1]) * 0.02,
       ]);
       setAmb2(prev => [
-        prev[0] + (userLoc[0] - prev[0]) * 0.015,
-        prev[1] + (userLoc[1] - prev[1]) * 0.015,
+        prev[0] + (location.lat - prev[0]) * 0.015,
+        prev[1] + (location.lng - prev[1]) * 0.015,
       ]);
 
       // Update ETA based on distance to ambulance 1
       setAmb1(prev => {
-        const dLat = userLoc[0] - prev[0];
-        const dLng = userLoc[1] - prev[1];
+        const dLat = location.lat - prev[0];
+        const dLng = location.lng - prev[1];
         const dist = Math.sqrt(dLat * dLat + dLng * dLng) * 111; // rough km
         setDistKm(parseFloat(dist.toFixed(1)));
         setEtaMin(Math.max(1, Math.round(dist / 0.5)));
@@ -96,7 +90,7 @@ const AmbulancePage: React.FC = () => {
       });
     }, 2000);
     return () => clearInterval(interval);
-  }, [userLoc]);
+  }, [location]);
 
   const [selectedHospital, setSelectedHospital] = useState<any | null>(null);
   const [dispatched, setDispatched] = useState(false);
@@ -104,7 +98,7 @@ const AmbulancePage: React.FC = () => {
   const handleDispatch = (hospital: any) => {
     setSelectedHospital(hospital);
     setDispatched(true);
-    setTimeout(() => navigate('/sos'), 1500);
+    setTimeout(() => navigate('/tracking/ambulance'), 1500);
   };
 
   const bedPercent = (h: any) => Math.round((h.erBedsAvailable / h.erBedsTotal) * 100);
@@ -121,13 +115,18 @@ const AmbulancePage: React.FC = () => {
       </div>
 
       <div className="page-content">
+        {status === 'denied' || status === 'error' ? (
+           <LocationFallback onSearch={searchCity} errorMessage={errorMessage} />
+        ) : (
+          <>
         {/* Real OpenStreetMap */}
-        <div style={{ height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
+        {location && (
+          <div style={{ height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
           <FreeMap
-            center={userLoc}
+            center={[location.lat, location.lng]}
             zoom={14}
             markers={[
-              { id: 'you', lat: userLoc[0], lng: userLoc[1], label: '📍 You' },
+              { id: 'you', lat: location.lat, lng: location.lng, label: '📍 You' },
               ...hospitals.map(h => ({
                 id: h.id,
                 lat: h.lat,
@@ -147,6 +146,7 @@ const AmbulancePage: React.FC = () => {
             ]}
           />
         </div>
+        )}
 
         {/* Dynamic ETA strip */}
         <div className="eta-strip animate-fade-in delay-200">
@@ -241,6 +241,8 @@ const AmbulancePage: React.FC = () => {
             </div>
           );
         })}
+          </>
+        )}
       </div>
 
       <style>{`

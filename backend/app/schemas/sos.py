@@ -35,17 +35,12 @@ class SOSLocationUpdate(BaseModel):
 
 
 class TriageRequest(BaseModel):
-    symptoms: str
+    symptoms: list[str]
     user_id: Optional[str] = None
 
 
 class TriageResponse(BaseModel):
     session_id: str
-    triage_level: str        # low | medium | high | critical
-    title: str
-    summary: str
-    recommended_action: str
-    recommended_specialist: str
-    uber_estimate: Optional[dict] = None
-    nearest_hospital: Optional[dict] = None
-    confidence: float
+    urgency: str
+    possible_factors: list[str]
+    recommendation: str

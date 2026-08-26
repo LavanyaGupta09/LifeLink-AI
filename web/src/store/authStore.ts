@@ -26,6 +26,7 @@ const REAL_USER: User = {
   fullName: 'Lavanya Gupta',
   email: 'lavanyagupta136@gmail.com',
   phone: '+91 98765 43210',
+  dateOfBirth: '1997-04-15',
 };
 
 export const useAuthStore = create<AuthState>((set) => ({

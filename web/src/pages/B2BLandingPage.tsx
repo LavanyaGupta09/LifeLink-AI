@@ -6,7 +6,7 @@ const B2BLandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-[100dvh] bg-[#F8FAFC] text-slate-800 font-sans">
+    <div className="bg-[#F8FAFC] text-slate-800 font-sans w-full min-h-screen px-6 py-6 ">
       {/* Enterprise Header */}
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ const B2BLandingPage: React.FC = () => {
           {/* Hospital ER Desk Card */}
           <div 
             className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all cursor-pointer group"
-            onClick={() => navigate('/b2b/hospital')}
+            onClick={() => navigate('/partner/dashboard')}
           >
             <div className="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Building2 size={28} className="text-[#0ea5e9]" />

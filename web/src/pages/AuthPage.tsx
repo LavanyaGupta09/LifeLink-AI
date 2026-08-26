@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Shield, ArrowRight, ArrowLeft, ScanFace, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -13,72 +13,139 @@ const AuthPage: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [isShaking, setIsShaking] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutCountdown, setLockoutCountdown] = useState(0);
+  const otpInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCountdown > 0) {
+      timer = setTimeout(() => setResendCountdown(c => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCountdown]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (lockoutCountdown > 0) {
+      timer = setTimeout(() => setLockoutCountdown(c => c - 1), 1000);
+    } else if (lockoutCountdown === 0 && failedAttempts >= 3) {
+      setFailedAttempts(0);
+    }
+    return () => clearTimeout(timer);
+  }, [lockoutCountdown, failedAttempts]);
 
   const handleSendOTP = async () => {
     if (!email.includes('@')) return;
     setIsLoading(true);
     setErrorMessage('');
+    setSuccessMessage('');
     try {
-      // For Vercel demo deployment without backend, mock the OTP
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        setTimeout(() => {
-          setStep('otp');
-          setOtp('123456');
-          setTimeout(() => handleVerifyOTP('123456'), 500);
-          setIsLoading(false);
-        }, 1000);
-        return;
-      }
-
       const res = await fetch(`/api/auth/send-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Failed to send OTP');
-      setStep('otp');
-      if (data.otp) {
-          setOtp(data.otp);
-          setTimeout(() => handleVerifyOTP(data.otp), 500);
+      let data: any = {};
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await res.json();
       }
+      if (!res.ok) throw new Error(data.detail || 'Failed to send OTP (Server unreachable)');
+      setStep('otp');
+      setOtp('');
+      setResendCountdown(30);
+      // The OTP is now sent via email using Resend (handled by backend)
     } catch (err: any) {
-      // Graceful fallback for rate limits or missing backend
       console.error(err);
-      setStep('otp');
-      setOtp('123456');
-      setTimeout(() => handleVerifyOTP('123456'), 500);
+      setErrorMessage(err.message || 'Failed to send OTP');
     } finally {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        setIsLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    if (!email.includes('@')) return;
+    setIsLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+    try {
+      const res = await fetch(`/api/auth/resend-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
+      let data: any = {};
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await res.json();
       }
+      if (!res.ok) throw new Error(data.detail || 'Failed to resend OTP (Server unreachable)');
+      
+      setOtp('');
+      setResendCountdown(30);
+      setSuccessMessage('New OTP sent. Please use the latest OTP.');
+      if (otpInputRef.current) otpInputRef.current.focus();
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.message || 'Failed to resend OTP');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleVerifyOTP = async (codeToVerify?: string) => {
+    if (lockoutCountdown > 0) return;
     const finalOtp = typeof codeToVerify === 'string' ? codeToVerify : otp;
     if (finalOtp.length < 6) return;
     setIsLoading(true);
     setErrorMessage('');
+    setSuccessMessage('');
     try {
       const res = await fetch(`/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp: finalOtp })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Invalid or expired OTP');
+      let data: any = {};
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await res.json();
+      }
+      if (!res.ok) throw new Error(data.message || data.detail || 'Invalid OTP or server unreachable');
       
-      demoLogin(); // Authenticates and sets user in store
+      if (data.token) {
+        localStorage.setItem('ll_access_token', data.token.access_token);
+        if (data.token.refresh_token) {
+          localStorage.setItem('ll_refresh_token', data.token.refresh_token);
+        }
+      }
+      
+      if (data.user) {
+        const realUser = {
+          id: data.user.id,
+          fullName: data.user.full_name,
+          email: data.user.email,
+          phone: '',
+          role: data.user.role,
+          isVerified: true
+        };
+        useAuthStore.getState().login(realUser as any);
+      } else {
+        demoLogin(); // Fallback if no user object
+      }
+      
       if (parseInt(age) >= 60) {
         setStep('easyModePrompt');
       } else {
         navigate('/dashboard');
       }
+
     } catch (err: any) {
-      console.error("OTP Verification failed, falling back to demo login:", err);
-      // Graceful fallback for development / locked accounts
-      demoLogin();
-      if (parseInt(age) >= 60) {
-        setStep('easyModePrompt');
-      } else {
-        navigate('/dashboard');
+      console.error("OTP Verification failed:", err);
+      setErrorMessage(err.message || 'Incorrect verification code. Please check and try again.');
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
+      
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+      if (newAttempts >= 3) {
+        setLockoutCountdown(30);
       }
     } finally {
       setIsLoading(false);
@@ -211,53 +278,95 @@ const AuthPage: React.FC = () => {
             <h3 className="form-title">Verify OTP</h3>
             <p className="form-desc">Enter the 6-digit code sent to {email}</p>
             
-            <div className="otp-container mt-6 relative flex flex-col items-center">
-              <input 
-                type="text" 
-                inputMode="numeric"
-                className="otp-input" 
-                maxLength={6}
-                placeholder="000000"
-                value={otp}
-                onPaste={(e) => {
-                  e.preventDefault();
-                  const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-                  setOtp(paste);
-                  if (paste.length === 6) {
-                    setTimeout(() => handleVerifyOTP(paste), 0);
-                  }
-                }}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '');
-                  setOtp(val);
-                  if (val.length === 6) {
-                    setTimeout(() => handleVerifyOTP(val), 0);
-                  }
-                }}
-                style={{ letterSpacing: '0.4em', textAlign: 'center', fontSize: '1.5rem', paddingLeft: '0.8rem' }}
-              />
-              {otp.length > 0 && otp.length < 6 && (
-                <p className="text-red-500 text-xs font-bold mt-2 animate-fade-in">OTP must be 6 digits.</p>
-              )}
+            <div className={`otp-container mt-6 relative flex flex-col items-center w-full ${isShaking ? 'animate-shake' : ''}`}>
+              <div className="relative w-full">
+                <input 
+                  ref={otpInputRef}
+                  type="text" 
+                  inputMode="numeric"
+                  className="otp-input w-full" 
+                  placeholder="000000"
+                  maxLength={6}
+                  value={otp}
+                  disabled={isLoading || lockoutCountdown > 0}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setOtp(val);
+                    setErrorMessage(''); // Clear error on typing
+                    if (val.length === 6 && lockoutCountdown === 0) setTimeout(() => handleVerifyOTP(val), 0);
+                  }}
+                  style={{
+                    letterSpacing: '0.5em',
+                    fontSize: '2rem',
+                    textAlign: 'center',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: isShaking || errorMessage ? '1px solid rgba(239,68,68,1)' : '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: isShaking || errorMessage ? '0 0 15px rgba(239,68,68,0.3)' : 'none',
+                    borderRadius: '16px',
+                    padding: '12px 24px',
+                    color: 'white',
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                    transition: 'all 0.2s',
+                    opacity: lockoutCountdown > 0 ? 0.5 : 1
+                  }}
+                />
+                {otp.length > 0 && lockoutCountdown === 0 && (
+                  <button 
+                    type="button"
+                    onClick={() => { setOtp(''); setErrorMessage(''); if (otpInputRef.current) otpInputRef.current.focus(); }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    <span className="text-xs font-semibold px-2 py-1 bg-gray-800 rounded-md">Clear</span>
+                  </button>
+                )}
+              </div>
             </div>
+            
+            {lockoutCountdown > 0 && (
+              <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl flex items-center justify-center w-full animate-fade-in">
+                 <p className="text-red-400 text-sm font-bold text-center">Too many attempts. Locked for {lockoutCountdown}s.</p>
+              </div>
+            )}
 
-            {errorMessage && (
-              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-center w-full">
-                 <p className="text-red-500 text-xs font-bold text-center">{errorMessage}</p>
+            {otp.length > 0 && otp.length < 6 && lockoutCountdown === 0 && !errorMessage && (
+              <div className="mt-4 flex justify-center">
+                <p className="text-red-500 text-xs font-bold">OTP must be 6 digits.</p>
+              </div>
+            )}
+
+            {errorMessage && lockoutCountdown === 0 && (
+              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-center w-full animate-fade-in">
+                 <p className="text-red-500 text-sm font-bold text-center">{errorMessage}</p>
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center justify-center w-full animate-fade-in">
+                 <p className="text-green-500 text-xs font-bold text-center">{successMessage}</p>
               </div>
             )}
 
             <button 
               className="btn btn-primary btn-block btn-lg mt-6 flex items-center justify-center gap-2"
               onClick={() => handleVerifyOTP()}
-              disabled={otp.length < 6 || isLoading}
+              disabled={isLoading || otp.length < 6 || lockoutCountdown > 0}
             >
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : 'Verify & Login'}
             </button>
 
-            <button className="btn-link mt-4" onClick={() => setStep('email')}>
-              Change email address
-            </button>
+            <div className="flex flex-col items-center gap-3 mt-4">
+              <button 
+                className="btn-link" 
+                onClick={handleResendOTP}
+                disabled={isLoading || resendCountdown > 0}
+                style={{ opacity: isLoading || resendCountdown > 0 ? 0.5 : 1 }}
+              >
+                {isLoading ? 'Sending...' : resendCountdown > 0 ? `Resend OTP in ${resendCountdown}s` : 'Resend OTP'}
+              </button>
+              <button className="btn-link" onClick={() => setStep('email')}>
+                Change email address
+              </button>
+            </div>
           </div>
         ) : (
           <div className="auth-form animate-slide-up text-center">

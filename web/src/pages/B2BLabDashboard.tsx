@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import '../index.css';
 import { useNavigate } from 'react-router-dom';
-import { FlaskConical, Upload, FileCheck, CheckCircle2, LogOut, MapPin, ListPlus, MessageSquare, Plus, Save, Phone, Clock, AlertTriangle } from 'lucide-react';
+import { FlaskConical, UploadCloud, FileCheck, CheckCircle2, ShieldCheck, MapPin, ListPlus, MessageSquare, Plus, Save, Phone, Clock, AlertTriangle, LogOut, ChevronLeft, Menu } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 type TabId = 'uploader' | 'catalog' | 'fleet' | 'sms';
@@ -54,10 +55,11 @@ const MOCK_SMS: SMSLog[] = [
   { id: 's3', phone: '+91 99887 76655', reportName: 'Thyroid_Panel', time: '08:15 AM', status: 'Pending' },
 ];
 
-const B2BLabDashboard: React.FC = () => {
+export default function B2BLabDashboard() {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState<TabId>('uploader');
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -110,160 +112,160 @@ const B2BLabDashboard: React.FC = () => {
     setTimeout(() => setSavingCatalog(false), 1000);
   };
 
-  // ── Fleet Map ──
-  // Using absolute positioning to simulate a map
-  
   // ── Auto-SMS ──
   const [autoSmsEnabled, setAutoSmsEnabled] = useState(true);
 
-  const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-    { id: 'uploader', label: 'Vault Uploader', icon: <Upload size={18} /> },
-    { id: 'catalog', label: 'Test Catalog', icon: <ListPlus size={18} /> },
-    { id: 'fleet', label: 'Phlebotomist Fleet', icon: <MapPin size={18} /> },
-    { id: 'sms', label: 'Auto-SMS Dispatch', icon: <MessageSquare size={18} /> },
-  ];
-
   return (
-    <div className="min-h-[100dvh] bg-slate-50 text-slate-800 font-sans flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-fuchsia-900 text-white p-6 flex flex-col shrink-0">
-        <div className="flex items-center gap-2 mb-10">
-          <FlaskConical size={24} className="text-fuchsia-400" />
-          <h1 className="text-lg font-bold leading-tight">Diagnostics Lab<br/><span className="text-xs font-normal text-fuchsia-300">Partner Portal</span></h1>
-        </div>
-        <nav className="flex flex-col gap-2 flex-1">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${activeTab === tab.id ? 'bg-fuchsia-800/50 text-fuchsia-300' : 'text-fuchsia-200/50 hover:text-white'}`}
+    <div className={`w-full min-h-screen bg-[#0B1121] text-white font-sans flex flex-col relative pb-[120px] md:pb-0 px-6 py-6 transition-all duration-300 ${isSidebarExpanded ? 'md:pl-72' : ''}`}>
+      
+      {/* HEADER */}
+      <header className="w-full flex justify-between items-center p-6 lg:px-10 lg:py-8 border-b border-slate-800/50">
+        <div className="flex items-center gap-4">
+          {!isSidebarExpanded && (
+            <button 
+              onClick={() => setIsSidebarExpanded(true)}
+              className="hidden md:flex w-10 h-10 rounded-lg hover:bg-slate-800 items-center justify-center text-slate-400 transition-colors mr-2"
             >
-              {tab.icon} {tab.label}
+              <Menu size={24} />
             </button>
-          ))}
-        </nav>
-        <button className="flex items-center gap-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white mt-auto px-4 py-3 rounded-lg font-bold transition-colors border border-red-500/30 w-full justify-start z-50 relative shadow-lg" onClick={handleLogout}>
-          <LogOut size={20} /> Log Out
-        </button>
-      </aside>
+          )}
+          <div className="w-14 h-14 rounded-full bg-fuchsia-600 flex items-center justify-center font-bold text-2xl shadow-lg shadow-fuchsia-600/20">
+            <FlaskConical size={28} className="text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl md:text-3xl font-bold tracking-tight">Diagnostics Lab</h1>
+            <p className="text-slate-400 text-sm md:text-base mt-1">Partner Portal • NABL Accredited</p>
+          </div>
+        </div>
+        <div className="flex gap-3">
+           <button onClick={handleLogout} className="px-5 py-3 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white font-bold transition flex items-center gap-2">
+             <LogOut size={18} /> Logout
+           </button>
+        </div>
+      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      {/* MAIN CONTENT WRAPPER */}
+      <main className="w-full flex-1 p-6 lg:p-10 flex flex-col min-h-0">
+
         {/* ═══ VAULT UPLOADER ═══ */}
         {activeTab === 'uploader' && (
-          <div className="p-8 h-full flex flex-col items-center justify-center">
-            <div className="max-w-2xl w-full">
-              <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold text-slate-900 mb-2">Patient Vault Uploader</h2>
-                <p className="text-slate-500">Securely push encrypted PDF lab reports directly into the patient's personal health vault.</p>
-              </div>
+          <div className="flex-1 w-full flex flex-col">
+            <div className="mb-6">
+              <h2 className="text-3xl font-bold text-white mb-2">Patient Vault Uploader</h2>
+              <p className="text-slate-400 text-lg">Securely push encrypted PDF lab reports directly into the patient's personal health vault.</p>
+            </div>
 
-              <div 
-                className={`border-4 border-dashed rounded-3xl p-16 flex flex-col items-center justify-center transition-colors bg-white ${dragActive ? 'border-fuchsia-400 bg-fuchsia-50' : 'border-slate-200'} ${uploadStatus === 'success' ? 'border-emerald-400 bg-emerald-50' : ''}`}
-                onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
-              >
-                {uploadStatus === 'success' ? (
-                  <>
-                    <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6 text-emerald-600"><CheckCircle2 size={40} /></div>
-                    <h3 className="text-2xl font-bold text-emerald-800 mb-2">Upload & Analysis Complete</h3>
-                    <p className="text-emerald-600 text-center mb-6">The report was encrypted and pushed to the patient's Vault.</p>
-                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 w-full text-left mb-6">
-                      <p className="text-xs font-bold text-rose-500 uppercase mb-2 flex items-center gap-2"><FlaskConical size={14}/> AI Red-Flag Summary (Gemini)</p>
-                      <p className="text-slate-700 text-sm font-medium">Critical Finding: Fasting Blood Sugar is 210 mg/dL. Elevated risk for severe hyperglycemia. Patient's PCP has been automatically alerted.</p>
-                    </div>
-                    <button onClick={() => setUploadStatus(null)} className="text-slate-500 font-bold hover:text-slate-700 underline">Upload another report</button>
-                  </>
-                ) : uploadStatus === 'ai_processing' ? (
-                  <>
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 border-t-rose-200"></div></div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-2">AI Scanning...</h3>
-                    <p className="text-slate-500 text-center">Gemini 2.5 Flash is extracting biomarkers to flag critical anomalies.</p>
-                  </>
-                ) : uploadStatus === 'encrypting' ? (
-                  <>
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fuchsia-600"></div></div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Encrypting & Uploading...</h3>
-                    <p className="text-slate-500 text-center">Generating secure vault keys.</p>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-20 h-20 bg-fuchsia-100 rounded-full flex items-center justify-center mb-6 text-fuchsia-600"><Upload size={40} /></div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-2">Drag & drop PDF report</h3>
-                    <p className="text-slate-500 text-center mb-2">or click to browse from your EHR system.</p>
-                    <p className="text-slate-400 text-xs text-center mb-8">Max size: 5MB (PDF, JPG, PNG)</p>
-                    {errorMsg && <p className="text-red-500 font-bold mb-4 animate-fade-in">{errorMsg}</p>}
-                    <label className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-3 px-8 rounded-full transition-colors shadow-lg shadow-fuchsia-600/20 cursor-pointer">
-                      Select File
-                      <input type="file" className="hidden" accept=".pdf, .jpg, .jpeg, .png" onChange={handleFileSelect} />
-                    </label>
-                  </>
-                )}
-              </div>
+            <div 
+              className={`flex-1 w-full bg-[#131B2F] border-4 border-dashed rounded-3xl p-10 lg:p-16 flex flex-col items-center justify-center transition-all shadow-xl ${dragActive ? 'border-fuchsia-500 bg-[#1e102e]' : 'border-slate-800'} ${uploadStatus === 'success' ? 'border-emerald-500 bg-[#0f241a]' : ''}`}
+              onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
+            >
+              {uploadStatus === 'success' ? (
+                <div className="flex flex-col items-center text-center animate-in zoom-in duration-300">
+                  <div className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mb-6 text-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]"><CheckCircle2 size={48} /></div>
+                  <h3 className="text-3xl font-black text-white mb-3">Upload & Analysis Complete</h3>
+                  <p className="text-emerald-400 text-lg mb-8">Report securely encrypted and pushed to patient Vault.</p>
+                  
+                  <div className="bg-[#0B1121] border border-rose-500/30 rounded-2xl p-6 w-full max-w-3xl text-left mb-8 shadow-xl">
+                    <p className="text-sm font-black text-rose-500 uppercase tracking-widest mb-3 flex items-center gap-2"><FlaskConical size={18}/> AI Red-Flag Summary (Gemini 2.0)</p>
+                    <p className="text-slate-300 text-lg font-medium leading-relaxed">Critical Finding: Fasting Blood Sugar is <span className="text-rose-400 font-bold">210 mg/dL</span>. Elevated risk for severe hyperglycemia. Patient's primary care physician has been automatically alerted.</p>
+                  </div>
+                  
+                  <button onClick={() => setUploadStatus(null)} className="text-slate-400 font-bold hover:text-white underline text-lg">Upload another report</button>
+                </div>
+              ) : uploadStatus === 'ai_processing' ? (
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6"><div className="animate-spin rounded-full h-16 w-16 border-4 border-b-rose-500 border-t-transparent border-l-rose-500 border-r-transparent"></div></div>
+                  <h3 className="text-3xl font-black text-white mb-3">AI Scanning...</h3>
+                  <p className="text-slate-400 text-lg">Gemini 2.0 is extracting text and checking for critical red-flag values.</p>
+                </div>
+              ) : uploadStatus === 'encrypting' ? (
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-24 h-24 bg-sky-500/20 rounded-full flex items-center justify-center mb-6 text-sky-400 animate-pulse"><ShieldCheck size={48} /></div>
+                  <h3 className="text-3xl font-black text-white mb-3">Zero-Knowledge Encryption</h3>
+                  <p className="text-slate-400 text-lg">Securing report with patient's public key before vault injection.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-32 h-32 bg-[#0B1121] rounded-full flex items-center justify-center mb-8 text-slate-500 border border-slate-800 shadow-inner">
+                    <UploadCloud size={64} />
+                  </div>
+                  <h3 className="text-3xl font-black text-white mb-3">Drag & Drop Lab Report</h3>
+                  <p className="text-slate-400 text-lg mb-10 max-w-md">Supports PDF, DICOM, or HL7 messages up to 50MB.</p>
+                  
+                  {errorMsg && <p className="text-red-500 font-bold mb-6 animate-fade-in text-lg">{errorMsg}</p>}
+                  
+                  <label className="bg-fuchsia-600 hover:bg-fuchsia-500 text-white px-10 py-5 rounded-2xl font-black text-lg transition-transform active:scale-95 shadow-[0_0_30px_rgba(192,38,211,0.3)] cursor-pointer">
+                    BROWSE FILES
+                    <input type="file" className="hidden" accept=".pdf, .jpg, .jpeg, .png" onChange={handleFileSelect} />
+                  </label>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {/* ═══ TEST CATALOG ═══ */}
         {activeTab === 'catalog' && (
-          <div className="p-8">
-            <header className="flex justify-between items-end mb-8 border-b border-slate-200 pb-4">
+          <div className="flex-1 w-full flex flex-col">
+            <header className="flex justify-between items-end mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900">Test Catalog & Pricing</h2>
-                <p className="text-slate-500">Manage available diagnostic tests, pricing, and home collection options.</p>
+                <h2 className="text-3xl font-bold text-white mb-2">Test Catalog & Pricing</h2>
+                <p className="text-slate-400 text-lg">Manage available diagnostic tests, pricing, and home collection options.</p>
               </div>
               <button 
                 onClick={saveCatalog}
-                className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold py-2.5 px-6 rounded-lg flex items-center gap-2 transition-colors"
+                className="bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-fuchsia-600/20 active:scale-95"
               >
-                {savingCatalog ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/> : <Save size={18}/>}
+                {savingCatalog ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"/> : <Save size={20}/>}
                 Save Catalog
               </button>
             </header>
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-              <table className="w-full text-left text-sm">
+            
+            <div className="bg-[#131B2F] rounded-3xl shadow-xl border border-slate-800 overflow-hidden flex-1">
+              <table className="w-full text-left text-sm lg:text-base">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs text-slate-400 uppercase tracking-wider">
-                    <th className="px-6 py-4 font-semibold">Test Name</th>
-                    <th className="px-6 py-4 font-semibold">Category</th>
-                    <th className="px-6 py-4 font-semibold">Price (₹)</th>
-                    <th className="px-6 py-4 font-semibold text-center">Offered</th>
-                    <th className="px-6 py-4 font-semibold text-center">Home Collection</th>
+                  <tr className="bg-[#0B1121] border-b border-slate-800 text-xs text-slate-400 uppercase tracking-widest font-black">
+                    <th className="px-8 py-5">Test Name</th>
+                    <th className="px-8 py-5">Category</th>
+                    <th className="px-8 py-5">Price (₹)</th>
+                    <th className="px-8 py-5 text-center">Offered</th>
+                    <th className="px-8 py-5 text-center">Home Collection</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-800/50">
                   {tests.map(test => (
-                    <tr key={test.id} className="border-b border-slate-50 hover:bg-slate-50/50">
-                      <td className="px-6 py-4 font-semibold text-slate-800">{test.name}</td>
-                      <td className="px-6 py-4 text-slate-500">{test.category}</td>
-                      <td className="px-6 py-4">
-                        <div className="relative w-24">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
+                    <tr key={test.id} className="hover:bg-slate-800/20 transition-colors">
+                      <td className="px-8 py-5 font-bold text-slate-200">{test.name}</td>
+                      <td className="px-8 py-5 text-slate-500 font-medium">{test.category}</td>
+                      <td className="px-8 py-5">
+                        <div className="relative w-32">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                           <input 
                             value={test.price} 
                             onChange={e => updateTest(test.id, 'price', e.target.value)}
                             disabled={!test.isOffered}
-                            className="w-full bg-white border border-slate-200 rounded md:rounded-lg pl-8 pr-3 py-1.5 outline-none focus:border-fuchsia-500 disabled:bg-slate-100 disabled:text-slate-400 font-bold"
+                            className="w-full bg-[#0B1121] border border-slate-700 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-fuchsia-500 disabled:opacity-50 text-white font-bold transition-colors"
                           />
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-8 py-5 text-center">
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" className="sr-only peer" checked={test.isOffered} onChange={(e) => updateTest(test.id, 'isOffered', e.target.checked)} />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-fuchsia-600"></div>
+                          <div className="w-14 h-8 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-400 peer-checked:after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-fuchsia-600"></div>
                         </label>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-8 py-5 text-center">
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input type="checkbox" className="sr-only peer" checked={test.homeCollection} onChange={(e) => updateTest(test.id, 'homeCollection', e.target.checked)} disabled={!test.isOffered} />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-fuchsia-600 peer-disabled:opacity-50"></div>
+                          <div className="w-14 h-8 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-400 peer-checked:after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-fuchsia-600 peer-disabled:opacity-20"></div>
                         </label>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div className="p-4 border-t border-slate-100 bg-slate-50 text-center">
-                <button className="text-sm font-bold text-fuchsia-600 hover:text-fuchsia-700 flex items-center justify-center gap-1 mx-auto"><Plus size={16}/> Add New Test</button>
+              <div className="p-6 bg-[#0B1121] border-t border-slate-800 text-center">
+                <button className="text-base font-black tracking-widest text-fuchsia-500 hover:text-fuchsia-400 flex items-center justify-center gap-2 mx-auto uppercase transition-colors"><Plus size={20}/> Add New Test</button>
               </div>
             </div>
           </div>
@@ -271,122 +273,128 @@ const B2BLabDashboard: React.FC = () => {
 
         {/* ═══ FLEET MAP ═══ */}
         {activeTab === 'fleet' && (
-          <div className="p-8 h-full flex flex-col">
-            <header className="mb-6">
-              <h2 className="text-3xl font-bold text-slate-900">Phlebotomist Fleet Map</h2>
-              <p className="text-slate-500">Live GPS tracking for home collection agents.</p>
+          <div className="flex-1 w-full flex flex-col">
+            <header className="mb-8">
+              <h2 className="text-3xl font-bold text-white mb-2">Phlebotomist Fleet Map</h2>
+              <p className="text-slate-400 text-lg">Live GPS tracking for home collection agents.</p>
             </header>
             
-            <div className="flex-1 flex gap-6 min-h-0">
-              {/* Map Placeholder */}
-              <div className="flex-1 bg-slate-200 rounded-xl border border-slate-300 relative overflow-hidden flex items-center justify-center shadow-inner">
-                <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                
-                {/* Mock Markers */}
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* Agent List (Left - 4 cols) */}
+              <div className="w-full lg:col-span-4 flex flex-col gap-4 overflow-y-auto pr-2">
                 {MOCK_FLEET.map(agent => (
-                  <div key={agent.id} className="absolute" style={{ top: `${agent.lat}%`, left: `${agent.lng}%`, transform: 'translate(-50%, -50%)' }}>
-                    <div className="relative group cursor-pointer">
-                      <div className={`w-4 h-4 rounded-full border-2 border-white shadow-lg ${agent.status === 'Offline' ? 'bg-slate-400' : agent.status === 'En Route' ? 'bg-sky-500' : agent.status === 'Collecting' ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-                      {agent.status !== 'Offline' && (
-                        <div className={`absolute inset-0 rounded-full animate-ping opacity-30 ${agent.status === 'En Route' ? 'bg-sky-500' : agent.status === 'Collecting' ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-                      )}
-                      
-                      {/* Tooltip */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 bg-slate-900 text-white text-xs p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
-                        <p className="font-bold">{agent.name}</p>
-                        <p className="text-slate-400">{agent.status}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur p-3 rounded-lg shadow-lg border border-slate-200 text-xs font-medium text-slate-600">
-                  <div className="flex items-center gap-2 mb-1"><div className="w-2 h-2 rounded-full bg-sky-500"/> En Route</div>
-                  <div className="flex items-center gap-2 mb-1"><div className="w-2 h-2 rounded-full bg-amber-500"/> Collecting</div>
-                  <div className="flex items-center gap-2 mb-1"><div className="w-2 h-2 rounded-full bg-emerald-500"/> Returning</div>
-                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"/> Offline</div>
-                </div>
-              </div>
-
-              {/* Agent List */}
-              <div className="w-full max-w-md mx-auto flex flex-col gap-3 overflow-y-auto pr-2">
-                {MOCK_FLEET.map(agent => (
-                  <div key={agent.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold text-slate-900">{agent.name}</h4>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                        agent.status === 'Offline' ? 'bg-slate-100 text-slate-500' :
-                        agent.status === 'En Route' ? 'bg-sky-100 text-sky-700' :
-                        agent.status === 'Collecting' ? 'bg-amber-100 text-amber-700' :
-                        'bg-emerald-100 text-emerald-700'
+                  <div key={agent.id} className="bg-[#131B2F] p-6 rounded-3xl shadow-xl border border-slate-800">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-bold text-white text-lg">{agent.name}</h4>
+                      <span className={`text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-wider border ${
+                        agent.status === 'Offline' ? 'bg-slate-800/50 text-slate-400 border-slate-700' :
+                        agent.status === 'En Route' ? 'bg-sky-500/20 text-sky-400 border-sky-500/30' :
+                        agent.status === 'Collecting' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                        'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                       }`}>
                         {agent.status}
                       </span>
                     </div>
                     {agent.status !== 'Offline' && (
-                      <div className="text-sm text-slate-600">
-                        <p className="flex items-center gap-2 mb-1"><MapPin size={14} className="text-slate-400"/> {agent.patient}</p>
-                        <p className="flex items-center gap-2"><Clock size={14} className="text-slate-400"/> ETA: {agent.eta}</p>
+                      <div className="text-base text-slate-400 font-medium space-y-2 bg-[#0B1121] p-4 rounded-2xl border border-slate-800/50">
+                        <p className="flex items-center gap-3"><MapPin size={18} className="text-fuchsia-500"/> {agent.patient}</p>
+                        <p className="flex items-center gap-3"><Clock size={18} className="text-fuchsia-500"/> ETA: {agent.eta}</p>
                       </div>
                     )}
                   </div>
                 ))}
               </div>
+
+              {/* Map Placeholder (Right - 8 cols) */}
+              <div className="w-full lg:col-span-8 bg-[#0B1121] rounded-3xl border border-slate-800 relative overflow-hidden flex items-center justify-center shadow-xl min-h-[500px]">
+                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                
+                {/* Mock Markers */}
+                {MOCK_FLEET.map(agent => (
+                  <div key={agent.id} className="absolute" style={{ top: `${agent.lat}%`, left: `${agent.lng}%`, transform: 'translate(-50%, -50%)' }}>
+                    <div className="relative group cursor-pointer">
+                      <div className={`w-5 h-5 rounded-full border-2 border-[#0B1121] shadow-[0_0_15px_rgba(0,0,0,0.5)] ${agent.status === 'Offline' ? 'bg-slate-500' : agent.status === 'En Route' ? 'bg-sky-500' : agent.status === 'Collecting' ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                      {agent.status !== 'Offline' && (
+                        <div className={`absolute inset-0 rounded-full animate-ping opacity-50 ${agent.status === 'En Route' ? 'bg-sky-500' : agent.status === 'Collecting' ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                      )}
+                      
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 bg-[#131B2F] border border-slate-700 text-white p-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-2xl">
+                        <p className="font-bold text-sm mb-1">{agent.name}</p>
+                        <p className="text-slate-400 text-xs font-black uppercase tracking-widest">{agent.status}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="absolute bottom-6 right-6 bg-[#131B2F]/90 backdrop-blur-md p-5 rounded-2xl shadow-2xl border border-slate-700 text-xs font-bold text-slate-300 uppercase tracking-widest">
+                  <div className="flex items-center gap-3 mb-3"><div className="w-3 h-3 rounded-full bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,0.5)]"/> En Route</div>
+                  <div className="flex items-center gap-3 mb-3"><div className="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"/> Collecting</div>
+                  <div className="flex items-center gap-3 mb-3"><div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"/> Returning</div>
+                  <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-slate-500"/> Offline</div>
+                </div>
+              </div>
+
             </div>
           </div>
         )}
 
         {/* ═══ AUTO-SMS ═══ */}
         {activeTab === 'sms' && (
-          <div className="p-8">
-            <header className="flex justify-between items-end mb-8 border-b border-slate-200 pb-4">
+          <div className="flex-1 w-full flex flex-col">
+            <header className="flex justify-between items-end mb-8">
               <div>
-                <h2 className="text-3xl font-bold text-slate-900">Auto-SMS Dispatch</h2>
-                <p className="text-slate-500">Automatically notify patients when their lab reports are uploaded to their Vault.</p>
+                <h2 className="text-3xl font-bold text-white mb-2">Auto-SMS Dispatch</h2>
+                <p className="text-slate-400 text-lg">Automatically notify patients when their lab reports are uploaded to their Vault.</p>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-bold text-slate-700">Master Toggle:</span>
+              <div className="flex items-center gap-4 bg-[#131B2F] px-6 py-3 rounded-2xl border border-slate-800 shadow-lg">
+                <span className="text-sm font-black uppercase tracking-widest text-slate-300">Master Toggle:</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" checked={autoSmsEnabled} onChange={(e) => setAutoSmsEnabled(e.target.checked)} />
-                  <div className="w-14 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-fuchsia-600"></div>
+                  <div className="w-14 h-8 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-400 peer-checked:after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-fuchsia-600"></div>
                 </label>
               </div>
             </header>
 
-            <div className="grid grid-cols-2 gap-8">
-              <div>
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-                  <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><MessageSquare size={18} className="text-fuchsia-600"/> SMS Template</h3>
-                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 font-mono text-sm text-slate-700 leading-relaxed">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
+              {/* Template Editor */}
+              <div className="flex flex-col gap-6">
+                <div className="bg-[#131B2F] rounded-3xl shadow-xl border border-slate-800 p-8 flex-1 flex flex-col">
+                  <h3 className="font-bold text-white mb-6 flex items-center gap-3 text-xl"><MessageSquare size={24} className="text-fuchsia-500"/> SMS Template</h3>
+                  <div className="bg-[#0B1121] p-6 rounded-2xl border border-slate-700 font-mono text-base text-slate-300 leading-loose flex-1 shadow-inner">
                     Dear [Patient_Name],<br/><br/>
                     Your [Report_Name] report is now available in your LifeLink Vault.<br/><br/>
                     Login to view: lifelink.app/vault<br/><br/>
                     - LifeLink Diagnostics
                   </div>
-                  <p className="text-xs text-slate-400 mt-3 flex items-center gap-1"><AlertTriangle size={12}/> Variables in brackets are auto-filled per patient.</p>
+                  <p className="text-sm text-slate-500 mt-6 flex items-center gap-2 font-medium"><AlertTriangle size={16} className="text-amber-500"/> Variables in brackets are auto-filled per patient.</p>
                 </div>
                 
-                <button className="w-full border-2 border-fuchsia-600 text-fuchsia-600 font-bold py-3 rounded-lg hover:bg-fuchsia-50 transition-colors">
-                  Edit Template
+                <button className="w-full border-2 border-fuchsia-600 text-fuchsia-500 hover:bg-fuchsia-600 hover:text-white font-black text-lg py-5 rounded-2xl transition-all shadow-lg active:scale-95">
+                  EDIT TEMPLATE
                 </button>
               </div>
 
-              <div>
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                  <div className="px-6 py-4 border-b border-slate-100 bg-slate-50"><h3 className="font-bold text-slate-700 text-sm">Recent Dispatch Log</h3></div>
-                  <div className="divide-y divide-slate-100">
-                    {MOCK_SMS.map(log => (
-                      <div key={log.id} className="p-4 flex items-center justify-between">
-                        <div>
-                          <p className="font-bold text-sm text-slate-800 flex items-center gap-2"><Phone size={14} className="text-slate-400"/> {log.phone}</p>
-                          <p className="text-xs text-slate-500 mt-1">{log.reportName} • {log.time}</p>
-                        </div>
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase ${log.status === 'Delivered' ? 'bg-emerald-100 text-emerald-700' : log.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
-                          {log.status}
-                        </span>
+              {/* Delivery Log */}
+              <div className="bg-[#131B2F] rounded-3xl shadow-xl border border-slate-800 overflow-y-auto flex flex-col min-h-screen w-full">
+                <div className="px-8 py-6 border-b border-slate-800 bg-[#0B1121]"><h3 className="font-bold text-white text-lg">Recent Dispatch Log</h3></div>
+                <div className="divide-y divide-slate-800/50 flex-1 overflow-y-auto">
+                  {MOCK_SMS.map(log => (
+                    <div key={log.id} className="p-6 flex items-center justify-between hover:bg-slate-800/20 transition-colors">
+                      <div>
+                        <p className="font-bold text-base text-white flex items-center gap-3 mb-1"><Phone size={16} className="text-slate-500"/> {log.phone}</p>
+                        <p className="text-sm text-slate-400 font-medium">{log.reportName} <span className="text-slate-600 mx-2">•</span> {log.time}</p>
                       </div>
-                    ))}
-                  </div>
+                      <span className={`text-xs font-black px-3 py-1.5 rounded-lg uppercase tracking-widest border ${
+                        log.status === 'Delivered' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 
+                        log.status === 'Pending' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 
+                        'bg-red-500/20 text-red-400 border-red-500/30'
+                      }`}>
+                        {log.status}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -394,8 +402,38 @@ const B2BLabDashboard: React.FC = () => {
         )}
 
       </main>
+
+      {/* FLOATING BOTTOM NAV / DESKTOP SIDEBAR */}
+      <div className={`fixed bottom-6 md:bottom-auto md:top-0 md:left-0 md:h-full w-[90%] left-[5%] md:left-0 bg-[#131B2F]/90 backdrop-blur-xl border border-slate-700/50 md:border-y-0 md:border-l-0 md:border-r md:rounded-none rounded-full px-4 py-3 md:px-0 md:py-6 flex md:flex-col justify-between md:justify-start items-center gap-0 md:gap-4 shadow-2xl z-50 overflow-x-auto md:overflow-visible transition-transform duration-300 ${isSidebarExpanded ? 'md:w-64 md:items-start md:px-4 md:translate-x-0' : 'md:w-64 md:-translate-x-full'}`}>
+        
+        {/* Toggle Button (Desktop only) */}
+        <div className="hidden md:flex w-full justify-end mb-4 pr-1">
+          <button 
+            onClick={() => setIsSidebarExpanded(false)}
+            className="w-8 h-8 rounded-lg hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors"
+          >
+            <ChevronLeft size={20} />
+          </button>
+        </div>
+
+        <button onClick={() => setActiveTab('uploader')} className={`flex items-center active:scale-95 transition-all w-full px-2 md:px-3 py-2 md:py-3 md:rounded-xl ${activeTab === 'uploader' ? 'text-fuchsia-500 md:bg-fuchsia-500/10' : 'text-slate-500 hover:text-slate-300 md:hover:bg-slate-800/50'} ${!isSidebarExpanded ? 'flex-col md:justify-center' : 'md:justify-start md:flex-row md:gap-3'}`} title={!isSidebarExpanded ? 'VAULT' : undefined}>
+          <span className="text-2xl md:text-xl shrink-0 flex items-center justify-center"><UploadCloud size={28}/></span>
+          {isSidebarExpanded ? <span className="text-sm font-bold tracking-wide hidden md:block whitespace-nowrap">VAULT</span> : <span className="text-[9px] md:text-[10px] mt-2 font-bold tracking-widest hidden md:block text-center">VAULT</span>}
+        </button>
+        <button onClick={() => setActiveTab('catalog')} className={`flex items-center active:scale-95 transition-all w-full px-2 md:px-3 py-2 md:py-3 md:rounded-xl ${activeTab === 'catalog' ? 'text-fuchsia-500 md:bg-fuchsia-500/10' : 'text-slate-500 hover:text-slate-300 md:hover:bg-slate-800/50'} ${!isSidebarExpanded ? 'flex-col md:justify-center' : 'md:justify-start md:flex-row md:gap-3'}`} title={!isSidebarExpanded ? 'TESTS' : undefined}>
+          <span className="text-2xl md:text-xl shrink-0 flex items-center justify-center"><ListPlus size={28}/></span>
+          {isSidebarExpanded ? <span className="text-sm font-bold tracking-wide hidden md:block whitespace-nowrap">TESTS</span> : <span className="text-[9px] md:text-[10px] mt-2 font-bold tracking-widest hidden md:block text-center">TESTS</span>}
+        </button>
+        <button onClick={() => setActiveTab('fleet')} className={`flex items-center active:scale-95 transition-all w-full px-2 md:px-3 py-2 md:py-3 md:rounded-xl ${activeTab === 'fleet' ? 'text-fuchsia-500 md:bg-fuchsia-500/10' : 'text-slate-500 hover:text-slate-300 md:hover:bg-slate-800/50'} ${!isSidebarExpanded ? 'flex-col md:justify-center' : 'md:justify-start md:flex-row md:gap-3'}`} title={!isSidebarExpanded ? 'FLEET' : undefined}>
+          <span className="text-2xl md:text-xl shrink-0 flex items-center justify-center"><MapPin size={28}/></span>
+          {isSidebarExpanded ? <span className="text-sm font-bold tracking-wide hidden md:block whitespace-nowrap">FLEET</span> : <span className="text-[9px] md:text-[10px] mt-2 font-bold tracking-widest hidden md:block text-center">FLEET</span>}
+        </button>
+        <button onClick={() => setActiveTab('sms')} className={`flex items-center active:scale-95 transition-all w-full px-2 md:px-3 py-2 md:py-3 md:rounded-xl ${activeTab === 'sms' ? 'text-fuchsia-500 md:bg-fuchsia-500/10' : 'text-slate-500 hover:text-slate-300 md:hover:bg-slate-800/50'} ${!isSidebarExpanded ? 'flex-col md:justify-center' : 'md:justify-start md:flex-row md:gap-3'}`} title={!isSidebarExpanded ? 'SMS' : undefined}>
+          <span className="text-2xl md:text-xl shrink-0 flex items-center justify-center"><MessageSquare size={28}/></span>
+          {isSidebarExpanded ? <span className="text-sm font-bold tracking-wide hidden md:block whitespace-nowrap">SMS</span> : <span className="text-[9px] md:text-[10px] mt-2 font-bold tracking-widest hidden md:block text-center">SMS</span>}
+        </button>
+      </div>
+
     </div>
   );
-};
-
-export default B2BLabDashboard;
+}

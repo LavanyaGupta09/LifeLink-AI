@@ -82,25 +82,36 @@ export const useSOSStore = create<SOSState>((set, get) => ({
       return;
     }
 
-    // Get real address from coordinates
-    const address = await reverseGeocode(lat, lng);
-
-    const event: SOSEvent = {
-      id: `sos_${Date.now()}`,
+    // IMMEDIATELY set the state with a placeholder address to prevent SOSPage from redirecting back
+    const eventId = `sos_${Date.now()}`;
+    const initialEvent: SOSEvent = {
+      id: eventId,
       userId: 'usr_001',
       status: 'active',
       triageLevel: level,
       triggerMethod: method,
       lat,
       lng,
-      address,
+      address: 'Locating...',
       createdAt: new Date().toISOString(),
     };
+    
+    set({ activeSOSId: initialEvent.id, sosEvent: initialEvent, isSOSActive: true, isCounting: false, countdown: 10 });
 
-    set({ activeSOSId: event.id, sosEvent: event, isSOSActive: true, isCounting: false, countdown: 10 });
-
-    // REAL: Persist to Supabase
-    persistSOSToSupabase(event);
+    // Asynchronously update address and persist
+    try {
+      const address = await reverseGeocode(lat, lng);
+      set((state) => {
+        if (state.activeSOSId === eventId && state.sosEvent) {
+          const updatedEvent = { ...state.sosEvent, address };
+          persistSOSToSupabase(updatedEvent);
+          return { sosEvent: updatedEvent };
+        }
+        return state;
+      });
+    } catch (err) {
+      persistSOSToSupabase(initialEvent);
+    }
   },
 
   cancelSOS: () =>

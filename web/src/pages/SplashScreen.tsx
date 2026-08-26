@@ -16,13 +16,13 @@ const SplashScreen: React.FC = () => {
             navigate('/b2b/pending-review');
           } else if (user.role === 'patient') navigate('/dashboard');
           else if (user.role === 'doctor') navigate('/b2b/doctor');
-          else if (user.role === 'hospital_admin') navigate('/b2b/hospital');
+          else if (user.role === 'hospital_admin') navigate('/partner/dashboard');
           else if (user.role === 'pharmacy_manager') navigate('/b2b/pharmacy');
           else if (user.role === 'lab_tech') navigate('/b2b/lab');
           else if (user.role === 'driver') navigate('/b2b/driver');
           else navigate('/role-select');
         } else {
-          navigate(isOnboarded ? '/role-select' : '/onboarding');
+          navigate('/role-select');
         }
       }, 500);
     }, 2000);

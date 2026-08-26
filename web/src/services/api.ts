@@ -56,6 +56,7 @@ export const aiAPI = {
   triage: (symptoms: string, language: string = 'en') => api.post('/api/ai/triage', { symptoms, language }),
   voiceCommand: (text: string) => api.post(`/api/ai/voice-command?text=${encodeURIComponent(text)}`),
   getSession: (sessionId: string) => api.get(`/api/ai/triage/${sessionId}`),
+  communitySearch: (query: string) => api.post('/api/ai/community-search', { query }),
 };
 
 // ─────────────────────────────────────────────

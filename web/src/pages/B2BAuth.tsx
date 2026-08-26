@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ShieldCheck, UserCheck, KeyRound, Building2, BadgeCheck, ArrowLeft, ScanFace } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -62,6 +62,31 @@ const B2BAuth: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [simulatePending, setSimulatePending] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [hasSentOTP, setHasSentOTP] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutCountdown, setLockoutCountdown] = useState(0);
+  const otpInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCountdown > 0) {
+      timer = setTimeout(() => setResendCountdown(c => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCountdown]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (lockoutCountdown > 0) {
+      timer = setTimeout(() => setLockoutCountdown(c => c - 1), 1000);
+    } else if (lockoutCountdown === 0 && failedAttempts >= 3) {
+      setFailedAttempts(0);
+    }
+    return () => clearTimeout(timer);
+  }, [lockoutCountdown, failedAttempts]);
 
   useEffect(() => {
     const roleParam = searchParams.get('role');
@@ -69,40 +94,35 @@ const B2BAuth: React.FC = () => {
   }, [searchParams]);
 
   const requiresOTP = ['pharmacy_manager', 'driver'].includes(role);
-  const requiresPassword = ['hospital_admin', 'lab_tech', 'doctor'].includes(role);
+  const requiresPassword = ['hospital_admin', 'lab_tech', 'doctor', 'equipment'].includes(role);
 
   const handleSendOTP = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!identity.includes('@') && identity.length < 5) return;
     setIsLoading(true);
     setErrorMessage('');
-    try {
-      // For Vercel demo deployment without backend, mock the OTP
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        setTimeout(() => {
-          setOtp('123456');
-          setTimeout(() => handleLogin(undefined, '123456'), 500);
-          setIsLoading(false);
-        }, 1000);
-        return;
-      }
+    setSuccessMessage('');
+    
+    // If we've already sent it once, call resend endpoint
+    const endpoint = `/api/auth/${hasSentOTP ? 'resend-otp' : 'send-otp'}?email=${encodeURIComponent(identity)}`;
 
-      const res = await fetch(`/api/auth/send-otp?email=${encodeURIComponent(identity)}`, { method: 'POST' });
+    try {
+      const res = await fetch(endpoint, { method: 'POST' });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Failed to send OTP');
-      if (data.otp) {
-        setOtp(data.otp);
-        setTimeout(() => handleLogin(undefined, data.otp), 500);
+      if (!res.ok) throw new Error(data.message || data.detail || 'Failed to send OTP');
+      if (data.otp || data.success) {
+        setOtp(data.otp || '');
+        setResendCountdown(30);
+        setHasSentOTP(true);
+        if (hasSentOTP) setSuccessMessage('New OTP sent. Please use the latest OTP.');
+        if (otpInputRef.current) otpInputRef.current.focus();
+        if (data.otp) setTimeout(() => handleLogin(undefined, data.otp), 500);
       }
     } catch (err: any) {
-      // Graceful fallback for rate limits or missing backend
       console.error(err);
-      setOtp('123456');
-      setTimeout(() => handleLogin(undefined, '123456'), 500);
+      setErrorMessage(err.message || 'Failed to send OTP');
     } finally {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
@@ -110,20 +130,33 @@ const B2BAuth: React.FC = () => {
     const status = simulatePending ? 'pending_approval' : 'verified';
     providerLogin(role, status);
     if (status === 'pending_approval') { navigate('/b2b/pending-review'); return; }
-    if (role === 'hospital_admin') navigate('/b2b/hospital');
+    if (role === 'hospital_admin') navigate('/partner/dashboard');
     else if (role === 'doctor') navigate('/b2b/doctor');
     else if (role === 'pharmacy_manager') navigate('/b2b/pharmacy');
     else if (role === 'lab_tech') navigate('/b2b/lab');
     else if (role === 'driver') navigate('/b2b/driver');
+    else if (role === 'equipment') navigate('/b2b/equipment');
+    else if (role === 'first_responder') navigate('/command-center');
   };
 
   const handleLogin = async (e?: React.FormEvent, codeToVerify?: string) => {
     if (e) e.preventDefault();
+    if (lockoutCountdown > 0) return;
     const finalOtp = typeof codeToVerify === 'string' ? codeToVerify : otp;
     if (requiresOTP) {
       if (finalOtp.length < 6) return;
       setIsLoading(true);
       setErrorMessage('');
+      
+      // Bypass backend for testing so you can log in even if the backend hasn't reloaded
+      // if (finalOtp === '172086' || finalOtp === '123456') {
+      //   setTimeout(() => {
+      //     setIsLoading(false);
+      //     executeLogin();
+      //   }, 300);
+      //   return;
+      // }
+
       try {
         const res = await fetch(`/api/auth/verify-otp`, {
           method: 'POST',
@@ -131,10 +164,18 @@ const B2BAuth: React.FC = () => {
           body: JSON.stringify({ email: identity, otp: finalOtp })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Invalid or expired OTP');
+        if (!res.ok) throw new Error(data.message || data.detail || 'Invalid or expired OTP');
         executeLogin();
       } catch (err: any) {
-        setErrorMessage(err.message);
+        setErrorMessage(err.message || 'Incorrect verification code. Please check and try again.');
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+        
+        const newAttempts = failedAttempts + 1;
+        setFailedAttempts(newAttempts);
+        if (newAttempts >= 3) {
+          setLockoutCountdown(30);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -167,14 +208,13 @@ const B2BAuth: React.FC = () => {
     pharmacy_manager: { identityLabel: 'Pharmacy Email', identityPlaceholder: 'pharmacy@example.com', licenseLabel: 'Drug License (DL) Number', licensePlaceholder: 'DL-RJ-1234' },
     doctor: { identityLabel: 'Individual Email', identityPlaceholder: 'dr.sharma@email.com', licenseLabel: 'Medical Council License No.', licensePlaceholder: 'MCI-009911' },
     driver: { identityLabel: 'Driver Email', identityPlaceholder: 'driver@example.com', licenseLabel: 'Commercial Vehicle License ID', licensePlaceholder: 'DL-01-C-5678' },
+    equipment: { identityLabel: 'Provider Email', identityPlaceholder: 'provider@medequip.com', licenseLabel: 'Business Registration No.', licensePlaceholder: 'REG-2023-ME' },
   };
   const fields = fieldConfig[role] || fieldConfig.hospital_admin;
 
   return (
     <div style={{
       width: '100%',
-      maxWidth: '448px',
-      margin: '0 auto',
       minHeight: '100dvh',
       display: 'flex',
       flexDirection: 'column',
@@ -183,6 +223,7 @@ const B2BAuth: React.FC = () => {
       color: colors.text,
       fontFamily: "'Inter', sans-serif",
       boxSizing: 'border-box',
+      overflowY: 'auto',
     }}>
       {/* ── Back Button ── */}
       <div style={{ marginBottom: '32px', paddingTop: '16px' }}>
@@ -231,7 +272,20 @@ const B2BAuth: React.FC = () => {
       </div>
 
       {/* ── Error Message ── */}
-      {errorMessage && (
+      {lockoutCountdown > 0 && (
+        <div style={{
+          marginBottom: '16px', padding: '12px',
+          background: 'rgba(239,68,68,0.1)',
+          border: '1px solid rgba(239,68,68,0.3)',
+          borderRadius: '12px',
+          textAlign: 'center',
+          animation: 'fade-in 0.3s ease-in-out'
+        }}>
+          <p style={{ color: colors.danger, fontSize: '0.8rem', fontWeight: 700, margin: 0 }}>Too many attempts. Locked for {lockoutCountdown}s.</p>
+        </div>
+      )}
+
+      {errorMessage && lockoutCountdown === 0 && (
         <div style={{
           marginBottom: '16px', padding: '12px',
           background: 'rgba(239,68,68,0.1)',
@@ -240,6 +294,18 @@ const B2BAuth: React.FC = () => {
           textAlign: 'center',
         }}>
           <p style={{ color: colors.danger, fontSize: '0.8rem', fontWeight: 700, margin: 0 }}>{errorMessage}</p>
+        </div>
+      )}
+
+      {successMessage && (
+        <div style={{
+          marginBottom: '16px', padding: '12px',
+          background: 'rgba(34,197,94,0.1)',
+          border: '1px solid rgba(34,197,94,0.3)',
+          borderRadius: '12px',
+          textAlign: 'center',
+        }}>
+          <p style={{ color: '#22c55e', fontSize: '0.8rem', fontWeight: 700, margin: 0 }}>{successMessage}</p>
         </div>
       )}
 
@@ -336,41 +402,67 @@ const B2BAuth: React.FC = () => {
         {requiresOTP && (
           <div>
             <label style={labelStyle}>One-Time Password (OTP)</label>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="Enter 6-digit OTP"
-                maxLength={6}
-                value={otp}
-                onPaste={(e) => {
-                  e.preventDefault();
-                  const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-                  setOtp(paste);
-                  if (paste.length === 6) setTimeout(() => handleLogin(undefined, paste), 0);
-                }}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '');
-                  setOtp(val);
-                  if (val.length === 6) setTimeout(() => handleLogin(undefined, val), 0);
-                }}
-                required
-                style={{
-                  ...inputStyle,
-                  paddingLeft: '16px',
-                  flex: 1,
-                  fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                  textAlign: 'center',
-                  letterSpacing: '0.3em',
-                  fontSize: '1.1rem',
-                }}
-                onFocus={(e) => { e.currentTarget.style.borderColor = colors.borderFocus; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.25)`; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = colors.border; e.currentTarget.style.boxShadow = 'none'; }}
-              />
+            <div style={{ display: 'flex', gap: '10px' }} className={isShaking ? 'animate-shake' : ''}>
+              <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+                <input
+                  ref={otpInputRef}
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Enter 6-digit OTP"
+                  maxLength={6}
+                  value={otp}
+                  disabled={isLoading || lockoutCountdown > 0}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                    setOtp(paste);
+                    setErrorMessage('');
+                    if (paste.length === 6 && lockoutCountdown === 0) setTimeout(() => handleLogin(undefined, paste), 0);
+                  }}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setOtp(val);
+                    setErrorMessage('');
+                    if (val.length === 6 && lockoutCountdown === 0) setTimeout(() => handleLogin(undefined, val), 0);
+                  }}
+                  required
+                  style={{
+                    ...inputStyle,
+                    paddingLeft: '16px',
+                    paddingRight: '60px',
+                    flex: 1,
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                    textAlign: 'center',
+                    letterSpacing: '0.3em',
+                    fontSize: '1.1rem',
+                    border: isShaking || errorMessage ? `1px solid ${colors.danger}` : `1px solid ${colors.border}`,
+                    boxShadow: isShaking || errorMessage ? '0 0 15px rgba(239,68,68,0.3)' : 'none',
+                    opacity: lockoutCountdown > 0 ? 0.5 : 1
+                  }}
+                  onFocus={(e) => { if (!isShaking && !errorMessage) { e.currentTarget.style.borderColor = colors.borderFocus; e.currentTarget.style.boxShadow = `0 0 0 3px rgba(59,130,246,0.25)`; } }}
+                  onBlur={(e) => { if (!isShaking && !errorMessage) { e.currentTarget.style.borderColor = colors.border; e.currentTarget.style.boxShadow = 'none'; } }}
+                />
+                {otp.length > 0 && lockoutCountdown === 0 && (
+                  <button 
+                    type="button"
+                    onClick={() => { setOtp(''); setErrorMessage(''); if (otpInputRef.current) otpInputRef.current.focus(); }}
+                    style={{
+                      position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
+                      background: 'transparent', border: 'none', color: colors.textMuted,
+                      cursor: 'pointer', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 600,
+                      borderRadius: '8px'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = colors.text}
+                    onMouseOut={(e) => e.currentTarget.style.color = colors.textMuted}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={handleSendOTP}
-                disabled={!identity.includes('@') || isLoading}
+                disabled={!identity.includes('@') || isLoading || resendCountdown > 0}
                 style={{
                   background: colors.accent,
                   color: '#fff',
@@ -379,13 +471,13 @@ const B2BAuth: React.FC = () => {
                   padding: '14px 20px',
                   fontWeight: 700,
                   fontSize: '0.85rem',
-                  cursor: !identity.includes('@') || isLoading ? 'not-allowed' : 'pointer',
-                  opacity: !identity.includes('@') || isLoading ? 0.5 : 1,
+                  cursor: !identity.includes('@') || isLoading || resendCountdown > 0 ? 'not-allowed' : 'pointer',
+                  opacity: !identity.includes('@') || isLoading || resendCountdown > 0 ? 0.5 : 1,
                   transition: 'all 0.2s',
                   whiteSpace: 'nowrap',
                 }}
               >
-                Send OTP
+                {resendCountdown > 0 ? `Resend in ${resendCountdown}s` : 'Send OTP'}
               </button>
             </div>
             {otp.length > 0 && otp.length < 6 && (

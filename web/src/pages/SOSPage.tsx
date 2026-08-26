@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Phone, MapPin, X, Check, Users, Clock, Shield, WifiOff, MessageSquare, Droplets } from 'lucide-react';
+import { AlertTriangle, Phone, MapPin, X, Check, Users, Clock, Shield, WifiOff, MessageSquare, Droplets, ArrowLeft } from 'lucide-react';
 import { useSOSStore } from '../store/sosStore';
 import { useSOSGuardStore } from '../store/sosGuardStore';
 import { usePrivacyStore } from '../store/privacyStore';
@@ -8,6 +8,7 @@ import { MOCK_EMERGENCY_CONTACTS, MOCK_AMBULANCES } from '../data/mockData';
 import { bloodAPI } from '../services/api';
 import FreeMap from '../components/FreeMap';
 import { fetchRoute, searchAddress, useDebounce } from '../utils/mapUtils';
+import JitsiVideoCall from '../components/telemedicine/JitsiVideoCall';
 
 const SOSPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +24,9 @@ const SOSPage: React.FC = () => {
   const [contactsNotified, setContactsNotified] = useState(false);
   const [ambulanceDispatched, setAmbulanceDispatched] = useState(false);
   const [doctorConnected, setDoctorConnected] = useState(false);
+  
+  const [activeEmergencyRoom, setActiveEmergencyRoom] = useState<string | null>(null);
+  const [chatProvider, setChatProvider] = useState<{name: string, eta: number | string} | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Address Search and Map State
@@ -31,6 +35,8 @@ const SOSPage: React.FC = () => {
   const [patientLoc, setPatientLoc] = useState<[number, number]>([28.5355, 77.2690]);
   const [ambLoc] = useState<[number, number]>([28.5520, 77.2510]); // Mock incoming ambulance
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
+  const [liveETA, setLiveETA] = useState<number | null>(null);
+  const [liveDistance, setLiveDistance] = useState<number | null>(null);
 
   useEffect(() => {
     if (debouncedAddress) {
@@ -46,7 +52,11 @@ const SOSPage: React.FC = () => {
   useEffect(() => {
     if (ambulanceDispatched) {
       fetchRoute(ambLoc[1], ambLoc[0], patientLoc[1], patientLoc[0]).then(route => {
-        if (route) setRouteCoords(route.coordinates);
+        if (route) {
+          setRouteCoords(route.coordinates);
+          setLiveETA(Math.round(route.durationSeconds / 60));
+          setLiveDistance(Math.round((route.distanceMeters / 1000) * 10) / 10);
+        }
       });
     }
   }, [ambulanceDispatched, patientLoc, ambLoc]);
@@ -150,6 +160,19 @@ const SOSPage: React.FC = () => {
     );
   }
 
+  // LIVE JITSI EMERGENCY CALL OVERLAY
+  if (activeEmergencyRoom) {
+    return (
+      <div className="fixed inset-0 bg-black z-50 flex flex-col justify-between overflow-hidden">
+        <JitsiVideoCall 
+          roomName={activeEmergencyRoom}
+          displayName="Emergency Patient"
+          onReadyToClose={() => setActiveEmergencyRoom(null)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell sos-page">
       {/* Pulsing danger header */}
@@ -243,28 +266,43 @@ const SOSPage: React.FC = () => {
                 <div>
                   <p className="font-semibold text-sm">{amb.vehicleNumber}</p>
                   <p className="text-xs text-secondary">Driver: {amb.driverName}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button 
+                      onClick={() => setActiveEmergencyRoom(`LifeLink_SOS_AMB_${amb.id}`)}
+                      className="flex items-center gap-1 text-[10px] font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-2 py-1 rounded-full border border-[#3D91FF]/20"
+                    >
+                      <Phone size={10} /> Call
+                    </button>
+                    <button 
+                      onClick={() => setChatProvider({ name: amb.driverName, eta: liveETA !== null ? liveETA : amb.etaMinutes })}
+                      className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20"
+                    >
+                      <MessageSquare size={10} /> Chat
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="flex items-center gap-1 justify-end">
-                  <Clock size={12} color="#00C9A7" />
-                  <span className="font-bold text-brand" style={{ fontSize: '1.25rem' }}>{amb.etaMinutes}</span>
-                  <span className="text-xs text-secondary">min</span>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-1 justify-end">
+                    <Clock size={12} color="#00C9A7" />
+                    <span className="font-bold text-brand" style={{ fontSize: '1.25rem' }}>{liveETA !== null ? liveETA : amb.etaMinutes}</span>
+                    <span className="text-xs text-secondary">min</span>
+                  </div>
+                  <p className="text-xs text-secondary">Live ETA {liveDistance !== null && `· ${liveDistance}km`}</p>
                 </div>
-                <p className="text-xs text-secondary">ETA</p>
               </div>
             </div>
 
-            {/* Map Area */}
-            <div className="h-48 rounded overflow-hidden relative">
-              <FreeMap
+            <div className="bg-[#131F35] rounded-3xl overflow-hidden border border-slate-800 shadow-xl mb-6 relative" style={{ height: '300px' }}>
+              <FreeMap 
                 center={patientLoc}
                 zoom={14}
-                routeCoordinates={routeCoords}
                 markers={[
-                  { id: 'pat', lat: patientLoc[0], lng: patientLoc[1], label: 'You' },
-                  { id: 'amb', lat: ambLoc[0], lng: ambLoc[1], label: 'Ambulance' }
+                  { id: 'pat_loc', lat: patientLoc[0], lng: patientLoc[1], label: 'You' },
+                  { id: 'amb_loc', lat: ambLoc[0], lng: ambLoc[1], label: 'Ambulance' }
                 ]}
+                routeCoordinates={routeCoords}
               />
             </div>
 
@@ -289,7 +327,7 @@ const SOSPage: React.FC = () => {
                   <span className="text-xs text-success">Connected</span>
                 </div>
               </div>
-              <button className="btn btn-primary btn-sm" onClick={() => navigate('/doctor')}>
+              <button className="btn btn-primary btn-sm" onClick={() => setActiveEmergencyRoom(`LifeLink_SOS_DOC_Arjun`)}>
                 <Phone size={14} />
                 Join Call
               </button>
@@ -317,7 +355,15 @@ const SOSPage: React.FC = () => {
                   <p className="text-xs text-secondary">{c.relationship} · {c.phone}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <div className="badge badge-success">Notified</div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setActiveEmergencyRoom(`LifeLink_SOS_FAM_${c.name.replace(/\\s/g,'_')}`)}
+                      className="bg-[#3D91FF]/10 text-[#3D91FF] border border-[#3D91FF]/30 p-1 rounded-full"
+                    >
+                      <Phone size={12} />
+                    </button>
+                    <div className="badge badge-success">Notified</div>
+                  </div>
                   <span className="text-[9px] text-[#FFA502]">Link active 24h</span>
                 </div>
               </div>
@@ -352,7 +398,7 @@ const SOSPage: React.FC = () => {
       </div>
 
       <style>{`
-        .sos-page { background: var(--bg-base); min-height: 100vh; }
+        .sos-page { background: var(--bg-base); min-height: 100dvh; }
         .sos-header {
           position: relative;
           padding: 52px 20px 28px;
@@ -475,6 +521,60 @@ const SOSPage: React.FC = () => {
           zIndex: 9999, fontSize: '0.85rem', fontWeight: 600, animation: 'fadeInUp 0.3s ease'
         }}>
           {toastMessage}
+        </div>
+      )}
+
+      {/* Chat Overlay */}
+      {chatProvider && (
+        <div className="fixed inset-0 z-50 bg-[#0B1121] flex flex-col animate-in slide-in-from-bottom-full duration-300">
+          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-slate-800/80 bg-[#131B2F]">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setChatProvider(null)}
+                className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-300 hover:text-white"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <div>
+                <h2 className="font-bold text-white text-lg">{chatProvider.name}</h2>
+                <p className="text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> En Route
+                </p>
+              </div>
+            </div>
+            <button className="text-[#3D91FF] p-2" onClick={() => {setChatProvider(null); setActiveEmergencyRoom(`LifeLink_SOS_AMB_${amb.id}`);}}>
+              <Phone size={20} />
+            </button>
+          </div>
+          
+          <div className="flex-1 w-full bg-[#060B14] p-4 flex flex-col gap-4 overflow-y-auto">
+            <div className="text-center text-xs text-slate-500 mb-2">Today, {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+            
+            <div className="flex gap-2 max-w-[80%]">
+              <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 mt-1">
+                <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Driver" className="w-full h-full object-cover" />
+              </div>
+              <div className="bg-[#131B2F] border border-slate-800 rounded-2xl rounded-tl-none p-3 text-sm text-slate-200">
+                Hello, this is your ambulance driver. I see your SOS alert and am on my way. Current ETA is {chatProvider.eta} minutes. Stay calm and keep your phone nearby.
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-[#131B2F] border-t border-slate-800/80 pb-[max(env(safe-area-inset-bottom,16px),16px)]">
+            <div className="relative flex items-center">
+              <input 
+                type="text" 
+                placeholder="Type a message..." 
+                className="w-full bg-[#0B1121] border border-slate-700 rounded-full py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-[#3D91FF]"
+              />
+              <button 
+                onClick={() => alert("SOS Chat message sent! (Simulated)")}
+                className="absolute right-2 w-8 h-8 bg-[#3D91FF] rounded-full flex items-center justify-center text-white"
+              >
+                <ArrowLeft size={16} className="rotate-180" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,777 +1,599 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Heart, AlertTriangle, Phone, MapPin, Activity, Zap,
-  Users, QrCode, Pill, FlaskConical, Droplets, ChevronRight,
-  Mic, MicOff, Bell, User, Settings, WifiOff, Building2, Star, ShieldCheck, LogOut
+  Bell, MessageCircle, Settings, Mic, Send, MapPin, Calendar, Activity, AlertTriangle,
+  Ambulance, Building2, UserRound, Pill, FlaskConical, Droplets, ChevronRight, Check,
+  Search, Heart, Moon, QrCode, Shield, HeartPulse, BadgeCheck, Stethoscope, Phone
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSOSStore } from '../store/sosStore';
-import { useAuditStore } from '../store/auditStore';
-import { useSOSGuardStore } from '../store/sosGuardStore';
-import { useTriageStore } from '../store/triageStore';
-
-const quickActions = [
-  { icon: <Activity size={22} />,   label: 'Symptom Check', route: '/symptoms',  color: '#3D91FF', bg: 'rgba(61,145,255,0.12)' },
-  { icon: <Building2 size={22} />,  label: 'Hospitals',     route: '/hospitals', color: '#00C9A7', bg: 'rgba(0,201,167,0.12)' },
-  { icon: <MapPin size={22} />,     label: 'Ambulance',     route: '/ambulance', color: '#FF6348', bg: 'rgba(255,99,72,0.12)' },
-  { icon: <Phone size={22} />,      label: 'Doctor On-Call',route: '/doctor',    color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
-  { icon: <Users size={22} />,      label: 'Family',        route: '/family',    color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
-  { icon: <QrCode size={22} />,     label: 'Health ID',     route: '/passport',  color: '#FFA502', bg: 'rgba(255,165,2,0.12)' },
-  { icon: <Droplets size={22} />,   label: 'Blood Network', route: '/blood',     color: '#FF4757', bg: 'rgba(255,71,87,0.12)' },
-  { icon: <Pill size={22} />,       label: 'Pharmacy',      route: '/pharmacy',  color: '#2ED573', bg: 'rgba(46,213,115,0.12)' },
-  { icon: <Bell size={22} />,       label: 'Pill Reminders',route: '/reminders', color: '#FF4757', bg: 'rgba(255,71,87,0.12)' },
-  { icon: <ShieldCheck size={22} />,label: 'Privacy',       route: '/privacy',   color: '#F39C12', bg: 'rgba(243,156,18,0.12)' },
-];
-
-
-// Live animated vitals (simulated wearable data stream)
-function useLiveVitals() {
-  const [hr, setHr] = useState(78);
-  const [spo2, setSpo2] = useState(98);
-  const [steps, setSteps] = useState(4231);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHr(prev => {
-        const delta = Math.random() > 0.5 ? 1 : -1;
-        return Math.max(72, Math.min(84, prev + delta));
-      });
-      setSpo2(prev => {
-        const delta = Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0;
-        return Math.max(96, Math.min(99, prev + delta));
-      });
-      setSteps(prev => prev + Math.floor(Math.random() * 15) + 3);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-  return [
-    { label: 'Heart Rate', value: String(hr), unit: 'BPM', icon: <Heart size={14} />, color: '#FF4757', trend: hr >= 78 ? `+${hr - 76}` : `${hr - 78}` },
-    { label: 'SpO₂', value: String(spo2), unit: '%', icon: <Activity size={14} />, color: '#3D91FF', trend: spo2 >= 98 ? 'stable' : '-1' },
-    { label: 'Steps Today', value: steps.toLocaleString(), unit: 'steps', icon: <Zap size={14} />, color: '#00C9A7', trend: '+12%' },
-  ];
-}
+import { api } from '../services/api';
+import LifeLinkAIAssistant from '../components/LifeLinkAIAssistant';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { user, emergencyContacts, healthProfile } = useAuthStore();
-  const { triggerSOS, isSOSActive, isCounting, countdown, startCountdown, stopCountdown, decrementCountdown } = useSOSStore();
-  const { auditStatus, auditDaysSince } = useAuditStore();
-  const { strikeCount } = useSOSGuardStore();
-  const { setSymptoms, analyzeSymptoms } = useTriageStore();
+  const { user } = useAuthStore();
+  const { triggerSOS, isSOSActive, isCounting, countdown, decrementCountdown, startCountdown, stopCountdown } = useSOSStore();
   
-  const vitals = useLiveVitals();
+  const [sosTimeout, setSosTimeout] = useState<NodeJS.Timeout | null>(null);
+  
+  const [aiQuery, setAiQuery] = useState('');
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [isProcessingIntent, setIsProcessingIntent] = useState(false);
-  const [isHolding, setIsHolding] = useState(false);
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const [greeting, setGreeting] = useState('');
-  
-  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const sosTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const h = new Date().getHours();
-    if (h < 12) setGreeting('Good morning');
-    else if (h < 17) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
-  }, []);
-
-  const age = user?.dateOfBirth ? new Date().getFullYear() - new Date(user.dateOfBirth).getFullYear() : 'N/A';
-  const primaryContact = emergencyContacts?.[0];
-
-  useEffect(() => {
-    if (isCounting) {
-      countdownRef.current = setInterval(() => {
-        decrementCountdown();
-      }, 1000);
-    } else {
-      if (countdownRef.current) clearInterval(countdownRef.current);
+  const handleAiSubmit = async () => {
+    if (!aiQuery.trim()) return;
+    setIsAiLoading(true);
+    setAiResponse(null);
+    try {
+      const res = await fetch(`${api.defaults.baseURL}/api/ai/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: aiQuery }] })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAiResponse(data.message);
+      } else {
+        setAiResponse("Sorry, I'm having trouble connecting right now.");
+      }
+    } catch (error) {
+      setAiResponse("Sorry, I'm having trouble connecting right now.");
+    } finally {
+      setIsAiLoading(false);
+      setAiQuery('');
     }
-    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
-  }, [isCounting, decrementCountdown]);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isCounting && countdown <= 0) {
-      handleSOSTrigger();
-    }
-  }, [countdown, isCounting]);
-
-  const handleSOSDown = () => {
-    setIsHolding(true);
-    sosTimeoutRef.current = setTimeout(() => {
-      setIsHolding(false);
-      handleSOSTrigger();
-    }, 3000);
   };
 
-  const handleSOSUp = () => {
-    if (sosTimeoutRef.current) clearTimeout(sosTimeoutRef.current);
-    setIsHolding(false);
-  };
-  
   const handleVoice = () => {
-    if (!isListening && !isProcessingIntent) {
+    if (!isListening) {
       setIsListening(true);
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.lang = 'en-US';
-        recognition.onresult = async (e: any) => {
+        recognition.onresult = (e: any) => {
           const text = e.results[0][0].transcript;
+          setAiQuery(text);
           setIsListening(false);
-          setIsProcessingIntent(true);
-          
-          try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-            const response = await fetch(`${API_URL}/api/v1/voice/parse-intent`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text })
-            });
-            const data = await response.json();
-            const { intent, action_payload } = data;
-            
-            switch (intent) {
-              case 'EMERGENCY':
-                handleSOSTrigger();
-                break;
-              case 'SYMPTOMS':
-                setSymptoms(action_payload || text);
-                await analyzeSymptoms(action_payload || text, 'en');
-                navigate('/symptoms');
-                break;
-              case 'NAVIGATION':
-                navigate('/' + (action_payload || '').replace(/^\/+/, ''));
-                break;
-              case 'GENERAL':
-              default:
-                alert(`AI Assistant: ${action_payload || 'I could not understand that command.'}`);
-                break;
-            }
-          } catch (err) {
-            console.warn('Backend unavailable, using simulated NLP logic', err);
-            let intent = 'GENERAL';
-            let action_payload = 'I heard: ' + text;
-            
-            const lowerText = text.toLowerCase();
-            if (lowerText.includes('emergency') || lowerText.includes('help') || lowerText.includes('sos')) {
-              intent = 'EMERGENCY';
-            } else if (lowerText.includes('pain') || lowerText.includes('hurt') || lowerText.includes('symptom')) {
-              intent = 'SYMPTOMS';
-              action_payload = text;
-            } else if (lowerText.includes('hospital') || lowerText.includes('ambulance') || lowerText.includes('navigate')) {
-              intent = 'NAVIGATION';
-              action_payload = 'hospitals';
-            }
-
-            switch (intent) {
-              case 'EMERGENCY':
-                handleSOSTrigger();
-                break;
-              case 'SYMPTOMS':
-                setSymptoms(action_payload || text);
-                await analyzeSymptoms(action_payload || text, 'en');
-                navigate('/symptoms');
-                break;
-              case 'NAVIGATION':
-                navigate('/' + (action_payload || '').replace(/^\/+/, ''));
-                break;
-              case 'GENERAL':
-              default:
-                alert(`AI Assistant (Simulated): I could not understand that command. Did you mean 'help' or 'hospital'?`);
-                break;
-            }
-          } finally {
-            setIsProcessingIntent(false);
-          }
         };
         recognition.onerror = () => setIsListening(false);
         recognition.onend = () => setIsListening(false);
         recognition.start();
       } else {
-        setTimeout(() => setIsListening(false), 3000);
+        setTimeout(() => setIsListening(false), 2000);
       }
     } else {
       setIsListening(false);
     }
   };
 
-  const handleSOSTrigger = () => {
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isCounting) {
+      interval = setInterval(() => decrementCountdown(), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isCounting, decrementCountdown]);
+
+  useEffect(() => {
+    if (isCounting && countdown <= 0) {
+      if (sosTimeout) clearTimeout(sosTimeout);
+      stopCountdown();
+      triggerSOS('CRITICAL', 'MANUAL', 12.9716, 77.5946); // mock lat/lng
+      navigate('/sos');
+    }
+  }, [countdown, isCounting, sosTimeout, stopCountdown, triggerSOS, navigate]);
+
+  const handleSOSDown = () => {
+    startCountdown();
+    const timeout = setTimeout(() => {
+      stopCountdown();
+      triggerSOS('CRITICAL', 'MANUAL', 12.9716, 77.5946); // mock lat/lng
+      navigate('/sos');
+    }, 3000);
+    setSosTimeout(timeout);
+  };
+
+  const handleSOSUp = () => {
     stopCountdown();
-    triggerSOS('critical', 'button', 28.5355, 77.2690);
-    navigate('/sos');
+    if (sosTimeout) clearTimeout(sosTimeout);
   };
 
   return (
-    <div className="app-shell">
-      <div className="dash-container">
-        {/* 100% Free Banner */}
-        <div className="bg-[#2ED573]/10 border border-[#2ED573]/30 p-2 text-center text-xs font-semibold text-[#2ED573] mb-4 rounded-lg">
-          100% Free Emergency & Family Healthcare — Powered by LifeLink Health Network
+    <div className="w-full flex justify-center pb-32">
+      <div className="flex flex-col gap-4 p-4 w-full max-w-[1400px] text-white">
+      
+        {/* 1. TOP HEADER */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+        <div className="flex items-center gap-3 self-start md:self-auto">
+          <div className="w-12 h-12 rounded-full bg-[#00C9A7] flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(0,201,167,0.4)]">
+            LG
+          </div>
+          <div>
+            <h2 className="font-bold text-lg leading-tight flex items-center gap-1">
+              Lavanya Gupta <BadgeCheck size={16} className="text-[#3D91FF]" />
+            </h2>
+            <p className="text-xs text-slate-400">LifeLink Member</p>
+          </div>
         </div>
+        
+        <div className="flex items-center gap-2">
+          <HeartPulse size={32} className="text-[#00C9A7]" />
+          <div>
+            <h1 className="text-2xl font-black tracking-tight leading-tight">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
+            <p className="text-[10px] text-slate-400 tracking-wider">Your Health. Our Priority.</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4 self-end md:self-auto">
+          <button 
+            className="relative text-slate-300 hover:text-white transition-colors p-2 bg-[#131F35] rounded-full border border-slate-800"
+            onClick={() => alert("You have 1 new system alert: Routine system maintenance scheduled for tonight.")}
+          >
+            <Bell size={20} />
+            <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#FF4757] rounded-full border-2 border-[#131F35]"></span>
+          </button>
+          <button 
+            className="text-slate-300 hover:text-white transition-colors p-2 bg-[#131F35] rounded-full border border-slate-800"
+            onClick={() => navigate('/community')}
+          >
+            <MessageCircle size={20} />
+          </button>
+          <button 
+            className="text-slate-300 hover:text-white transition-colors p-2 bg-[#131F35] rounded-full border border-slate-800"
+            onClick={() => navigate('/settings')}
+          >
+            <Settings size={20} />
+          </button>
+        </div>
+      </div>
 
-        {/* Primary Info Header */}
-        <div className="primary-info-card">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="avatar-initials" style={{ width: 48, height: 48, fontSize: '1.2rem' }}>
-                {user?.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </div>
-              <div>
-                <h3 className="font-display text-[1.125rem] font-bold text-white leading-tight">
-                  {user?.fullName} <span className="text-secondary text-sm font-normal">({age} yrs)</span>
-                </h3>
-                <p className="text-xs text-secondary flex items-center gap-1 mt-0.5">
-                  <Phone size={12} /> {user?.phone}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button 
-                className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors" 
-                onClick={handleVoice}
-                disabled={isProcessingIntent}
-              >
-                {isProcessingIntent ? (
-                  <Activity size={20} className="text-[#3D91FF] animate-pulse" />
-                ) : isListening ? (
-                  <Mic size={20} className="text-emerald-400 animate-pulse" />
-                ) : (
-                  <Mic size={20} />
-                )}
-              </button>
-              <button 
-                className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors" 
-                onClick={() => navigate('/settings')}
-              >
-                <Settings size={20} />
-              </button>
-              <button 
-                className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-red-400 hover:bg-slate-700 transition-colors" 
-                onClick={() => navigate('/logout')}
-              >
-                <LogOut size={20} />
-              </button>
-            </div>
+      {/* 2. AI ASSISTANT HERO CARD */}
+      <div className="bg-gradient-to-br from-[#0D152D] to-[#1B0F2A] border border-[#2D1B4E] rounded-[24px] p-4 relative overflow-hidden flex flex-col lg:flex-row items-center gap-4 shadow-xl">
+        {/* Background glow */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#8B5CF6]/10 rounded-full blur-[80px] pointer-events-none" />
+        
+        <div className="flex items-center gap-4 flex-1 relative z-10 w-full">
+          <div className="w-24 h-24 md:w-32 md:h-32 shrink-0">
+            <img 
+              src="/images/robot_assistant.jpg" 
+              className="w-full h-full object-cover mix-blend-screen rounded-full drop-shadow-[0_0_20px_rgba(61,145,255,0.2)]" 
+              alt="AI Assistant" 
+            />
           </div>
           
-          {primaryContact && (
-            <div className="emergency-contact-strip">
-              <div className="flex items-center gap-2 text-danger font-semibold text-xs uppercase tracking-wide">
-                <AlertTriangle size={14} />
-                <span>Primary Emergency Contact</span>
-              </div>
-              <div className="flex items-center justify-between mt-1.5 pl-[22px]">
-                <div>
-                  <p className="text-white font-medium text-sm">{primaryContact.name} ({primaryContact.relationship})</p>
-                  <p className="text-xs text-secondary">{primaryContact.phone}</p>
+          <div className="flex-1 flex flex-col justify-center">
+            <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, Lavanya! 👋</h2>
+            <p className="text-xs text-slate-300 mb-3">I'm your AI Health Assistant. How can I help you today?</p>
+            
+            <div className="relative w-full max-w-md">
+              <button 
+                onClick={handleVoice}
+                className={`absolute inset-y-0 left-0 pl-3 flex items-center ${isListening ? 'text-[#8B5CF6] animate-pulse' : 'text-slate-400 hover:text-white'} transition-colors`}
+              >
+                <Mic size={16} />
+              </button>
+              <input 
+                type="text"
+                value={aiQuery}
+                onChange={(e) => setAiQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAiSubmit(); }}
+                disabled={isAiLoading} 
+                className="w-full bg-[#131B31] border border-slate-700/50 rounded-full py-2 pl-9 pr-10 text-xs text-white focus:outline-none focus:border-[#8B5CF6] transition-colors shadow-inner disabled:opacity-50"
+                placeholder="Ask anything..."
+              />
+              <button 
+                onClick={handleAiSubmit}
+                disabled={isAiLoading || !aiQuery.trim()}
+                className="absolute inset-y-1 right-1 w-7 h-7 rounded-full bg-[#8B5CF6] flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-[#8B5CF6]/30 disabled:opacity-50 disabled:hover:scale-100">
+                {isAiLoading ? (
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Send size={12} className="text-white ml-0.5" />
+                )}
+              </button>
+            </div>
+            
+            {aiResponse && (
+              <div className="mt-3 w-full max-w-md bg-[#131B31] border border-[#8B5CF6]/30 rounded-xl p-3 relative animate-fade-in">
+                <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-slate-400 hover:text-white">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div className="flex gap-2 items-start">
+                  <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <HeartPulse size={12} className="text-[#8B5CF6]"/>
+                  </div>
+                  <p className="text-xs text-slate-200 leading-relaxed pr-4">{aiResponse}</p>
                 </div>
-                <button className="btn-call-contact">Call Now</button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {isOffline && (
-          <div className="offline-banner mx-[20px] mb-4 bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 flex flex-col gap-2">
-            <div className="flex items-start gap-3">
-              <WifiOff size={18} className="text-orange-500 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-orange-500 font-semibold text-sm">You are offline</p>
-                <p className="text-orange-500/80 text-xs mt-0.5 leading-tight">📱 SMS fallback active — Your SOS will be dispatched via encrypted SMS.</p>
-              </div>
-            </div>
-            <button 
-              className="mt-1 flex items-center justify-between bg-orange-500/20 text-orange-500 px-3 py-2 rounded text-xs font-semibold"
-              onClick={() => navigate('/offline-guide')}
-            >
-              📖 View Offline First Aid Guide <ChevronRight size={14} />
-            </button>
-          </div>
-        )}
-
-        {/* Data Currency Banner */}
-        <div className="mx-[20px] mb-4">
-          {auditStatus === 'fresh' && (
-            <div className="bg-[rgba(46,213,115,0.1)] border border-[rgba(46,213,115,0.3)] rounded-lg p-2.5 flex items-center justify-between" onClick={() => navigate('/audit')}>
-              <div className="flex items-center gap-2 text-[#2ED573]">
-                <ShieldCheck size={16} />
-                <span className="text-xs font-semibold">Verified Fresh</span>
-              </div>
-              <span className="text-[10px] text-secondary">Updated {auditDaysSince} days ago</span>
-            </div>
-          )}
-          {auditStatus === 'aging' && (
-            <div className="bg-[rgba(255,165,2,0.1)] border border-[rgba(255,165,2,0.3)] rounded-lg p-2.5 flex items-center justify-between cursor-pointer" onClick={() => navigate('/audit')}>
-              <div className="flex items-center gap-2 text-[#FFA502]">
-                <AlertTriangle size={16} />
-                <span className="text-xs font-semibold">Profile aging — Review recommended</span>
-              </div>
-              <span className="text-[10px] text-secondary">{auditDaysSince} days old <ChevronRight size={12} className="inline" /></span>
-            </div>
-          )}
-          {auditStatus === 'overdue' && (
-            <div className="bg-[rgba(255,71,87,0.1)] border border-[#FF4757] rounded-lg p-2.5 flex items-center justify-between cursor-pointer animate-pulse" onClick={() => navigate('/audit')}>
-              <div className="flex items-center gap-2 text-[#FF4757]">
-                <AlertTriangle size={16} />
-                <span className="text-xs font-bold">⚠️ 90-Day Audit Overdue</span>
-              </div>
-              <span className="text-[10px] text-white bg-[#FF4757] px-2 py-0.5 rounded">Update Now</span>
-            </div>
-          )}
-        </div>
-
-        {/* Health badge strip */}
-        <div className="vitals-strip">
-          {vitals.map((v, i) => (
-            <div key={i} className="vital-chip" style={{ transition: 'all 0.5s ease' }}>
-              <span style={{ color: v.color }}>{v.icon}</span>
-              <div>
-                <span className="vital-value">{v.value}</span>
-                <span className="vital-unit">{v.unit}</span>
-              </div>
-              <span className="vital-trend" style={{ color: v.trend.startsWith('+') ? '#2ED573' : v.trend === 'stable' ? '#8B9CC5' : '#FF4757' }}>
-                {v.trend}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* SOS Button */}
-        <div className="sos-section">
-          <div className="sos-bg-glow" />
-          <div className={`sos-ring-wrap ${isHolding ? 'counting' : ''}`}>
-            <div className="sos-ripple r1" />
-            <div className="sos-ripple r2" />
-            <div className="sos-ripple r3" />
-            <button
-              className={`sos-btn ${isHolding ? 'counting active:scale-95' : ''} ${isSOSActive ? 'active' : ''}`}
-              onMouseDown={handleSOSDown}
-              onMouseUp={handleSOSUp}
-              onMouseLeave={handleSOSUp}
-              onTouchStart={handleSOSDown}
-              onTouchEnd={handleSOSUp}
-              id="sos-main-btn"
-            >
-              <AlertTriangle size={32} fill="white" />
-              <span className="sos-label">SOS</span>
-            </button>
-            {strikeCount > 0 && (
-              <div className="absolute -top-1 -right-1 bg-black border border-[#FF4757] text-[#FF4757] text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full z-10 shadow-[0_0_10px_rgba(255,71,87,0.5)]">
-                {strikeCount}
               </div>
             )}
           </div>
-          {isHolding ? (
-            <div className="sos-status-text">
-              <p className="text-danger font-semibold text-lg animate-pulse">Keep holding to send SOS...</p>
-            </div>
-          ) : (
-            <p className="sos-hint">Hold for 3 seconds or press 3× power button</p>
-          )}
         </div>
-
-        {/* Medical Records Access */}
-        <div className="medical-records-section">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="font-display font-semibold text-white flex items-center gap-2">
-              <span className="bg-[#3D91FF20] text-[#3D91FF] p-1.5 rounded-lg"><FlaskConical size={16} /></span>
-              Medical Records
-            </h4>
-            <button className="text-xs text-[var(--primary)] font-semibold" onClick={() => navigate('/vault')}>View Vault</button>
-          </div>
-          <div className="flex gap-3">
-            <button className="mr-btn mr-view" onClick={() => navigate('/vault')}>
-              View Existing
+        
+        <div className="flex items-center gap-4 relative z-10 w-full lg:w-auto">
+          <div className="flex flex-col gap-2 min-w-[180px]">
+            <button onClick={() => navigate('/hospitals')} className="bg-[#131B31]/80 border border-slate-700/50 rounded-full py-2 px-3 text-[10px] font-medium text-slate-300 hover:text-white hover:bg-[#1A2542] transition-colors flex items-center gap-2">
+              <MapPin size={12} className="text-slate-400" /> Find nearest hospital
             </button>
-            <button className="mr-btn mr-upload" onClick={() => navigate('/vault')}>
-              + Upload New
+            <button onClick={() => navigate('/doctor')} className="bg-[#131B31]/80 border border-slate-700/50 rounded-full py-2 px-3 text-[10px] font-medium text-slate-300 hover:text-white hover:bg-[#1A2542] transition-colors flex items-center gap-2">
+              <Calendar size={12} className="text-slate-400" /> Book a doctor
+            </button>
+            <button onClick={() => navigate('/symptoms')} className="bg-[#131B31]/80 border border-slate-700/50 rounded-full py-2 px-3 text-[10px] font-medium text-slate-300 hover:text-white hover:bg-[#1A2542] transition-colors flex items-center gap-2">
+              <Activity size={12} className="text-slate-400" /> Check my symptoms
             </button>
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="section-header pt-[env(safe-area-inset-top)]">
-          <span className="section-title">Quick Actions</span>
-          <button className="see-all-btn">See all</button>
-        </div>
-        <div className="quick-actions-grid">
-          {quickActions.map((action, i) => (
-            <button
-              key={i}
-              className="quick-action-btn animate-fade-in"
-              style={{ animationDelay: `${i * 60}ms` }}
-              onClick={() => navigate(action.route)}
-              id={`quick-action-${action.label.toLowerCase().replace(/\s+/g, '-')}`}
-            >
-              <div className="qa-icon" style={{ background: action.bg, color: action.color }}>
-                {action.icon}
-              </div>
-              <span className="qa-label">{action.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Health card */}
-        <div className="section-header pt-[env(safe-area-inset-top)]">
-          <span className="section-title">Health Profile</span>
-        </div>
-        <div className="card card-primary health-card" onClick={() => navigate('/passport')}>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="badge badge-primary">
-                  <span>🩸</span> {healthProfile?.bloodGroup}
-                </div>
-                <div className="badge badge-success">Verified</div>
-              </div>
-              <h4 className="font-display mb-1" style={{ fontSize: '0.9375rem' }}>Health Passport</h4>
-              <p className="text-xs text-secondary">
-                {healthProfile?.allergies.length} allergies · {healthProfile?.currentMedications.length} medications
-              </p>
+          
+          <div className="bg-[#190F24]/50 border border-[#FF4757]/20 rounded-[20px] p-3 flex flex-col items-center justify-center h-[120px] w-[140px] backdrop-blur-sm relative overflow-hidden">
+            <div className="text-center mb-2 relative z-10">
+              <p className="text-[#FF4757] text-[10px] font-bold">Emergency?</p>
             </div>
-            <div className="flex items-center gap-2">
-              <QrCode size={36} color="#00C9A7" />
-              <ChevronRight size={18} color="var(--text-tertiary)" />
+            
+            <div className="relative w-16 h-16 flex items-center justify-center">
+              {/* Ripple Rings */}
+              {!isSOSActive && (
+                <>
+                  <div className={`absolute inset-0 rounded-full border-2 ${isCounting ? 'border-[#FF4757]' : 'border-[#FF4757]/40'} animate-[ping_2s_ease-out_infinite]`} style={{ animationDelay: '0s' }} />
+                  <div className={`absolute -inset-2 rounded-full border-2 ${isCounting ? 'border-[#FF4757]' : 'border-[#FF4757]/20'} animate-[ping_2s_ease-out_infinite]`} style={{ animationDelay: '0.6s' }} />
+                  <div className={`absolute -inset-4 rounded-full border-2 ${isCounting ? 'border-[#FF4757]' : 'border-[#FF4757]/10'} animate-[ping_2s_ease-out_infinite]`} style={{ animationDelay: '1.2s' }} />
+                </>
+              )}
+
+              <button 
+                onMouseDown={handleSOSDown}
+                onMouseUp={handleSOSUp}
+                onMouseLeave={handleSOSUp}
+                onTouchStart={handleSOSDown}
+                onTouchEnd={handleSOSUp}
+                className={`w-14 h-14 rounded-full bg-gradient-to-br from-[#FF4757] to-[#D63031] shadow-lg border-2 border-[#FF4757]/30 flex flex-col items-center justify-center relative z-10 transition-all duration-300 ${isCounting ? 'scale-90 animate-pulse' : 'hover:scale-105'} active:scale-95`}
+              >
+                {isSOSActive ? (
+                  <div className="flex flex-col items-center animate-fade-in">
+                    <span className="text-xs font-black text-white">SOS</span>
+                  </div>
+                ) : isCounting ? (
+                  <span className="text-xl font-black text-white leading-none">{countdown}</span>
+                ) : (
+                  <>
+                    <AlertTriangle size={16} className="text-white mb-0.5" />
+                    <span className="text-white font-black text-[9px] tracking-widest leading-none">SOS</span>
+                  </>
+                )}
+              </button>
+            </div>
+            
+            <div className="text-center mt-2 h-3 relative z-10">
+              {isSOSActive ? (
+                <span className="text-[#FF4757] font-bold text-[8px] animate-pulse">ACTIVATED</span>
+              ) : isCounting ? (
+                <span className="text-white font-bold text-[8px]">Release to cancel...</span>
+              ) : (
+                <span className="text-slate-400 text-[8px]">Hold <strong className="text-white">3s</strong></span>
+              )}
             </div>
           </div>
         </div>
-
-        {/* Family quick-peek */}
-        <div className="section-header pt-[env(safe-area-inset-top)]">
-          <span className="section-title">Family Status</span>
-          <button className="see-all-btn" onClick={() => navigate('/family')}>View all</button>
-        </div>
-        <div className="family-strip">
-          {['Rahul', 'Aarav', 'Mom'].map((name, i) => (
-            <div key={i} className="family-chip" onClick={() => navigate('/family')}>
-              <div className="avatar-initials" style={{ width: 36, height: 36, fontSize: '0.75rem' }}>
-                {name[0]}
-              </div>
-              <div className="status-dot online" style={{ position: 'absolute', bottom: 0, right: 0, border: '2px solid var(--bg-base)' }} />
-              <span className="family-name">{name}</span>
-            </div>
-          ))}
-          <div className="family-chip" onClick={() => navigate('/family')}>
-            <div className="family-add-btn">
-              <span>+</span>
-            </div>
-            <span className="family-name">Add</span>
-          </div>
-        </div>
-
-        <div style={{ height: 100 }} />
       </div>
 
-      <style>{`
-        .dash-container {
-          min-height: 100dvh;
-          padding-bottom: 90px;
-          background: var(--bg-base);
-        }
-        .primary-info-card {
-          padding: 40px 20px 20px;
-          background: linear-gradient(180deg, rgba(0,201,167,0.05) 0%, transparent 100%);
-          border-bottom: 1px solid var(--border-light);
-          margin-bottom: 20px;
-        }
-        .emergency-contact-strip {
-          background: rgba(255,71,87,0.08);
-          border: 1px solid rgba(255,71,87,0.2);
-          border-radius: var(--radius-md);
-          padding: 12px;
-          margin-top: 16px;
-        }
-        .btn-call-contact {
-          background: rgba(255,71,87,0.15);
-          color: var(--danger);
-          border: none;
-          padding: 6px 12px;
-          border-radius: var(--radius-sm);
-          font-size: 0.75rem;
-          font-weight: 700;
-          cursor: pointer;
-        }
-        .icon-btn {
-          width: 38px;
-          height: 38px;
-          border-radius: var(--radius-md);
-          background: var(--bg-elevated);
-          border: 1px solid var(--border);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: var(--text-secondary);
-          position: relative;
-          transition: all var(--duration-fast);
-        }
-        .icon-btn:hover { background: var(--bg-card); color: var(--text-primary); }
-        .notif-badge {
-          position: absolute;
-          top: 7px;
-          right: 7px;
-          width: 8px;
-          height: 8px;
-          background: var(--danger);
-          border-radius: 50%;
-          border: 2px solid var(--bg-elevated);
-        }
-        .vitals-strip {
-          display: flex;
-          gap: 10px;
-          padding: 0 20px 20px;
-          overflow-x: auto;
-          scrollbar-width: none;
-        }
-        .vitals-strip::-webkit-scrollbar { display: none; }
-        .vital-chip {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius-md);
-          padding: 10px 14px;
-          white-space: nowrap;
-          flex-shrink: 0;
-          cursor: default;
-        }
-        .vital-value {
-          font-size: 0.9375rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          font-family: var(--font-display);
-        }
-        .vital-unit {
-          font-size: 0.625rem;
-          color: var(--text-tertiary);
-          margin-left: 3px;
-        }
-        .vital-trend {
-          font-size: 0.625rem;
-          font-weight: 700;
-          margin-left: 4px;
-        }
+      {/* 3. QUICK ACTIONS */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-bold text-xs flex items-center gap-1.5 text-slate-200">
+            <span className="text-yellow-500">⚡</span> Quick Actions
+          </h2>
+          <button className="text-[10px] text-[#3D91FF] hover:underline">Edit</button>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar snap-x">
+          
+          <button onClick={() => navigate('/ambulance')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 relative hover:border-slate-600 transition-colors group">
+            <div className="absolute top-1 left-1 bg-[#FF4757] text-white text-[7px] font-bold px-1 py-0.5 rounded-full">24/7</div>
+            <div className="w-8 h-8 rounded-full bg-[#FF4757]/10 flex items-center justify-center text-[#FF4757] group-hover:scale-110 transition-transform">
+              <Ambulance size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Ambulance</span>
+          </button>
 
-        /* ===== SOS SECTION ===== */
-        .sos-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 16px;
-          padding: 8px 20px 28px;
-          position: relative;
-        }
-        .sos-bg-glow {
-          position: absolute;
-          width: 260px;
-          height: 260px;
-          border-radius: 50%;
-          background: radial-gradient(ellipse, rgba(255,71,87,0.08) 0%, transparent 70%);
-          pointer-events: none;
-        }
-        .sos-ring-wrap {
-          position: relative;
-          width: 160px;
-          height: 160px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .sos-ripple {
-          position: absolute;
-          border-radius: 50%;
-          border: 2px solid var(--danger);
-          opacity: 0;
-          animation: sos-ripple 2.5s ease-out infinite;
-        }
-        .sos-ring-wrap.counting .sos-ripple { border-color: var(--danger); }
-        .r1 { width: 100%; height: 100%; animation-delay: 0s; }
-        .r2 { width: 130%; height: 130%; top: -15%; left: -15%; animation-delay: 0.7s; }
-        .r3 { width: 160%; height: 160%; top: -30%; left: -30%; animation-delay: 1.4s; }
-        .sos-btn {
-          width: 128px;
-          height: 128px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #FF4757, #D63031);
-          border: 4px solid rgba(255,71,87,0.3);
-          color: white;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-          cursor: pointer;
-          font-family: var(--font-display);
-          box-shadow: 0 8px 40px rgba(255,71,87,0.45), 0 0 0 8px rgba(255,71,87,0.1);
-          transition: all 0.2s;
-          position: relative;
-          z-index: 1;
-        }
-        .sos-btn:hover { transform: scale(1.04); box-shadow: 0 12px 50px rgba(255,71,87,0.55), 0 0 0 12px rgba(255,71,87,0.12); }
-        .sos-btn:active { transform: scale(0.96); }
-        .sos-btn.counting {
-          animation: heartbeat 0.8s ease-in-out infinite;
-          box-shadow: 0 8px 40px rgba(255,71,87,0.6), 0 0 0 8px rgba(255,71,87,0.2);
-        }
-        .sos-label {
-          font-size: 1.375rem;
-          font-weight: 900;
-          letter-spacing: 0.1em;
-        }
-        .sos-countdown {
-          font-size: 2.5rem;
-          font-weight: 900;
-          line-height: 1;
-        }
-        .sos-hint {
-          font-size: 0.75rem;
-          color: var(--text-tertiary);
-          text-align: center;
-        }
-        .sos-status-text {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          animation: fade-in 0.3s ease;
-        }
+          <button onClick={() => navigate('/hospitals')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7] group-hover:scale-110 transition-transform">
+              <Building2 size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Hospitals</span>
+          </button>
 
-        /* ===== MEDICAL RECORDS ===== */
-        .medical-records-section {
-          margin: 0 20px 24px;
-          padding: 16px;
-          background: var(--bg-card);
-          border: 1px solid var(--border-light);
-          border-radius: var(--radius-lg);
-        }
-        .mr-btn {
-          flex: 1;
-          padding: 10px 0;
-          border-radius: var(--radius-sm);
-          font-size: 0.8125rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-          text-align: center;
-        }
-        .mr-view {
-          background: var(--bg-elevated);
-          border: 1px solid var(--border);
-          color: var(--text-primary);
-        }
-        .mr-view:hover { background: var(--bg-hover); }
-        .mr-upload {
-          background: var(--primary);
-          border: 1px solid var(--primary);
-          color: var(--bg-base);
-        }
-        .mr-upload:hover { opacity: 0.9; }
+          <button onClick={() => navigate('/doctor')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF] group-hover:scale-110 transition-transform">
+              <UserRound size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Doctors</span>
+          </button>
 
-        /* ===== QUICK ACTIONS ===== */
-        .section-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 20px 12px;
-        }
-        .see-all-btn {
-          background: none;
-          border: none;
-          color: var(--primary);
-          font-size: 0.8125rem;
-          font-weight: 600;
-          cursor: pointer;
-          font-family: var(--font-body);
-        }
-        .quick-actions-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-          padding: 0 20px 24px;
-        }
-        .quick-action-btn {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 4px 0;
-        }
-        .qa-icon {
-          width: 56px;
-          height: 56px;
-          border-radius: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid rgba(255,255,255,0.06);
-          transition: all var(--duration-normal) var(--ease-out);
-        }
-        .quick-action-btn:hover .qa-icon { transform: translateY(-3px); }
-        .quick-action-btn:active .qa-icon { transform: scale(0.94); }
-        .qa-label {
-          font-size: 0.6875rem;
-          font-weight: 600;
-          color: var(--text-secondary);
-          text-align: center;
-          line-height: 1.2;
-        }
+          <button onClick={() => navigate('/pharmacy')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573] group-hover:scale-110 transition-transform">
+              <Pill size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Pharmacy</span>
+          </button>
 
-        /* Health card */
-        .health-card { margin: 0 20px 24px; cursor: pointer; }
-        .health-card:hover { border-color: var(--primary); }
+          <button onClick={() => navigate('/lab')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
+              <FlaskConical size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Lab Tests</span>
+          </button>
 
-        /* Family strip */
-        .family-strip {
-          display: flex;
-          gap: 16px;
-          padding: 0 20px 24px;
-          overflow-x: auto;
-          scrollbar-width: none;
-        }
-        .family-strip::-webkit-scrollbar { display: none; }
-        .family-chip {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 6px;
-          cursor: pointer;
-          position: relative;
-        }
-        .family-name {
-          font-size: 0.6875rem;
-          font-weight: 600;
-          color: var(--text-secondary);
-        }
-        .family-add-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background: var(--bg-elevated);
-          border: 2px dashed var(--border-light);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.25rem;
-          color: var(--text-tertiary);
-        }
-      `}</style>
+          <button onClick={() => navigate('/blood')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-[#FF6B81]/10 flex items-center justify-center text-[#FF6B81] group-hover:scale-110 transition-transform">
+              <Droplets size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Blood Bank</span>
+          </button>
+
+          <button onClick={() => navigate('/symptoms')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-[#38ADA9]/10 flex items-center justify-center text-[#38ADA9] group-hover:scale-110 transition-transform">
+              <HeartPulse size={16} />
+            </div>
+            <span className="text-[10px] font-semibold text-slate-300">Symptoms</span>
+          </button>
+          
+        </div>
+      </div>
+
+      {/* 4. 3-COLUMN GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        {/* Appointments */}
+        <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-xs flex items-center gap-1.5"><Calendar size={14} className="text-[#3D91FF]"/> Appointments</h3>
+            <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/doctor')}>View all</button>
+          </div>
+          
+          <div className="flex flex-col gap-2 mb-3">
+            <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
+                <img src="https://i.pravatar.cc/150?u=dr_ananya" alt="Dr. Ananya" className="w-full h-full object-cover"/>
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[10px] font-bold text-slate-200">Dr. Ananya Sharma</h4>
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 18 May • 11:00 AM</p>
+                  <span className="text-[8px] font-bold bg-[#3D91FF]/10 text-[#3D91FF] px-1.5 py-0.5 rounded">Confirmed</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
+                <img src="https://i.pravatar.cc/150?u=dr_rahul" alt="Dr. Rahul" className="w-full h-full object-cover"/>
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[10px] font-bold text-slate-200">Dr. Rahul Verma</h4>
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 21 May • 04:30 PM</p>
+                  <span className="text-[8px] font-bold bg-[#8B5CF6]/10 text-[#8B5CF6] px-1.5 py-0.5 rounded">Scheduled</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5" onClick={() => navigate('/doctor')}>
+            <Calendar size={12} /> Book New <ChevronRight size={12}/>
+          </button>
+        </div>
+
+        {/* Health Overview */}
+        <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-xs flex items-center gap-1.5"><Heart size={14} className="text-[#FF4757]"/> Health Overview</h3>
+            <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/audit')}>View all</button>
+          </div>
+          
+          <div className="flex flex-col gap-4 flex-1 justify-center">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-6 h-6 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7]"><Activity size={10}/></div>
+                <div>
+                  <p className="text-[8px] text-slate-400">Steps</p>
+                  <p className="text-xs font-bold">7,245 <span className="text-[8px] font-normal text-slate-500">/10k</span></p>
+                </div>
+              </div>
+              <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                <div className="bg-[#00C9A7] h-full rounded-full" style={{ width: '72%' }}></div>
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Droplets size={10}/></div>
+                <div>
+                  <p className="text-[8px] text-slate-400">Water</p>
+                  <p className="text-xs font-bold">6 <span className="text-[8px] font-normal text-slate-500">/ 8</span></p>
+                </div>
+              </div>
+              <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                <div className="bg-[#3D91FF] h-full rounded-full" style={{ width: '75%' }}></div>
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]"><Moon size={10}/></div>
+                <div>
+                  <p className="text-[8px] text-slate-400">Sleep</p>
+                  <p className="text-xs font-bold">7h 15m</p>
+                </div>
+              </div>
+              <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] h-full rounded-full" style={{ width: '85%' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reminders */}
+        <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-xs flex items-center gap-1.5"><Bell size={14} className="text-[#A78BFA]"/> Reminders</h3>
+            <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/reminders')}>View all</button>
+          </div>
+          
+          <div className="flex flex-col gap-3 mb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2 items-start">
+                <div className="w-6 h-6 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573]"><Pill size={10}/></div>
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-200">Vitamin D3</h4>
+                  <p className="text-[8px] text-slate-400">1 Tab • Breakfast (08:00 AM)</p>
+                </div>
+              </div>
+              <div className="w-4 h-4 rounded-full bg-[#00C9A7] flex items-center justify-center shadow-[0_0_10px_rgba(0,201,167,0.3)]">
+                <Check size={8} className="text-white" />
+              </div>
+            </div>
+            
+            <div className="h-[1px] w-full bg-slate-800"></div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2 items-start">
+                <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Pill size={10}/></div>
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-200">Calcium</h4>
+                  <p className="text-[8px] text-slate-400">1 Tab • Dinner (08:00 PM)</p>
+                </div>
+              </div>
+              <div className="w-4 h-4 rounded-full border border-slate-500"></div>
+            </div>
+          </div>
+          
+          <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5">
+            <Bell size={12} /> All Reminders <ChevronRight size={12}/>
+          </button>
+        </div>
+
+      </div>
+
+      {/* 5. 2-COLUMN INSURANCE & VAULT */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        {/* Insurance Banner */}
+        <div className="bg-[#120F26] border border-[#312E81] rounded-2xl relative overflow-hidden shadow-md flex items-center min-h-[120px] group cursor-pointer" onClick={() => navigate('/insurance')}>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-50 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#120F26] via-[#120F26]/80 to-transparent" />
+          </div>
+          
+          <div className="relative z-10 p-5 w-full md:w-3/4 flex flex-col justify-center text-left">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+              <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Active Coverage</p>
+            </div>
+            <h3 className="text-base font-black text-white mb-1 leading-tight">Health Insurance</h3>
+            <p className="text-xs text-slate-300 mb-3 max-w-[200px] leading-snug">Protect your family with comprehensive health plans.</p>
+            <button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-all flex items-center gap-1.5 backdrop-blur-sm">
+              Explore Plans <ChevronRight size={12} />
+            </button>
+          </div>
+        </div>
+
+        {/* Health ID Locker */}
+        <div className="bg-[#0B141F] border border-[#162B3A] rounded-2xl p-4 shadow-md flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/passport')}>
+          <div className="w-16 h-16 shrink-0 bg-[#00C9A7]/10 rounded-xl border border-[#00C9A7]/30 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/20 transition-colors">
+            <QrCode size={32} className="text-[#00C9A7]" />
+            <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
+          </div>
+          
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-sm font-bold">Health Locker</h3>
+              <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">B+</span>
+            </div>
+            <p className="text-[10px] text-[#00C9A7] font-bold mb-1">ID Verified</p>
+            <p className="text-[9px] text-slate-400 mb-2">Keep your records safe.</p>
+            
+            <button className="bg-[#122A3B] hover:bg-[#1A3A52] border border-[#1E435E] text-[#3D91FF] text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-colors flex items-center gap-1.5">
+              View ID <ChevronRight size={12} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 6. HEALTHCARE SERVICES GRID */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-bold text-xs flex items-center gap-1.5 text-slate-200">
+            <Heart size={14} className="text-[#3D91FF]" /> Services
+          </h2>
+        </div>
+        
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/physiotherapy')}>
+            <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <UserRound size={14} className="text-indigo-400" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Physiotherapy</h4>
+            </div>
+          </div>
+          
+          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/homecare')}>
+            <div className="w-8 h-8 bg-amber-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <HeartPulse size={14} className="text-amber-400" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Home Care</h4>
+            </div>
+          </div>
+          
+          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/equipment')}>
+            <div className="w-8 h-8 bg-blue-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Stethoscope size={14} className="text-blue-400" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Equipment</h4>
+            </div>
+          </div>
+          
+          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/insurance')}>
+            <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <Shield size={14} className="text-indigo-400" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Insurance</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. COMMUNITY BANNER */}
+      <div className="bg-gradient-to-r from-[#21163A] to-[#120B20] border border-[#3D256B] rounded-xl p-3 flex flex-row items-center justify-between gap-2 cursor-pointer hover:border-[#4B2C8B] transition-colors" onClick={() => navigate('/community')}>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-[#8B5CF6]/20 rounded-lg flex items-center justify-center shrink-0">
+            <HeartPulse size={16} className="text-[#8B5CF6]" />
+          </div>
+          <div>
+            <h3 className="font-bold text-xs text-slate-200 mb-0.5">LifeLink Community</h3>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="flex -space-x-1.5 hidden sm:flex">
+            <img src="https://i.pravatar.cc/100?u=1" className="w-6 h-6 rounded-full border border-[#1B0F2A]" alt="User"/>
+            <img src="https://i.pravatar.cc/100?u=2" className="w-6 h-6 rounded-full border border-[#1B0F2A]" alt="User"/>
+            <div className="w-6 h-6 rounded-full border border-[#1B0F2A] bg-[#8B5CF6] text-white flex items-center justify-center text-[7px] font-bold z-10">
+              +1k
+            </div>
+          </div>
+          
+          <button className="bg-[#3D256B] hover:bg-[#4B2C8B] px-3 py-1.5 rounded-md text-[10px] font-bold transition-colors flex items-center gap-1">
+            Explore <ChevronRight size={12} />
+          </button>
+        </div>
+      </div>
+
+      </div>
+      <LifeLinkAIAssistant />
     </div>
   );
 };

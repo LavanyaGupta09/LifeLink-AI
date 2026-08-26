@@ -13,9 +13,9 @@ const PendingReviewPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#0F172A] flex flex-col items-center justify-center p-6 font-sans text-white">
+    <div className="bg-[#0F172A] flex flex-col items-center justify-center p-6 font-sans text-white w-full min-h-screen px-6 py-6 ">
       {/* Elevated Card Container */}
-      <div className="max-w-md w-full bg-slate-800 rounded-3xl shadow-2xl border border-slate-700/50 p-8 text-center relative overflow-hidden">
+      <div className="max-w-md md:max-w-2xl w-full bg-slate-800 rounded-3xl shadow-2xl border border-slate-700/50 p-8 text-center relative overflow-hidden">
         
         {/* Decorative Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-sky-500/10 blur-[60px] pointer-events-none" />

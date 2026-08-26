@@ -8,6 +8,7 @@ POST /api/auth/logout
 GET  /api/auth/me
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -49,20 +50,54 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
 @router.post("/verify-otp")
 async def verify_otp(data: OTPVerify, db: AsyncSession = Depends(get_db)):
     """Verify email OTP"""
-    # otp_service handles raising 429 exceptions for rate limits/lockouts and 400 for invalid
-    await otp_service.verify_otp(data.email, data.otp)
+    try:
+        await otp_service.verify_otp(db, data.email, data.otp)
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"success": False, "message": e.detail}
+        )
     
     user = await auth_service.get_user_by_email(db, data.email)
-    if user:
-        user.is_verified = True
-    return {"message": "Email verified successfully"}
+    if not user:
+        import uuid
+        # create the user implicitly
+        user_data = UserRegister(
+            full_name=data.email.split("@")[0],
+            email=data.email,
+            password=str(uuid.uuid4())
+        )
+        user = await auth_service.create_user(db, user_data)
+        
+    user.is_verified = True
+    await db.flush()
+    
+    token_resp = auth_service.build_token_response(user)
+    return {
+        "success": True, 
+        "message": "OTP verified successfully",
+        "token": token_resp.model_dump(),
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "full_name": user.full_name,
+            "role": user.role
+        }
+    }
 
 
 @router.post("/send-otp")
-async def send_otp(email: str = Query(...)):
+async def send_otp(email: str = Query(...), db: AsyncSession = Depends(get_db)):
     """Generate and send an OTP via Resend"""
-    otp = await otp_service.generate_otp(email)
-    return {"message": f"OTP sent to {email}", "otp": otp}
+    await otp_service.generate_otp(db, email)
+    return {"success": True, "message": "OTP sent successfully"}
+
+
+@router.post("/resend-otp")
+async def resend_otp(email: str = Query(...), db: AsyncSession = Depends(get_db)):
+    """Invalidate previous OTP and send a new one"""
+    await otp_service.generate_otp(db, email)
+    return {"success": True, "message": "New OTP sent successfully"}
 
 
 @router.post("/refresh-token", response_model=TokenResponse)

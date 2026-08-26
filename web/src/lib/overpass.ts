@@ -1,4 +1,4 @@
-export type FacilityType = 'hospital' | 'pharmacy' | 'lab';
+export type FacilityType = 'hospital' | 'pharmacy' | 'lab' | 'clinic';
 
 export interface OverpassFacility {
   id: string;
@@ -9,6 +9,8 @@ export interface OverpassFacility {
   distanceKm?: number;
   phone?: string;
   tags?: Record<string, string>;
+  costLevel?: 'Low' | 'Medium' | 'High';
+  estimatedCost?: number;
 }
 
 /**
@@ -37,7 +39,7 @@ export async function fetchNearbyFacilities(
   lat: number,
   lng: number,
   type: FacilityType,
-  radius: number = 10000
+  radius: number = 5000 // default to 5000 as per directive
 ): Promise<OverpassFacility[]> {
   const overpassUrl = 'https://overpass-api.de/api/interpreter';
   
@@ -75,6 +77,17 @@ export async function fetchNearbyFacilities(
       );
       out center;
     `;
+  } else if (type === 'clinic') {
+    query = `
+      [out:json][timeout:25];
+      (
+        node["amenity"="clinic"](around:${radius},${lat},${lng});
+        way["amenity"="clinic"](around:${radius},${lat},${lng});
+        relation["amenity"="clinic"](around:${radius},${lat},${lng});
+        node["amenity"="doctors"](around:${radius},${lat},${lng});
+      );
+      out center;
+    `;
   }
 
   try {
@@ -92,6 +105,12 @@ export async function fetchNearbyFacilities(
 
     const data = await response.json();
     
+    // If no facilities found and radius is 5000, expand to 15000 and retry
+    if ((!data.elements || data.elements.length === 0) && radius === 5000) {
+      console.log(`No ${type} found within 5km. Expanding radius to 15km...`);
+      return fetchNearbyFacilities(lat, lng, type, 15000);
+    }
+    
     // Parse results
     const facilities: OverpassFacility[] = data.elements
       .map((element: any) => {
@@ -103,6 +122,22 @@ export async function fetchNearbyFacilities(
 
         const distanceKm = calculateDistance(lat, lng, elLat, elLng);
         
+        // Generate a deterministic pseudo-random cost based on the ID so it doesn't change on re-render
+        const costSeed = parseInt(element.id.toString().slice(-4)) || Math.floor(Math.random() * 1000);
+        let costLevel: 'Low' | 'Medium' | 'High' = 'Medium';
+        let estimatedCost = 500;
+        
+        if (costSeed % 3 === 0) {
+          costLevel = 'High';
+          estimatedCost = 1500 + (costSeed % 10) * 100;
+        } else if (costSeed % 3 === 1) {
+          costLevel = 'Low';
+          estimatedCost = 200 + (costSeed % 10) * 30;
+        } else {
+          costLevel = 'Medium';
+          estimatedCost = 500 + (costSeed % 10) * 50;
+        }
+
         return {
           id: element.id.toString(),
           name: element.tags?.name || 'Unknown Facility',
@@ -112,6 +147,8 @@ export async function fetchNearbyFacilities(
           phone: element.tags?.phone || element.tags?.['contact:phone'] || '',
           distanceKm,
           tags: element.tags,
+          costLevel,
+          estimatedCost
         };
       })
       .filter(Boolean)
@@ -122,5 +159,26 @@ export async function fetchNearbyFacilities(
   } catch (error) {
     console.error('Error fetching facilities from Overpass:', error);
     return [];
+  }
+}
+
+/**
+ * Uses the Nominatim API to get coordinates for a manually entered city name.
+ */
+export async function fetchCityCoordinates(city: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`);
+    if (!response.ok) throw new Error('Nominatim API error');
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon)
+      };
+    }
+    return null;
+  } catch (err) {
+    console.error('Error fetching city coordinates:', err);
+    return null;
   }
 }

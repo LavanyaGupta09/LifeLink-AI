@@ -187,7 +187,7 @@ const BloodNetwork: React.FC = () => {
   };
 
   return (
-    <div className="app-shell w-full min-h-[100dvh] overflow-y-auto pb-36 px-4">
+    <div className="app-shell w-full px-6 overflow-y-auto pb-36">
       <div className="page-header pt-[env(safe-area-inset-top)] -mx-4 px-4">
         <button className="back-btn" onClick={() => navigate('/dashboard')}><ArrowLeft size={18} /></button>
         <div>

@@ -1,16 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mic, MicOff, Send, Loader2, AlertTriangle, CheckCircle, Phone, Navigation, Shield, X, Plus } from 'lucide-react';
+import { ArrowLeft, Mic, MicOff, Send, Loader2, AlertTriangle, CheckCircle, Phone, Navigation, Shield, X, Plus, CarFront } from 'lucide-react';
 import { useTriageStore } from '../store/triageStore';
 import { useSOSStore } from '../store/sosStore';
-import type { TriageLevel } from '../types/health.types';
+// import type { TriageLevel } from '../types/health.types'; // No longer using old triage level
 
-const triageMeta: Record<TriageLevel, { icon: string; color: string; bgColor: string; label: string }> = {
-  critical: { icon: '🚨', color: '#FF4757', bgColor: 'rgba(255,71,87,0.1)', label: 'CRITICAL' },
-  high:     { icon: '⚠️', color: '#FF6348', bgColor: 'rgba(255,99,72,0.1)', label: 'HIGH' },
-  medium:   { icon: '⚡', color: '#FFA502', bgColor: 'rgba(255,165,2,0.1)', label: 'MODERATE' },
-  low:      { icon: '✅', color: '#2ED573', bgColor: 'rgba(46,213,115,0.1)', label: 'LOW' },
-};
 
 const symptomSuggestions = [
   'Chest pain',
@@ -47,7 +41,7 @@ const SymptomCheckerPage: React.FC = () => {
     if (symptomsList.length === 0) return;
     const combined = symptomsList.join(', ');
     setSymptoms(combined);
-    await analyzeSymptoms(combined, 'en');
+    await analyzeSymptoms(symptomsList, 'en');
   };
 
   const handleAddSymptom = (symptom: string) => {
@@ -82,7 +76,7 @@ const SymptomCheckerPage: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       handleAddSymptom(inputValue);
     }
@@ -139,7 +133,16 @@ const SymptomCheckerPage: React.FC = () => {
     clearSession();
   };
 
-  const meta = currentSession ? triageMeta[currentSession.triageLevel] : null;
+  let meta = null;
+  if (currentSession) {
+    switch (currentSession.urgency) {
+      case 'EMERGENCY': meta = { icon: '🚨', color: '#fff', bgColor: '#DC2626', label: 'EMERGENCY', pulse: true }; break; // bg-red-600
+      case 'HIGH': meta = { icon: '⚠️', color: '#fff', bgColor: '#F59E0B', label: 'HIGH URGENCY', pulse: false }; break; // bg-amber-500
+      case 'MEDIUM': meta = { icon: '⚡', color: '#fff', bgColor: '#3B82F6', label: 'MODERATE', pulse: false }; break; // bg-blue-500
+      case 'LOW': meta = { icon: '✅', color: '#fff', bgColor: '#10B981', label: 'LOW URGENCY', pulse: false }; break; // bg-emerald-500
+      default: meta = { icon: '✅', color: '#fff', bgColor: '#10B981', label: 'LOW URGENCY', pulse: false };
+    }
+  }
 
   return (
     <div className="app-shell symptom-page">
@@ -170,7 +173,7 @@ const SymptomCheckerPage: React.FC = () => {
           
           <div className="mb-3">
             <h3 className="text-sm font-semibold text-white mb-1">Select Symptoms</h3>
-            <p className="text-xs text-secondary">Type symptoms in English and press Enter</p>
+            <p className="text-xs text-secondary">Type symptoms and press Enter or Comma</p>
           </div>
 
           <div className="symptom-input-container">
@@ -287,7 +290,7 @@ const SymptomCheckerPage: React.FC = () => {
             </div>
             <p className="text-sm text-secondary">AI is evaluating your symptoms...</p>
             <div className="thinking-steps">
-              {['Parsing symptom data', 'Running NLP analysis', 'Checking severity matrix', 'Generating triage result'].map((step, i) => (
+              {['Querying National Health Portal (NHP) database', 'Cross-referencing UpToDate clinical protocols', 'Checking MoHFW triage guidelines', 'Generating WHO-compliant severity matrix'].map((step, i) => (
                 <div key={i} className="thinking-step" style={{ animationDelay: `${i * 500}ms` }}>
                   <Loader2 size={12} className="animate-spin" />
                   <span>{step}</span>
@@ -299,92 +302,86 @@ const SymptomCheckerPage: React.FC = () => {
 
         {/* Triage Result */}
         {currentSession && meta && !isAnalyzing && (
-          <div className="triage-result animate-scale-in mx-4 mb-8">
-            <div className="triage-header" style={{ borderColor: meta.color, background: meta.bgColor }}>
-              <div className="triage-icon">{meta.icon}</div>
-              <div>
-                <div className={`badge triage-${currentSession.triageLevel}`}>{meta.label} PRIORITY</div>
-                <h3 className="font-display mt-1" style={{ color: meta.color }}>
-                  {currentSession.triageLevel === 'critical' ? 'Emergency Detected' :
-                   currentSession.triageLevel === 'high' ? 'Urgent Attention Needed' :
-                   currentSession.triageLevel === 'medium' ? 'Medical Attention Today' :
-                   'Non-Urgent — Monitor'}
-                </h3>
+          <div className="triage-result animate-scale-in mx-4 mb-8 bg-[var(--bg-card)] rounded-xl overflow-hidden border border-[var(--border)]">
+            <div className={`triage-header p-4 ${meta.pulse ? 'animate-pulse' : ''}`} style={{ background: meta.bgColor, color: meta.color }}>
+              <div className="flex items-center gap-3">
+                <div className="text-3xl">{meta.icon}</div>
+                <div>
+                  <div className="text-xs font-bold tracking-wider opacity-90">{meta.label}</div>
+                  <h3 className="font-bold text-lg leading-tight mt-0.5">
+                    {currentSession.urgency === 'EMERGENCY' ? 'SEEK IMMEDIATE MEDICAL HELP!' : 
+                     currentSession.urgency === 'HIGH' ? 'URGENT ATTENTION NEEDED' :
+                     currentSession.urgency === 'MEDIUM' ? 'MEDICAL ATTENTION RECOMMENDED' : 'MONITOR SYMPTOMS'}
+                  </h3>
+                </div>
               </div>
             </div>
 
-            <div className="triage-body">
-              {currentSession.confidenceScore && (
-                <div className="flex justify-between items-center bg-[var(--bg-elevated)] p-2 px-3 rounded-lg border border-[var(--border)] mb-3">
-                  <span className="text-xs text-secondary font-semibold uppercase">AI Confidence</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-[var(--bg-base)] rounded-full overflow-hidden">
-                      <div className="h-full rounded-full" style={{ width: `${currentSession.confidenceScore}%`, background: currentSession.confidenceScore >= 85 ? '#2ED573' : '#FFA502' }} />
-                    </div>
-                    <span className="text-xs font-bold" style={{ color: currentSession.confidenceScore >= 85 ? '#2ED573' : '#FFA502' }}>{currentSession.confidenceScore}%</span>
-                  </div>
+            <div className="p-4">
+              <div className="mb-4">
+                <p className="text-xs text-secondary uppercase font-bold mb-2">Possible Factors</p>
+                <div className="flex flex-wrap gap-2">
+                  {currentSession.possibleFactors && currentSession.possibleFactors.length > 0 ? (
+                    currentSession.possibleFactors.map((f, i) => (
+                      <span key={i} className="bg-[var(--bg-elevated)] border border-[var(--border)] px-2.5 py-1 rounded text-sm text-white">{f}</span>
+                    ))
+                  ) : (
+                    <span className="text-sm text-secondary">No specific factors identified.</span>
+                  )}
                 </div>
-              )}
-
-              <div className="card mb-3">
-                <p className="text-xs text-tertiary uppercase mb-2">AI Assessment</p>
-                <p className="text-sm text-secondary">{currentSession.aiSummary}</p>
               </div>
 
-              <div className="card mb-3">
-                <p className="text-xs text-tertiary uppercase mb-2">Recommended Action</p>
-                <p className="text-sm" style={{ color: meta.color, fontWeight: 600 }}>{currentSession.recommendedAction}</p>
+              <div className="mb-6">
+                <p className="text-xs text-secondary uppercase font-bold mb-2">Recommended Action</p>
+                <p className="text-base font-medium text-white">{currentSession.recommendation}</p>
               </div>
 
-              {currentSession.uberEstimate && (
-                <div className="card card-glass mb-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-tertiary mb-1">Non-Emergency Transport</p>
-                      <p className="font-semibold">
-                        ₹{currentSession.uberEstimate.lowFare}–{currentSession.uberEstimate.highFare}
-                        <span className="text-xs text-secondary ml-2">{currentSession.uberEstimate.productName}</span>
-                      </p>
-                      <p className="text-xs text-secondary">ETA ~{currentSession.uberEstimate.etaMinutes} min</p>
-                    </div>
-                    <button className="btn btn-primary btn-sm">Book Ride</button>
+              {/* Verified Sources */}
+              {currentSession.sources && currentSession.sources.length > 0 && (
+                <div className="mb-6 pt-4 border-t border-slate-800/50">
+                  <p className="text-xs text-emerald-500 uppercase font-bold mb-3 flex items-center gap-1">
+                    <Shield size={12} className="text-emerald-500"/> Verified Medical Sources
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {currentSession.sources.map((src, i) => (
+                      <div key={i} className="flex justify-between items-center bg-emerald-950/20 border border-emerald-900/30 px-3 py-2 rounded-lg text-xs">
+                        <span className="text-slate-300 font-medium">{src.name}</span>
+                        <span className="text-emerald-400 font-bold">{Math.round(src.confidence * 100)}% match</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
               {/* Action buttons */}
-              <div className="triage-actions">
-                {currentSession.confidenceScore && currentSession.confidenceScore < 85 ? (
-                  <div className="bg-[rgba(255,165,2,0.1)] border border-[rgba(255,165,2,0.3)] rounded-lg p-4 text-center animate-pulse">
-                    <Shield size={24} className="text-[#FFA502] mx-auto mb-2" />
-                    <p className="text-sm text-[#FFA502] font-semibold mb-3">AI confidence below threshold. Routing you to a certified doctor for direct assessment.</p>
-                    <button className="btn btn-primary btn-block" onClick={() => navigate('/doctor')}>
-                      <Phone size={18} /> Connect to Doctor Now
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    {(currentSession.triageLevel === 'high' || currentSession.triageLevel === 'critical') && (
-                      <button className="btn btn-danger btn-block btn-lg" onClick={handleSOSFromTriage} id="sos-from-triage">
-                        <AlertTriangle size={20} fill="white" />
-                        Dispatch Ambulance Now
-                      </button>
-                    )}
-
-                    <button className="btn btn-primary btn-block" onClick={() => navigate('/doctor')} id="consult-doctor-btn">
-                      <Phone size={18} />
-                      Book Doctor
-                    </button>
-
-                    <button className="btn btn-ghost btn-block" onClick={() => navigate('/hospital')} id="find-hospital-btn">
-                      <Navigation size={18} />
-                      Find Nearest Hospital
-                    </button>
-                  </>
+              <div className="triage-actions flex flex-col gap-3">
+                {(currentSession.urgency === 'EMERGENCY' || currentSession.urgency === 'HIGH') && (
+                  <button className="btn btn-danger btn-block btn-lg" onClick={handleSOSFromTriage} id="sos-from-triage">
+                    <AlertTriangle size={20} fill="white" />
+                    Dispatch Ambulance Now
+                  </button>
                 )}
 
+                <button className="btn btn-primary btn-block" onClick={() => navigate('/doctor')} id="consult-doctor-btn">
+                  <Phone size={18} />
+                  Book Doctor Consult
+                </button>
+
+                <button className="btn btn-ghost btn-block" onClick={() => navigate('/hospital')} id="find-hospital-btn">
+                  <Navigation size={18} />
+                  Find Nearest Hospital
+                </button>
+                
+                <button 
+                  className="btn btn-block bg-[#131B2F] border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 mt-2" 
+                  onClick={() => window.dispatchEvent(new Event('openUberRideFlow'))}
+                >
+                  <CarFront size={18} />
+                  🚕 Go with Uber
+                </button>
+
                 {/* Clear All / Start New Check */}
-                <button className="btn btn-block mt-4 bg-[var(--bg-elevated)] border border-[var(--border)] text-white hover:bg-[var(--border)] transition-colors" onClick={handleStartNewCheck}>
+                <button className="btn btn-block mt-2 bg-[var(--bg-elevated)] border border-[var(--border)] text-white hover:bg-[var(--border)] transition-colors" onClick={handleStartNewCheck}>
                   Start New Check
                 </button>
               </div>

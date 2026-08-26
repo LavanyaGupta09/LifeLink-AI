@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class UserRegister(BaseModel):
-    full_name: str = Field(..., min_length=2, max_length=50, pattern=r"^[A-Za-z\s\-]+$")
+    full_name: str = Field(..., min_length=2, max_length=50)
     phone: Optional[str] = Field(None, pattern=r"^[6-9]\d{9}$")
     email: Optional[EmailStr] = None
     password: str = Field(..., min_length=8)

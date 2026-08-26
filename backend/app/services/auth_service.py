@@ -7,8 +7,8 @@ import httpx
 from datetime import datetime, timedelta
 from typing import Optional
 
+import bcrypt
 from jose import jwt, JWTError
-from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -16,18 +16,22 @@ from app.config import settings
 from app.models.user import User
 from app.schemas.auth import UserRegister, TokenResponse
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
 # ─────────────────────────────────────────────
 # Password utils
 # ─────────────────────────────────────────────
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    password_bytes = password.encode('utf-8')[:72]
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    try:
+        plain_bytes = plain.encode('utf-8')[:72]
+        return bcrypt.checkpw(plain_bytes, hashed.encode('utf-8'))
+    except Exception:
+        return False
 
 
 # ─────────────────────────────────────────────

@@ -58,7 +58,19 @@ export const MOCK_FAMILY_MEMBERS: FamilyMember[] = [
 
 export const MOCK_MEDICAL_RECORDS: MedicalRecord[] = [];
 
-export const MOCK_AMBULANCES: Ambulance[] = [];
+export const MOCK_AMBULANCES: Ambulance[] = [
+  {
+    id: 'amb_1',
+    vehicleNumber: 'DL 1A 1234',
+    driverName: 'Ravi Kumar',
+    hospitalName: 'Max Super Speciality',
+    status: 'available',
+    lat: 28.5520,
+    lng: 77.2510,
+    etaMinutes: 8,
+    equipment: ['Oxygen', 'Defibrillator', 'Ventilator']
+  }
+];
 
 export const MOCK_BLOOD_DONORS: BloodDonor[] = [];
 
@@ -70,7 +82,22 @@ export const GENERIC_MAP: Record<string, string> = {
   'pan40': 'Pantoprazole 40mg',
 };
 
-export const MOCK_PHARMACIES: Pharmacy[] = [];
+export const MOCK_PHARMACIES: Pharmacy[] = [
+  {
+    id: 'pharm_001',
+    name: 'Apollo Pharmacy',
+    address: 'Connaught Place, New Delhi',
+    phone: '+91 11 2345 6789',
+    isOpen: true,
+    distanceKm: 1.2,
+    rating: 4.8,
+    medicines: [
+      { name: 'Paracetamol 500mg', available: true, quantity: 150 },
+      { name: 'Amoxicillin 500mg', available: true, quantity: 45 },
+      { name: 'Salbutamol Inhaler', available: false, quantity: 0 },
+    ]
+  }
+];
 
 export const MOCK_LABS: Lab[] = [];
 

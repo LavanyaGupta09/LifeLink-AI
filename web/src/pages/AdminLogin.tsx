@@ -73,7 +73,7 @@ const AdminLogin: React.FC = () => {
     e.preventDefault();
     if (email && password && pin.length === 6) {
       superAdminLogin();
-      navigate('/admin/compliance');
+      navigate('/admin/dashboard');
     } else {
       setError('Invalid credentials or PIN format');
     }

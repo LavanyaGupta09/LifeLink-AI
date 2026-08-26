@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Optional
 
 from app.config import settings
+from app.services.search_service import fetch_healthline_context
 
 
 # ─────────────────────────────────────────────
@@ -76,37 +77,29 @@ def keyword_triage(symptoms: str) -> str:
 # Gemini API triage (when key is configured)
 # ─────────────────────────────────────────────
 GEMINI_PROMPT_TEMPLATE = """
-You are a medical triage AI assistant for LifeLink AI emergency platform.
-Analyze the following patient symptoms and provide a structured triage assessment.
+SYSTEM: You are a clinical triage AI. You have been provided with live search results directly from Healthline.com regarding the following symptoms.
 
-SYSTEM DIRECTIVE: You MUST evaluate symptoms and output all clinical summaries, risk assessments, and recommendations STRICTLY in English. Reject non-English inputs and respond in clear, accessible English.
+HEALTHLINE CONTEXT: {healthlineContext}
+USER SYMPTOMS: {symptoms}
 
-Patient Symptoms: {symptoms}
-
-Respond ONLY with a JSON object in this exact format:
+RULE 1: You MUST base your urgency level and recommendation STRICTLY on the provided Healthline Context. Do not invent information.
+RULE 2: If the Healthline context suggests seeking immediate emergency care, set urgency to "EMERGENCY".
+RULE 3: Return your response strictly as JSON:
 {{
-  "triage_level": "low|medium|high|critical",
-  "title": "short title",
-  "summary": "1-2 sentence clinical assessment",
-  "recommended_action": "specific action to take",
-  "recommended_specialist": "medical specialty",
-  "confidence": 0.0-1.0
+  "urgency": "EMERGENCY", "HIGH", "MEDIUM", "LOW",
+  "possible_factors": ["string"],
+  "healthline_recommendation": "Clear next steps derived directly from the provided context.",
+  "disclaimer": "Information retrieved from Healthline.com. This is for informational purposes only and is not a substitute for professional medical advice."
 }}
-
-Rules:
-- critical: life-threatening, immediate emergency (chest pain, stroke, cardiac arrest)
-- high: urgent, needs care within 2 hours (severe pain, difficulty breathing)
-- medium: needs care today (fever, vomiting, moderate pain)
-- low: mild symptoms, can be managed with teleconsult
 """
 
-async def ai_triage(symptoms: str) -> Optional[dict]:
+async def ai_triage(symptoms: list[str], healthline_context: str) -> Optional[dict]:
     """Call Groq API for AI triage — falls back to Gemini on error"""
     if settings.USE_MOCK_APIS:
         return None
         
     if settings.GROQ_API_KEY:
-        groq_result = await _groq_triage(symptoms)
+        groq_result = await _groq_triage(symptoms, healthline_context)
         if groq_result:
             return groq_result
 
@@ -115,7 +108,7 @@ async def ai_triage(symptoms: str) -> Optional[dict]:
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent"
     payload = {
-        "contents": [{"parts": [{"text": GEMINI_PROMPT_TEMPLATE.format(symptoms=symptoms)}]}],
+        "contents": [{"parts": [{"text": GEMINI_PROMPT_TEMPLATE.format(healthlineContext=healthline_context, symptoms=", ".join(symptoms))}]}],
         "generationConfig": {"temperature": 0.1, "maxOutputTokens": 250},
     }
 
@@ -136,7 +129,7 @@ async def ai_triage(symptoms: str) -> Optional[dict]:
         pass
     return None
 
-async def _groq_triage(symptoms: str) -> Optional[dict]:
+async def _groq_triage(symptoms: list[str], healthline_context: str) -> Optional[dict]:
     if not settings.GROQ_API_KEY:
         return None
         
@@ -146,10 +139,10 @@ async def _groq_triage(symptoms: str) -> Optional[dict]:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "llama-3.1-8b-instant",
+        "model": "groq/compound-mini",
         "messages": [
             {"role": "system", "content": "You are a medical triage AI."},
-            {"role": "user", "content": GEMINI_PROMPT_TEMPLATE.format(symptoms=symptoms)}
+            {"role": "user", "content": GEMINI_PROMPT_TEMPLATE.format(healthlineContext=healthline_context, symptoms=", ".join(symptoms))}
         ],
         "temperature": 0.1,
         "max_tokens": 250
@@ -175,34 +168,32 @@ async def _groq_triage(symptoms: str) -> Optional[dict]:
 # ─────────────────────────────────────────────
 # Main triage function
 # ─────────────────────────────────────────────
-async def analyze_symptoms(symptoms: str) -> dict:
+async def analyze_symptoms(symptoms: list[str]) -> dict:
     """Run AI triage (Gemini/Groq), fall back to keyword engine"""
-    ai_result = await ai_triage(symptoms)
+    healthline_context = await fetch_healthline_context(symptoms)
+    ai_result = await ai_triage(symptoms, healthline_context)
 
-    if ai_result and "triage_level" in ai_result:
-        level = ai_result["triage_level"]
-        meta = TRIAGE_META.get(level, TRIAGE_META["low"])
+    if ai_result and "urgency" in ai_result:
+        recommendation = ai_result.get("healthline_recommendation", ai_result.get("recommendation", "Seek medical attention."))
+        if "disclaimer" in ai_result:
+            recommendation += f"\n\n{ai_result['disclaimer']}"
+
         return {
             "session_id": str(uuid.uuid4()),
-            "triage_level": level,
-            "title": ai_result.get("title", meta["title"]),
-            "summary": ai_result.get("summary", meta["summary"]),
-            "recommended_action": ai_result.get("recommended_action", meta["recommended_action"]),
-            "recommended_specialist": ai_result.get("recommended_specialist", meta["recommended_specialist"]),
-            "confidence": ai_result.get("confidence", meta["confidence"]),
-            "source": ai_result.get("source", "gemini"),
-            "uber_estimate": _uber_estimate() if level in ("low", "medium") else None,
+            "urgency": ai_result["urgency"],
+            "possible_factors": ai_result.get("possible_factors", []),
+            "recommendation": recommendation
         }
     else:
         # Keyword fallback
-        level = keyword_triage(symptoms)
-        meta = TRIAGE_META[level]
+        level = keyword_triage(", ".join(symptoms))
+        urgency_map = {"critical": "EMERGENCY", "high": "HIGH", "medium": "MEDIUM", "low": "LOW"}
+        urgency = urgency_map.get(level, "LOW")
         return {
             "session_id": str(uuid.uuid4()),
-            "triage_level": level,
-            **meta,
-            "source": "keyword_engine",
-            "uber_estimate": _uber_estimate() if level in ("low", "medium") else None,
+            "urgency": urgency,
+            "possible_factors": ["Unknown"],
+            "recommendation": "Consult a medical professional."
         }
 
 
@@ -256,7 +247,7 @@ async def parse_voice_intent_ai(text: str) -> dict:
             "Content-Type": "application/json"
         }
         payload = {
-            "model": "llama-3.1-8b-instant",
+            "model": "groq/compound-mini",
             "messages": [
                 {"role": "system", "content": "You are a routing AI. Respond only in JSON."},
                 {"role": "user", "content": INTENT_PROMPT_TEMPLATE.format(text=text)}
@@ -387,7 +378,7 @@ async def analyze_medical_report(file_bytes: bytes, filename: str) -> dict:
             "Content-Type": "application/json"
         }
         payload = {
-            "model": "llama-3.1-8b-instant",
+            "model": "groq/compound-mini",
             "messages": [
                 {"role": "system", "content": "You are a medical AI. Respond only in JSON."},
                 {"role": "user", "content": prompt}
@@ -681,5 +672,61 @@ async def analyze_medical_report(file_bytes: bytes, filename: str) -> dict:
                 }
             ]
         }
+
+async def generic_chat(text: str) -> str:
+    """Uses LLM for generic chat requests"""
+    try:
+        context = await fetch_healthline_context([text])
+    except Exception:
+        context = ""
+
+    system_prompt = (
+        "You are a helpful and concise AI Health Assistant for LifeLink AI, an emergency healthcare platform. "
+        "You can help users with medical triage, booking doctors, finding hospitals, and dispatching ambulances. "
+        f"For medical questions, use this context if relevant: {context}. "
+        "Always keep your responses short (under 2 sentences), safe, and conversational."
+    )
+
+    if settings.GROQ_API_KEY:
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "groq/compound-mini",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": text}
+            ],
+            "temperature": 0.5,
+            "max_tokens": 150
+        }
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(url, json=payload, headers=headers)
+                if resp.status_code == 200:
+                    return resp.json()["choices"][0]["message"]["content"]
+        except Exception as e:
+            print(f"Groq chat error: {e}")
+            pass
+
+    if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "your-gemini-api-key-here":
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent"
+        payload = {
+            "contents": [{"parts": [{"text": system_prompt + " User says: " + text}]}],
+            "generationConfig": {"temperature": 0.5, "maxOutputTokens": 150}
+        }
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(url, json=payload, params={"key": settings.GEMINI_API_KEY})
+                if resp.status_code == 200:
+                    return resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception as e:
+            print(f"Gemini chat error: {e}")
+            pass
+            
+    # Fallback if APIs fail
+    return "I'm having trouble connecting to my AI brain. Please try again later."
 
 

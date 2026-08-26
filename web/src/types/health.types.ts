@@ -36,6 +36,7 @@ export interface HealthProfile {
   insuranceNumber?: string;
   qrToken?: string;
   bloodPressure?: string;
+  dailyMood?: string;
 }
 
 export interface EmergencyContact {
@@ -67,13 +68,11 @@ export interface TriageSession {
   id: string;
   userId: string;
   symptomsInput: string;
-  triageLevel: TriageLevel;
-  recommendedAction: string;
-  recommendedSpecialist?: string;
-  aiSummary: string;
-  confidenceScore?: number;
-  uberEstimate?: UberEstimate;
+  urgency: 'EMERGENCY' | 'HIGH' | 'MEDIUM' | 'LOW';
+  possibleFactors: string[];
+  recommendation: string;
   createdAt: string;
+  sources?: { name: string; url?: string; confidence: number }[];
 }
 
 export interface Ambulance {
