@@ -4,6 +4,8 @@ import { Mail, Shield, ArrowRight, ArrowLeft, ScanFace, Loader2 } from 'lucide-r
 import { useAuthStore } from '../store/authStore';
 import { supabase } from '../lib/supabase';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const { demoLogin } = useAuthStore();
@@ -44,7 +46,7 @@ const AuthPage: React.FC = () => {
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      const res = await fetch(`/api/auth/send-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/auth/send-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
       let data: any = {};
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -69,7 +71,7 @@ const AuthPage: React.FC = () => {
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      const res = await fetch(`/api/auth/resend-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/auth/resend-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
       let data: any = {};
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -97,7 +99,7 @@ const AuthPage: React.FC = () => {
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      const res = await fetch(`/api/auth/verify-otp`, {
+      const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp: finalOtp })
