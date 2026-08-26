@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 import {
   Package, Wrench, Truck, DollarSign, ShieldCheck, BarChart3, Clock,
   Plus, Search, ChevronRight, CheckCircle2, AlertTriangle, Star, Phone,
   ArrowRight, Edit3, Eye, XCircle, RefreshCw, ClipboardCheck, Sparkles,
-  TrendingUp, Users, Activity, Settings, MapPin, Filter, FileText, ChevronLeft, Menu
+  TrendingUp, Users, Activity, Settings, MapPin, Filter, FileText, ChevronLeft, Menu, LogOut
 } from 'lucide-react';
 import {
   EQUIPMENT_CATALOG,
@@ -58,6 +60,18 @@ const EQUIP_STATUS_CONFIG: Record<string, { label: string; dotColor: string; tex
 };
 
 export default function B2BEquipmentDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
+
   const [activeTab, setActiveTab] = useState<DashboardTab>('command');
   const [ordersSubTab, setOrdersSubTab] = useState<'pipeline' | 'rentals'>('pipeline');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -141,8 +155,11 @@ export default function B2BEquipmentDashboard() {
           </div>
         </div>
         <div className="flex gap-3">
-          <button className="px-5 py-3 bg-[#131B2F] border border-slate-800 rounded-xl hover:bg-slate-800 font-bold transition text-sm">
+          <button onClick={() => navigate('/settings')} className="px-5 py-3 bg-[#131B2F] border border-slate-800 rounded-xl hover:bg-slate-800 font-bold transition text-sm">
             <Settings size={16} className="inline mr-2" />Settings
+          </button>
+          <button onClick={handleLogout} className="px-5 py-3 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white font-bold transition text-sm flex items-center gap-2">
+            <LogOut size={16} />Logout
           </button>
         </div>
       </header>
