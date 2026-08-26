@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Video, VideoOff, PhoneIncoming, X } from 'lucide-react';
+import { Video, VideoOff, PhoneIncoming, X, LogOut } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 
@@ -11,7 +11,19 @@ const MOCK_QUEUE_FALLBACK = [
 
 export default function DoctorOnCall() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      if (isOnline) {
+        setIsOnline(false);
+      }
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
   const [isOnline, setIsOnline] = useState(false);
   const [queue, setQueue] = useState<any[]>([]);
   const [ringingPatient, setRingingPatient] = useState<any | null>(null);
@@ -91,6 +103,13 @@ export default function DoctorOnCall() {
 
   return (
     <div className="w-full h-full p-8 flex flex-col items-center justify-center text-center relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      {/* LOGOUT BUTTON */}
+      <button 
+        onClick={handleLogout}
+        className="absolute top-8 right-8 px-4 py-2 bg-slate-800/80 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 transition-colors rounded-xl text-sm font-bold flex items-center gap-2 z-40"
+      >
+        <LogOut size={16} /> Logout
+      </button>
       
       {/* INCOMING CALL OVERLAY */}
       {ringingPatient && (
