@@ -110,11 +110,11 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-2">
         <div className="flex items-center gap-3 self-start md:self-auto">
           <div className="w-12 h-12 rounded-full bg-[#00C9A7] flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(0,201,167,0.4)]">
-            LG
+            {user?.fullName ? user.fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
           </div>
           <div>
             <h2 className="font-bold text-lg leading-tight flex items-center gap-1">
-              Lavanya Gupta <BadgeCheck size={16} className="text-[#3D91FF]" />
+              {user?.fullName || 'LifeLink User'} <BadgeCheck size={16} className="text-[#3D91FF]" />
             </h2>
             <p className="text-xs text-slate-400">LifeLink Member</p>
           </div>
@@ -166,7 +166,7 @@ const Dashboard: React.FC = () => {
           </div>
           
           <div className="flex-1 flex flex-col justify-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, Lavanya! 👋</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, {user?.fullName ? user.fullName.split(' ')[0] : 'User'}! 👋</h2>
             <p className="text-xs text-slate-300 mb-3">I'm your AI Health Assistant. How can I help you today?</p>
             
             <div className="relative w-full max-w-md">

@@ -4,6 +4,7 @@ import { AlertTriangle, Phone, MapPin, X, Check, Users, Clock, Shield, WifiOff, 
 import { useSOSStore } from '../store/sosStore';
 import { useSOSGuardStore } from '../store/sosGuardStore';
 import { usePrivacyStore } from '../store/privacyStore';
+import { useAuthStore } from '../store/authStore';
 import { MOCK_EMERGENCY_CONTACTS, MOCK_AMBULANCES } from '../data/mockData';
 import { bloodAPI } from '../services/api';
 import FreeMap from '../components/FreeMap';
@@ -13,6 +14,7 @@ import JitsiVideoCall from '../components/telemedicine/JitsiVideoCall';
 const SOSPage: React.FC = () => {
   const navigate = useNavigate();
   const { sosEvent, isSOSActive, cancelSOS, resolveSOS } = useSOSStore();
+  const { user } = useAuthStore();
   const { addStrike } = useSOSGuardStore();
   const { generateShareLink } = usePrivacyStore();
 
@@ -249,7 +251,7 @@ const SOSPage: React.FC = () => {
               No internet connection detected. The following encrypted SMS was sent to emergency dispatch and your contacts:
             </p>
             <div className="bg-black/50 p-3 rounded text-[10px] font-mono text-white break-all mb-3 border border-[rgba(255,255,255,0.1)]">
-              [LIFELINK SOS] Lavanya G. | B+ | GPS: 28.5355,77.2690 | Triage: {triage.toUpperCase()} | Medical Data: https://ll.ai/s/1x9f
+              [LIFELINK SOS] {user?.fullName ? `${user.fullName.split(' ')[0]} ${user.fullName.split(' ')[1]?.[0] || ''}.` : 'User'} | B+ | GPS: 28.5355,77.2690 | Triage: {triage.toUpperCase()} | Medical Data: https://ll.ai/s/1x9f
             </div>
             <button className="w-full py-2 bg-[rgba(255,165,2,0.2)] text-[#FFA502] rounded text-xs font-semibold flex items-center justify-center gap-2">
               <MessageSquare size={14} /> Copy to Manual SMS
