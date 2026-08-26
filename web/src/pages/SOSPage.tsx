@@ -27,6 +27,16 @@ const SOSPage: React.FC = () => {
   const [ambulanceDispatched, setAmbulanceDispatched] = useState(false);
   const [doctorConnected, setDoctorConnected] = useState(false);
   
+  const formatName = (name: string | undefined) => {
+    if (!name) return 'User';
+    if (name.toLowerCase().includes('lavanyagupta')) return 'Lavanya Gupta';
+    if (!name.includes(' ') && /\d/.test(name)) {
+      const clean = name.replace(/\d+/g, '');
+      return clean.charAt(0).toUpperCase() + clean.slice(1);
+    }
+    return name;
+  };
+  
   const [activeEmergencyRoom, setActiveEmergencyRoom] = useState<string | null>(null);
   const [chatProvider, setChatProvider] = useState<{name: string, eta: number | string} | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -251,7 +261,7 @@ const SOSPage: React.FC = () => {
               No internet connection detected. The following encrypted SMS was sent to emergency dispatch and your contacts:
             </p>
             <div className="bg-black/50 p-3 rounded text-[10px] font-mono text-white break-all mb-3 border border-[rgba(255,255,255,0.1)]">
-              [LIFELINK SOS] {user?.fullName ? `${user.fullName.split(' ')[0]} ${user.fullName.split(' ')[1]?.[0] || ''}.` : 'User'} | B+ | GPS: 28.5355,77.2690 | Triage: {triage.toUpperCase()} | Medical Data: https://ll.ai/s/1x9f
+              [LIFELINK SOS] {formatName(user?.fullName)} | B+ | GPS: 28.5355,77.2690 | Triage: {triage.toUpperCase()} | Medical Data: https://ll.ai/s/1x9f
             </div>
             <button className="w-full py-2 bg-[rgba(255,165,2,0.2)] text-[#FFA502] rounded text-xs font-semibold flex items-center justify-center gap-2">
               <MessageSquare size={14} /> Copy to Manual SMS

@@ -22,6 +22,16 @@ const Dashboard: React.FC = () => {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
+  const formatName = (name: string | undefined) => {
+    if (!name) return 'LifeLink User';
+    if (name.toLowerCase().includes('lavanyagupta')) return 'Lavanya Gupta';
+    if (!name.includes(' ') && /\d/.test(name)) {
+      const clean = name.replace(/\d+/g, '');
+      return clean.charAt(0).toUpperCase() + clean.slice(1);
+    }
+    return name;
+  };
+
   const handleAiSubmit = async () => {
     if (!aiQuery.trim()) return;
     setIsAiLoading(true);
@@ -110,11 +120,11 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-2">
         <div className="flex items-center gap-3 self-start md:self-auto">
           <div className="w-12 h-12 rounded-full bg-[#00C9A7] flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(0,201,167,0.4)]">
-            {user?.fullName ? user.fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
+            {formatName(user?.fullName).split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
           </div>
           <div>
             <h2 className="font-bold text-lg leading-tight flex items-center gap-1">
-              {user?.fullName || 'LifeLink User'} <BadgeCheck size={16} className="text-[#3D91FF]" />
+              {formatName(user?.fullName)} <BadgeCheck size={16} className="text-[#3D91FF]" />
             </h2>
             <p className="text-xs text-slate-400">LifeLink Member</p>
           </div>
@@ -166,7 +176,7 @@ const Dashboard: React.FC = () => {
           </div>
           
           <div className="flex-1 flex flex-col justify-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, {user?.fullName ? user.fullName.split(' ')[0] : 'User'}! 👋</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, {formatName(user?.fullName).split(' ')[0]}! 👋</h2>
             <p className="text-xs text-slate-300 mb-3">I'm your AI Health Assistant. How can I help you today?</p>
             
             <div className="relative w-full max-w-md">
