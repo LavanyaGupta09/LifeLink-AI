@@ -233,6 +233,123 @@ const SettingsPage: React.FC = () => {
     return <div className="text-white text-center mt-20">Loading Profile...</div>;
   }
 
+  if (user?.role === 'equipment') {
+    return (
+      <div className="w-full px-6 overflow-y-auto pb-36 bg-[#0B1121] min-h-screen text-white">
+        {/* Header */}
+        <div className="header sticky pt-[env(safe-area-inset-top)] z-50 bg-[#0B1121] border-b border-slate-800 -mx-4 px-4 pb-4 mb-6 mt-4 flex items-center justify-between">
+          <button className="text-slate-400 hover:text-white transition-colors" onClick={() => navigate(-1)}>
+            <ArrowLeft size={24} />
+          </button>
+          <h2 className="text-xl font-bold text-white">Provider Settings</h2>
+          <div style={{ width: 24 }} />
+        </div>
+
+        <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+          <h3 className="text-slate-400 text-sm font-bold mb-2 uppercase tracking-wider">Business Profile</h3>
+          
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Business Name</label>
+            <input 
+              type="text" 
+              defaultValue="LifeCare Medical Equipments Ltd."
+              className="w-full bg-[#131B2F] text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all placeholder-slate-500"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5 mt-2">
+            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Support Phone</label>
+            <div className="flex items-center w-full bg-[#131B2F] text-white border border-slate-700 rounded-xl focus-within:ring-2 focus-within:ring-cyan-500/50 focus-within:border-cyan-500 transition-all overflow-hidden">
+              <span className="pl-3.5 pr-2 py-3.5 text-slate-400 font-semibold border-r border-slate-700 bg-slate-800/80 text-sm">+91</span>
+              <input 
+                type="tel" 
+                defaultValue="9876543210"
+                className="w-full bg-transparent text-white p-3.5 outline-none placeholder-slate-500"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5 mt-2">
+            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Service Area Radius (km)</label>
+            <input 
+              type="number" 
+              defaultValue="50"
+              className="w-full bg-[#131B2F] text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all placeholder-slate-500"
+            />
+          </div>
+
+          <h3 className="text-slate-400 text-sm font-bold mt-6 mb-2 uppercase tracking-wider">Preferences</h3>
+          
+          <div className="flex items-center justify-between p-4 bg-[#131B2F] border border-slate-700 rounded-xl mt-2">
+            <div>
+              <h4 className="font-semibold text-white">Auto-Accept Rentals</h4>
+              <p className="text-xs text-slate-400 mt-1">Automatically approve rentals if inventory is available</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+            </label>
+          </div>
+
+          <button 
+            className={`w-full mt-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 ${success ? 'bg-green-600 text-white' : 'bg-cyan-600 hover:bg-cyan-500 text-white'} transition-colors`} 
+            onClick={() => {
+              setLoading(true);
+              setTimeout(() => {
+                setLoading(false);
+                setSuccess(true);
+                setTimeout(() => setSuccess(false), 3000);
+              }, 1000);
+            }}
+            disabled={loading || success}
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Saving...
+              </>
+            ) : success ? (
+              <>✅ Settings Saved</>
+            ) : (
+              <><Save size={20} /> Save Settings</>
+            )}
+          </button>
+
+          {/* Logout Section */}
+          <div className="mt-10 mb-8 border-t border-slate-800 pt-8">
+            {showLogoutConfirm ? (
+              <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl flex flex-col items-center">
+                <AlertTriangle className="text-red-500 mb-2" size={24} />
+                <p className="text-red-500 font-bold mb-4 text-center">Are you sure you want to log out?</p>
+                <div className="flex gap-3 w-full">
+                  <button 
+                    className="px-4 py-2 bg-slate-800 rounded-lg flex-1 text-slate-400 font-bold hover:bg-slate-700"
+                    onClick={() => setShowLogoutConfirm(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white flex-1 font-bold"
+                    onClick={handleLogout}
+                  >
+                    Confirm Log Out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                className="w-full py-3.5 border border-red-500/30 text-red-500 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500/10 font-bold transition-colors"
+                onClick={() => setShowLogoutConfirm(true)}
+              >
+                <LogOut size={20} /> Log Out
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full px-6 overflow-y-auto pb-36 bg-slate-950">
       {/* Header */}
