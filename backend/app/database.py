@@ -4,21 +4,30 @@ Async SQLAlchemy engine with SQLite (dev) / PostgreSQL (prod)
 """
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.pool import NullPool, AsyncAdaptedQueuePool
 from app.config import settings
 
 
+# Supabase uses pgbouncer in transaction mode which does NOT support
+# prepared statements. We must use NullPool + statement_cache_size=0
+# to prevent "DuplicatePreparedStatementError" on startup.
+is_postgres = settings.DATABASE_URL.startswith("postgresql")
+
 connect_args = {}
-if settings.DATABASE_URL.startswith("postgresql"):
+pool_class = AsyncAdaptedQueuePool  # default for SQLite
+if is_postgres:
     connect_args = {
         "statement_cache_size": 0,
         "prepared_statement_cache_size": 0,
     }
+    pool_class = NullPool  # disable SQLAlchemy pooling — pgbouncer handles it
 
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=(settings.APP_ENV == "development"),
     future=True,
     connect_args=connect_args,
+    poolclass=pool_class,
 )
 
 AsyncSessionLocal = async_sessionmaker(
