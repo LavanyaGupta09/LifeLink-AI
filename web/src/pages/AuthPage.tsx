@@ -4,7 +4,7 @@ import { Mail, Shield, ArrowRight, ArrowLeft, ScanFace, Loader2 } from 'lucide-r
 import { useAuthStore } from '../store/authStore';
 import { supabase } from '../lib/supabase';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://lifelink-ai-rwru.onrender.com';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();

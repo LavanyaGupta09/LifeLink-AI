@@ -82,7 +82,7 @@ const ElderEasyDashboard: React.FC = () => {
           setIsProcessingIntent(true);
           
           try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const API_URL = import.meta.env.VITE_API_URL || 'https://lifelink-ai-rwru.onrender.com';
             const response = await fetch(`${API_URL}/api/v1/voice/parse-intent`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
