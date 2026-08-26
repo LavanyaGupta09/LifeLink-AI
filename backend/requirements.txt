@@ -19,4 +19,4 @@ websockets==13.1
 twilio==9.3.3
 firebase-admin==6.5.0
 cryptography==43.0.3
-duckduckgo-search==6.2.11
+duckduckgo-search>=6.2.12
