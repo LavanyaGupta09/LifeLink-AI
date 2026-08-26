@@ -7,10 +7,18 @@ from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 
+connect_args = {}
+if settings.DATABASE_URL.startswith("postgresql"):
+    connect_args = {
+        "statement_cache_size": 0,
+        "prepared_statement_cache_size": 0,
+    }
+
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=(settings.APP_ENV == "development"),
     future=True,
+    connect_args=connect_args,
 )
 
 AsyncSessionLocal = async_sessionmaker(
