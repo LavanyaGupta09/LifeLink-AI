@@ -183,6 +183,7 @@ function generateFallbackFacilities(lat: number, lng: number, type: FacilityType
       { id: 'fb_pharm_1', name: 'Apollo Pharmacy 24/7', lat: lat + 0.005, lng: lng + 0.003, address: 'Market Complex Shop #12', phone: '+91 98765 43210', distanceKm: calculateDistance(lat, lng, lat + 0.005, lng + 0.003), costLevel: 'Low', estimatedCost: 200 },
       { id: 'fb_pharm_2', name: 'MedPlus Chemist & Druggist', lat: lat - 0.008, lng: lng + 0.006, address: 'Main Road Plaza', phone: '+91 98765 43211', distanceKm: calculateDistance(lat, lng, lat - 0.008, lng + 0.006), costLevel: 'Low', estimatedCost: 150 },
       { id: 'fb_pharm_3', name: 'Wellness Forever Pharmacy', lat: lat + 0.011, lng: lng - 0.004, address: 'Central Avenue', phone: '+91 98765 43212', distanceKm: calculateDistance(lat, lng, lat + 0.011, lng - 0.004), costLevel: 'Medium', estimatedCost: 300 },
+      { id: 'fb_pharm_4', name: 'Pradhan Mantri Bhartiya Janaushadhi Kendra (Generic)', lat: lat - 0.004, lng: lng - 0.012, address: 'Civil Hospital Road', phone: '+91 98765 43213', distanceKm: calculateDistance(lat, lng, lat - 0.004, lng - 0.012), costLevel: 'Low', estimatedCost: 50 },
     ];
   } else {
     return [
