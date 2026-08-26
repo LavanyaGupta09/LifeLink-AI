@@ -2,16 +2,32 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp, Clock, Wallet, Users, Video, FileText,
-  Upload, Calendar, Star, ChevronRight, MessageSquare
+  Upload, Calendar, Star, ChevronRight, MessageSquare, LogOut
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
 export default function DoctorDashboard() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
 
   return (
     <div className="p-4 md:p-8 pb-24 w-full">
+      
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-white">Doctor Dashboard</h1>
+        <button onClick={handleLogout} className="px-4 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/30 rounded-xl hover:bg-rose-500 hover:text-white font-bold transition text-sm flex items-center gap-2">
+          <LogOut size={16} />Logout
+        </button>
+      </div>
       
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
