@@ -166,32 +166,30 @@ const AuthPage: React.FC = () => {
       window.crypto.getRandomValues(challenge);
 
       let credential;
-      try {
-        // We go straight to creating a passkey. 
-        // This forces the OS to show the native FaceID/Fingerprint prompt.
-        const userId = new Uint8Array(16);
-        window.crypto.getRandomValues(userId);
-        credential = await navigator.credentials.create({
-          publicKey: {
-            challenge: challenge,
-            rp: { name: "LifeLink AI", id: window.location.hostname },
-            user: {
-              id: userId,
-              name: "demo@lifelink.ai",
-              displayName: "LifeLink User"
-            },
-            pubKeyCredParams: [
-              { type: "public-key", alg: -7 },
-              { type: "public-key", alg: -257 }
-            ],
-            authenticatorSelection: {
-              authenticatorAttachment: "platform",
-              userVerification: "required"
-            },
-            timeout: 60000
-          }
-        });
-      }
+      // We go straight to creating a passkey. 
+      // This forces the OS to show the native FaceID/Fingerprint prompt.
+      const userId = new Uint8Array(16);
+      window.crypto.getRandomValues(userId);
+      credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: { name: "LifeLink AI", id: window.location.hostname },
+          user: {
+            id: userId,
+            name: "demo@lifelink.ai",
+            displayName: "LifeLink User"
+          },
+          pubKeyCredParams: [
+            { type: "public-key", alg: -7 },
+            { type: "public-key", alg: -257 }
+          ],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required"
+          },
+          timeout: 60000
+        }
+      });
 
       if (credential) {
         demoLogin();
