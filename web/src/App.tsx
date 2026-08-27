@@ -137,6 +137,11 @@ const App: React.FC = () => {
   const { user } = useAuthStore();
 
   React.useEffect(() => {
+    // Ping backend to wake it up from sleep (Render free tier)
+    fetch(`${import.meta.env.VITE_API_URL || 'https://lifelink-ai-rwru.onrender.com'}/health`).catch(() => {});
+  }, []);
+
+  React.useEffect(() => {
     if (user?.easyModeEnabled) {
       document.documentElement.classList.add('easy-mode');
     } else {
