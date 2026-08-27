@@ -65,8 +65,8 @@ const RoleSelectionPage: React.FC = () => {
         <main className="w-full max-w-[1100px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 pb-10">
         
         {/* PATIENT CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col h-[300px] group border border-[#00C9A7]/20 hover:border-[#00C9A7]/60 hover:shadow-[0_0_30px_rgba(0,201,167,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/login')}>
-          <div className="absolute right-0 bottom-12 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#00C9A7]/20 hover:border-[#00C9A7]/60 hover:shadow-[0_0_30px_rgba(0,201,167,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/login')}>
+          <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />
             <img src="/images/role_patient.jpg" alt="Patient Family" className="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
@@ -90,8 +90,8 @@ const RoleSelectionPage: React.FC = () => {
         </div>
 
         {/* DOCTOR CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col h-[300px] group border border-[#3B82F6]/20 hover:border-[#3B82F6]/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=doctor')}>
-          <div className="absolute right-0 bottom-12 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#3B82F6]/20 hover:border-[#3B82F6]/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=doctor')}>
+          <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />
             <img src="/images/role_doctor.jpg" alt="Doctor" className="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
@@ -115,8 +115,8 @@ const RoleSelectionPage: React.FC = () => {
         </div>
 
         {/* FIRST RESPONDER CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col h-[300px] group border border-[#F97316]/20 hover:border-[#F97316]/60 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=first_responder')}>
-          <div className="absolute right-0 bottom-12 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#F97316]/20 hover:border-[#F97316]/60 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=first_responder')}>
+          <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />
             <img src="/images/role_responder.jpg" alt="First Responder" className="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
@@ -140,8 +140,8 @@ const RoleSelectionPage: React.FC = () => {
         </div>
 
         {/* FACILITY PARTNER CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col h-[300px] group border border-[#A855F7]/20 hover:border-[#A855F7]/60 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=hospital_admin')}>
-          <div className="absolute right-0 bottom-12 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#A855F7]/20 hover:border-[#A855F7]/60 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=hospital_admin')}>
+          <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />
             <img src="/images/role_facility.jpg" alt="Facility Partner" className="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
@@ -165,8 +165,8 @@ const RoleSelectionPage: React.FC = () => {
         </div>
 
         {/* EQUIPMENT PROVIDER CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col h-[300px] group border border-[#06B6D4]/20 hover:border-[#06B6D4]/60 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=equipment')}>
-          <div className="absolute right-0 bottom-12 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#06B6D4]/20 hover:border-[#06B6D4]/60 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/b2b/auth?role=equipment')}>
+          <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />
             <img src="/images/role_equipment.jpg" alt="Equipment Provider" className="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
@@ -190,8 +190,8 @@ const RoleSelectionPage: React.FC = () => {
         </div>
 
         {/* SYSTEM ADMINISTRATOR CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col h-[300px] group border border-[#8B5CF6]/20 hover:border-[#8B5CF6]/60 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/login')}>
-          <div className="absolute right-0 bottom-12 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#8B5CF6]/20 hover:border-[#8B5CF6]/60 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/admin/login')}>
+          <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />
             <img src="/images/role_admin.jpg" alt="System Administrator" className="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
