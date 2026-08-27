@@ -56,30 +56,7 @@ async def send_email_alert(to_email: str, subject: str, html_body: str) -> bool:
         if result:
             return True
 
-    # ── Fallback: Resend API (most reliable on cloud servers) ──
-    if settings.RESEND_API_KEY:
-        try:
-            async with httpx.AsyncClient(timeout=15) as client:
-                resp = await client.post(
-                    "https://api.resend.com/emails",
-                    headers={
-                        "Authorization": f"Bearer {settings.RESEND_API_KEY}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "from": "LifeLink AI <onboarding@resend.dev>",
-                        "to": [to_email],
-                        "subject": subject,
-                        "html": html_body,
-                    },
-                )
-                if resp.status_code in (200, 201):
-                    print(f"[RESEND] Email sent successfully to {to_email}")
-                    return True
-                else:
-                    print(f"[RESEND ERROR] Status {resp.status_code}: {resp.text}")
-        except Exception as e:
-            print(f"[RESEND EXCEPTION] {e}")
+    print(f"[EMAIL ERROR] SMTP is not configured or failed. Could not send email to {to_email}")
 
     print(f"[EMAIL FALLBACK] All email methods failed — check Render logs for OTP code above")
     return True  # Never block the OTP flow
