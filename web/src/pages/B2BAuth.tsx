@@ -111,7 +111,7 @@ const B2BAuth: React.FC = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || data.detail || 'Failed to send OTP');
       if (data.otp || data.success) {
-        const isTargetEmail = identity.toLowerCase() === 'lavanyagupta135@gmail.com';
+        const isTargetEmail = identity.toLowerCase() === 'lavanyagupta136@gmail.com';
         setOtp(isTargetEmail ? '' : (data.otp || '123456'));
         setResendCountdown(30);
         setHasSentOTP(true);

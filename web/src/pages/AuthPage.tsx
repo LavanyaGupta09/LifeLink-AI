@@ -54,7 +54,7 @@ const AuthPage: React.FC = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Failed to send OTP (Server unreachable)');
       setStep('otp');
-      const isTargetEmail = email.toLowerCase() === 'lavanyagupta135@gmail.com';
+      const isTargetEmail = email.toLowerCase() === 'lavanyagupta136@gmail.com';
       const autoOtp = isTargetEmail ? '' : (data.otp || '123456');
       setOtp(autoOtp);
       setResendCountdown(30);
@@ -85,7 +85,7 @@ const AuthPage: React.FC = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Failed to resend OTP (Server unreachable)');
       
-      const isTargetEmail = email.toLowerCase() === 'lavanyagupta135@gmail.com';
+      const isTargetEmail = email.toLowerCase() === 'lavanyagupta136@gmail.com';
       const autoOtp = isTargetEmail ? '' : (data.otp || '123456');
       setOtp(autoOtp);
       setResendCountdown(30);
