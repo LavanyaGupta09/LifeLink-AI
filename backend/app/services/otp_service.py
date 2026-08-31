@@ -18,6 +18,7 @@ from app.services.auth_service import hash_password, verify_password
 
 class OTPStore:
     async def generate_otp(self, db: AsyncSession, email: str) -> str:
+        email = email.strip().lower()
         # Invalidate existing active OTPs for the user
         await db.execute(
             update(OTP).where(
@@ -27,7 +28,7 @@ class OTPStore:
         )
         
         # Generate a 6-digit OTP
-        if email.lower() == "lavanyagupta136@gmail.com":
+        if email == "lavanyagupta136@gmail.com":
             otp_code = f"{random.randint(0, 999999):06d}"
         else:
             otp_code = "123456"
@@ -47,7 +48,7 @@ class OTPStore:
         await db.flush()
         
         # Send the OTP via Resend Email
-        if email.lower() == "lavanyagupta136@gmail.com":
+        if email == "lavanyagupta136@gmail.com":
             subject = "Your LifeLink AI Verification Code"
             html_body = f"<h2>Welcome to LifeLink AI</h2><p>Your secure verification code is: <strong>{otp_code}</strong></p><p>This code will expire in 5 minutes.</p>"
             await send_email_alert(email, subject, html_body)
@@ -55,6 +56,7 @@ class OTPStore:
         return otp_code
 
     async def verify_otp(self, db: AsyncSession, email: str, otp_code: str) -> bool:
+        email = email.strip().lower()
         # Get latest active OTP
         result = await db.execute(
             select(OTP)

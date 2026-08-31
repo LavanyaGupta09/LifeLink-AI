@@ -41,12 +41,13 @@ const AuthPage: React.FC = () => {
   }, [lockoutCountdown, failedAttempts]);
 
   const handleSendOTP = async () => {
-    if (!email.includes('@')) return;
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail.includes('@')) return;
     setIsLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      const res = await fetch(`${API_BASE}/api/auth/send-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/auth/send-otp?email=${encodeURIComponent(trimmedEmail)}`, { method: 'POST' });
       let data: any = {};
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -54,7 +55,7 @@ const AuthPage: React.FC = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Failed to send OTP (Server unreachable)');
       setStep('otp');
-      const isTargetEmail = email.toLowerCase() === 'lavanyagupta136@gmail.com';
+      const isTargetEmail = trimmedEmail.toLowerCase() === 'lavanyagupta136@gmail.com';
       const autoOtp = isTargetEmail ? '' : (data.otp || '123456');
       setOtp(autoOtp);
       setResendCountdown(30);
@@ -72,12 +73,13 @@ const AuthPage: React.FC = () => {
   };
 
   const handleResendOTP = async () => {
-    if (!email.includes('@')) return;
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail.includes('@')) return;
     setIsLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
     try {
-      const res = await fetch(`${API_BASE}/api/auth/resend-otp?email=${encodeURIComponent(email)}`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/auth/resend-otp?email=${encodeURIComponent(trimmedEmail)}`, { method: 'POST' });
       let data: any = {};
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -85,7 +87,7 @@ const AuthPage: React.FC = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Failed to resend OTP (Server unreachable)');
       
-      const isTargetEmail = email.toLowerCase() === 'lavanyagupta136@gmail.com';
+      const isTargetEmail = trimmedEmail.toLowerCase() === 'lavanyagupta136@gmail.com';
       const autoOtp = isTargetEmail ? '' : (data.otp || '123456');
       setOtp(autoOtp);
       setResendCountdown(30);
@@ -114,7 +116,7 @@ const AuthPage: React.FC = () => {
       const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: finalOtp })
+        body: JSON.stringify({ email: email.trim(), otp: finalOtp })
       });
       let data: any = {};
       const contentType = res.headers.get("content-type");

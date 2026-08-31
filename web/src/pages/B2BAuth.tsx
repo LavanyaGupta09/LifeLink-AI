@@ -4,6 +4,8 @@ import { ShieldCheck, UserCheck, KeyRound, Building2, BadgeCheck, ArrowLeft, Sca
 import { useAuthStore } from '../store/authStore';
 import { supabase } from '../lib/supabase';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://lifelink-ai-rwru.onrender.com';
+
 /* ─── Inline Style Constants ─── */
 const colors = {
   bg: '#0f172a',
@@ -98,20 +100,21 @@ const B2BAuth: React.FC = () => {
 
   const handleSendOTP = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!identity.includes('@') && identity.length < 5) return;
+    const trimmedIdentity = identity.trim();
+    if (!trimmedIdentity.includes('@') && trimmedIdentity.length < 5) return;
     setIsLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
     
     // If we've already sent it once, call resend endpoint
-    const endpoint = `/api/auth/${hasSentOTP ? 'resend-otp' : 'send-otp'}?email=${encodeURIComponent(identity)}`;
+    const endpoint = `${API_BASE}/api/auth/${hasSentOTP ? 'resend-otp' : 'send-otp'}?email=${encodeURIComponent(trimmedIdentity)}`;
 
     try {
       const res = await fetch(endpoint, { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || data.detail || 'Failed to send OTP');
       if (data.otp || data.success) {
-        const isTargetEmail = identity.toLowerCase() === 'lavanyagupta136@gmail.com';
+        const isTargetEmail = trimmedIdentity.toLowerCase() === 'lavanyagupta136@gmail.com';
         setOtp(isTargetEmail ? '' : (data.otp || '123456'));
         setResendCountdown(30);
         setHasSentOTP(true);
@@ -149,20 +152,11 @@ const B2BAuth: React.FC = () => {
       setIsLoading(true);
       setErrorMessage('');
       
-      // Bypass backend for testing so you can log in even if the backend hasn't reloaded
-      // if (finalOtp === '172086' || finalOtp === '123456') {
-      //   setTimeout(() => {
-      //     setIsLoading(false);
-      //     executeLogin();
-      //   }, 300);
-      //   return;
-      // }
-
       try {
-        const res = await fetch(`/api/auth/verify-otp`, {
+        const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: identity, otp: finalOtp })
+          body: JSON.stringify({ email: identity.trim(), otp: finalOtp })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || data.detail || 'Invalid or expired OTP');
