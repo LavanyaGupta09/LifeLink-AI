@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../store/authStore';
 import { 
   User, Calendar, Phone, Activity, Droplets, MapPin, 
   Building2, ChevronRight, ChevronLeft, Check, AlertCircle, Heart
@@ -8,6 +9,7 @@ import {
 
 export default function PatientOnboarding() {
   const navigate = useNavigate();
+  const { setOnboarded } = useAuthStore();
   const [step, setStep] = useState(1);
 
   // Form State
@@ -49,6 +51,7 @@ export default function PatientOnboarding() {
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
   const submitForm = () => {
     // In a real app, save to backend here
+    setOnboarded();
     navigate('/dashboard');
   };
 

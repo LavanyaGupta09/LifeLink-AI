@@ -166,7 +166,8 @@ const AuthPage: React.FC = () => {
       if (parseInt(age) >= 60) {
         setStep('easyModePrompt');
       } else {
-        navigate('/dashboard');
+        const isOnboarded = useAuthStore.getState().isOnboarded;
+        navigate(isOnboarded ? '/dashboard' : '/onboarding');
       }
 
     } catch (err: any) {
@@ -428,7 +429,8 @@ const AuthPage: React.FC = () => {
                 className="btn btn-primary btn-lg w-full"
                 onClick={() => {
                   useAuthStore.getState().toggleEasyMode(true);
-                  navigate('/dashboard');
+                  const isOnboarded = useAuthStore.getState().isOnboarded;
+                  navigate(isOnboarded ? '/dashboard' : '/onboarding');
                 }}
               >
                 Yes, Enable Easy Mode
@@ -436,7 +438,8 @@ const AuthPage: React.FC = () => {
               <button 
                 className="btn btn-ghost btn-lg w-full"
                 onClick={() => {
-                  navigate('/dashboard');
+                  const isOnboarded = useAuthStore.getState().isOnboarded;
+                  navigate(isOnboarded ? '/dashboard' : '/onboarding');
                 }}
               >
                 No, Standard Mode
