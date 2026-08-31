@@ -8,7 +8,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'https://lifelink-ai-rwru.onren
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
-  const { demoLogin } = useAuthStore();
+  const { demoLogin, isAuthenticated, user } = useAuthStore();
   const [step, setStep] = useState<'email' | 'otp' | 'easyModePrompt'>('email');
   const [email, setEmail] = useState('');
   const [age, setAge] = useState('');
@@ -21,6 +21,23 @@ const AuthPage: React.FC = () => {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutCountdown, setLockoutCountdown] = useState(0);
   const otpInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === 'super_admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (['doctor', 'hospital_admin', 'pharmacy_manager', 'lab_tech', 'driver', 'equipment'].includes(user?.role || '')) {
+        if (user?.role === 'hospital_admin') navigate('/partner/dashboard', { replace: true });
+        else if (user?.role === 'doctor') navigate('/doctor/dashboard', { replace: true });
+        else if (user?.role === 'pharmacy_manager') navigate('/b2b/pharmacy', { replace: true });
+        else if (user?.role === 'lab_tech') navigate('/b2b/lab', { replace: true });
+        else if (user?.role === 'driver') navigate('/b2b/driver', { replace: true });
+        else if (user?.role === 'equipment') navigate('/b2b/equipment', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;

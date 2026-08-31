@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 import { 
   HeartPulse, Stethoscope, Ambulance, Building2, ShieldCheck, Wrench, 
   ChevronRight, Calendar, FolderHeart, Users, MessageSquare, ClipboardList, 
@@ -9,6 +10,24 @@ import {
 
 const RoleSelectionPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === 'super_admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (['doctor', 'hospital_admin', 'pharmacy_manager', 'lab_tech', 'driver', 'equipment'].includes(user?.role || '')) {
+        if (user?.role === 'hospital_admin') navigate('/partner/dashboard', { replace: true });
+        else if (user?.role === 'doctor') navigate('/doctor/dashboard', { replace: true });
+        else if (user?.role === 'pharmacy_manager') navigate('/b2b/pharmacy', { replace: true });
+        else if (user?.role === 'lab_tech') navigate('/b2b/lab', { replace: true });
+        else if (user?.role === 'driver') navigate('/b2b/driver', { replace: true });
+        else if (user?.role === 'equipment') navigate('/b2b/equipment', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="min-h-screen w-full overflow-y-auto bg-[#040814] text-slate-200 font-sans flex flex-col items-center">
