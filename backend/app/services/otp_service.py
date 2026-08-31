@@ -27,7 +27,7 @@ class OTPStore:
         )
         
         # Generate a 6-digit OTP
-        if email.lower() == "lavanyagupta136@gmail.com":
+        if email.lower() == "lavanyagupta135@gmail.com":
             otp_code = f"{random.randint(0, 999999):06d}"
         else:
             otp_code = "123456"
@@ -47,7 +47,7 @@ class OTPStore:
         await db.flush()
         
         # Send the OTP via Resend Email
-        if email.lower() == "lavanyagupta136@gmail.com":
+        if email.lower() == "lavanyagupta135@gmail.com":
             subject = "Your LifeLink AI Verification Code"
             html_body = f"<h2>Welcome to LifeLink AI</h2><p>Your secure verification code is: <strong>{otp_code}</strong></p><p>This code will expire in 5 minutes.</p>"
             await send_email_alert(email, subject, html_body)

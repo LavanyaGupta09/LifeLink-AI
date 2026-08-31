@@ -92,7 +92,7 @@ async def send_otp(email: str = Query(...), db: AsyncSession = Depends(get_db)):
     otp_code = await otp_service.generate_otp(db, email)
     # For non-target emails, return the OTP so frontend can auto-fill
     response = {"success": True, "message": "OTP sent successfully"}
-    if email.lower() != "lavanyagupta136@gmail.com":
+    if email.lower() != "lavanyagupta135@gmail.com":
         response["otp"] = otp_code
     return response
 
@@ -102,7 +102,7 @@ async def resend_otp(email: str = Query(...), db: AsyncSession = Depends(get_db)
     """Invalidate previous OTP and send a new one"""
     otp_code = await otp_service.generate_otp(db, email)
     response = {"success": True, "message": "New OTP sent successfully"}
-    if email.lower() != "lavanyagupta136@gmail.com":
+    if email.lower() != "lavanyagupta135@gmail.com":
         response["otp"] = otp_code
     return response
 
