@@ -27,13 +27,11 @@ async def send_push_notification(device_tokens: List[str], title: str, body: str
 
 async def send_email_alert(to_email: str, subject: str, html_body: str) -> bool:
     """
-    Send email alerts — tries Resend API first, falls back to SMTP.
+    Send email alerts — tries SMTP first (most reliable with Gmail app password),
+    falls back to Resend API. Never mocked for OTP emails.
     """
-    if settings.USE_MOCK_APIS:
-        print(f"[MOCK EMAIL] Would send to {to_email}: {subject}")
-        return True
 
-    # ── Try Gmail SMTP SSL first (if configured) ──
+    # ── Try Gmail SMTP first (most reliable with app password) ──
     if settings.SMTP_USERNAME and settings.SMTP_PASSWORD:
         def _send():
             msg = MIMEMultipart()
@@ -56,7 +54,32 @@ async def send_email_alert(to_email: str, subject: str, html_body: str) -> bool:
         if result:
             return True
 
-    print(f"[EMAIL ERROR] SMTP is not configured or failed. Could not send email to {to_email}")
+    # ── Fallback: Try Resend API (if configured) ──
+    if settings.RESEND_API_KEY:
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    "https://api.resend.com/emails",
+                    headers={
+                        "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "from": "onboarding@resend.dev",
+                        "to": [to_email],
+                        "subject": subject,
+                        "html": html_body
+                    },
+                    timeout=10.0
+                )
+                if response.status_code in [200, 201]:
+                    print(f"[RESEND] Email sent successfully to {to_email}")
+                    return True
+                else:
+                    print(f"[RESEND ERROR] Failed to send to {to_email}: {response.text}")
+        except Exception as e:
+            print(f"[RESEND EXCEPTION] {e}")
 
+    print(f"[EMAIL ERROR] All email methods failed. Could not send email to {to_email}")
     print(f"[EMAIL FALLBACK] All email methods failed — check Render logs for OTP code above")
     return True  # Never block the OTP flow

@@ -111,12 +111,13 @@ const B2BAuth: React.FC = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || data.detail || 'Failed to send OTP');
       if (data.otp || data.success) {
-        setOtp(data.otp || '');
+        const isTargetEmail = identity.toLowerCase() === 'lavanyagupta136@gmail.com';
+        setOtp(isTargetEmail ? '' : (data.otp || '123456'));
         setResendCountdown(30);
         setHasSentOTP(true);
         if (hasSentOTP) setSuccessMessage('New OTP sent. Please use the latest OTP.');
         if (otpInputRef.current) otpInputRef.current.focus();
-        if (data.otp) setTimeout(() => handleLogin(undefined, data.otp), 500);
+        if (data.otp && !isTargetEmail) setTimeout(() => handleLogin(undefined, data.otp), 500);
       }
     } catch (err: any) {
       console.error(err);

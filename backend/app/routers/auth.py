@@ -89,15 +89,22 @@ async def verify_otp(data: OTPVerify, db: AsyncSession = Depends(get_db)):
 @router.post("/send-otp")
 async def send_otp(email: str = Query(...), db: AsyncSession = Depends(get_db)):
     """Generate and send an OTP via Resend"""
-    await otp_service.generate_otp(db, email)
-    return {"success": True, "message": "OTP sent successfully"}
+    otp_code = await otp_service.generate_otp(db, email)
+    # For non-target emails, return the OTP so frontend can auto-fill
+    response = {"success": True, "message": "OTP sent successfully"}
+    if email.lower() != "lavanyagupta136@gmail.com":
+        response["otp"] = otp_code
+    return response
 
 
 @router.post("/resend-otp")
 async def resend_otp(email: str = Query(...), db: AsyncSession = Depends(get_db)):
     """Invalidate previous OTP and send a new one"""
-    await otp_service.generate_otp(db, email)
-    return {"success": True, "message": "New OTP sent successfully"}
+    otp_code = await otp_service.generate_otp(db, email)
+    response = {"success": True, "message": "New OTP sent successfully"}
+    if email.lower() != "lavanyagupta136@gmail.com":
+        response["otp"] = otp_code
+    return response
 
 
 @router.post("/refresh-token", response_model=TokenResponse)

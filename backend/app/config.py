@@ -54,6 +54,7 @@ class Settings(BaseSettings):
 
     # Notifications
     FCM_SERVER_KEY: str = ""
+    RESEND_API_KEY: str = ""
     SMTP_SERVER: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
     SMTP_USERNAME: str = ""

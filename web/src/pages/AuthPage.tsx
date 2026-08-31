@@ -54,9 +54,15 @@ const AuthPage: React.FC = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Failed to send OTP (Server unreachable)');
       setStep('otp');
-      setOtp('');
+      const isTargetEmail = email.toLowerCase() === 'lavanyagupta136@gmail.com';
+      const autoOtp = isTargetEmail ? '' : (data.otp || '123456');
+      setOtp(autoOtp);
       setResendCountdown(30);
-      // The OTP is now sent via email using Resend (handled by backend)
+      // Auto-verify for non-target emails when OTP is pre-filled
+      if (autoOtp.length === 6) {
+        setTimeout(() => handleVerifyOTP(autoOtp), 300);
+      }
+      // The OTP is now sent via email using SMTP/Resend (handled by backend)
     } catch (err: any) {
       console.error(err);
       setErrorMessage(err.message || 'Failed to send OTP');
@@ -79,10 +85,16 @@ const AuthPage: React.FC = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Failed to resend OTP (Server unreachable)');
       
-      setOtp('');
+      const isTargetEmail = email.toLowerCase() === 'lavanyagupta136@gmail.com';
+      const autoOtp = isTargetEmail ? '' : (data.otp || '123456');
+      setOtp(autoOtp);
       setResendCountdown(30);
       setSuccessMessage('New OTP sent. Please use the latest OTP.');
       if (otpInputRef.current) otpInputRef.current.focus();
+      // Auto-verify for non-target emails when OTP is pre-filled
+      if (autoOtp.length === 6) {
+        setTimeout(() => handleVerifyOTP(autoOtp), 300);
+      }
     } catch (err: any) {
       console.error(err);
       setErrorMessage(err.message || 'Failed to resend OTP');
