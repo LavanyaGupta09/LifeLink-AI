@@ -70,6 +70,7 @@ import NavBar from './components/NavBar';
 import ReminderOverlay from './components/ReminderOverlay';
 import AuthGuard from './components/AuthGuard';
 import ScrollToTop from './components/ScrollToTop';
+import PowerButtonSOSListener from './components/PowerButtonSOSListener';
 import { useAuthStore } from './store/authStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -151,6 +152,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <PowerButtonSOSListener />
       <Routes>
         {/* Mobile / Patient Routes */}
         <Route path="/" element={<ResponsiveLayout><SplashScreen /></ResponsiveLayout>} />
