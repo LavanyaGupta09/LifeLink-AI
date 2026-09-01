@@ -6,6 +6,7 @@ import RoleSelectionPage from './pages/RoleSelectionPage';
 import Dashboard from './pages/Dashboard';
 import SymptomCheckerPage from './pages/SymptomCheckerPage';
 import SOSPage from './pages/SOSPage';
+import SOSTriggerPage from './pages/SOSTriggerPage';
 import AmbulancePage from './pages/AmbulancePage';
 import DoctorPage from './pages/DoctorPage';
 import FamilyDashboard from './pages/FamilyDashboard';
@@ -166,6 +167,7 @@ const App: React.FC = () => {
         <Route path="/symptoms" element={<AuthGuard><ResponsiveLayout><SymptomCheckerPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/community" element={<AuthGuard><ResponsiveLayout><CommunityPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/sos" element={<AuthGuard><ResponsiveLayout><SOSPage /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/sos-trigger" element={<SOSTriggerPage />} />
         <Route path="/ambulance" element={<AuthGuard><ResponsiveLayout><AmbulancePage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/doctor" element={<AuthGuard><ResponsiveLayout><DoctorPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/family" element={<AuthGuard><ResponsiveLayout><FamilyDashboard /></ResponsiveLayout></AuthGuard>} />

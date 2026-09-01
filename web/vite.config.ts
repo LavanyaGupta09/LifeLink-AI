@@ -24,11 +24,25 @@ export default defineConfig({
         theme_color: '#060B14',
         background_color: '#060B14',
         display: 'standalone',
+        start_url: '/dashboard',
+        scope: '/',
+        launch_handler: {
+          client_mode: 'navigate-existing'
+        },
         icons: [
           {
             src: '/favicon.svg',
             sizes: '512x512',
             type: 'image/svg+xml'
+          }
+        ],
+        shortcuts: [
+          {
+            name: 'Emergency SOS',
+            short_name: 'SOS',
+            description: 'Trigger emergency SOS immediately',
+            url: '/sos-trigger',
+            icons: [{ src: '/favicon.svg', sizes: '512x512' }]
           }
         ]
       },

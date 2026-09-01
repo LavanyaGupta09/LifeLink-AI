@@ -378,6 +378,79 @@ const SettingsPage: React.FC = () => {
         </label>
       </div>
 
+      {/* 🚨 Emergency SOS Power Button Setup Guide */}
+      <div className="mb-6 rounded-2xl overflow-hidden border-2 border-[#FF4757]/40 shadow-lg shadow-red-900/20" style={{ background: 'linear-gradient(180deg, rgba(255,71,87,0.08) 0%, rgba(6,11,20,0) 100%)' }}>
+        <div className="p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-[#FF4757]/20 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle size={20} className="text-[#FF4757]" />
+            </div>
+            <div>
+              <h4 className="font-bold text-[1rem] text-[#FF4757]">Power Button SOS Setup</h4>
+              <p className="text-[11px] text-slate-400 mt-0.5">Press power button 3× to auto-trigger LifeLink SOS</p>
+            </div>
+          </div>
+          
+          <div className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 mb-3">
+            <p className="text-xs text-slate-300 font-semibold mb-3">📱 Follow these steps on your phone:</p>
+            
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#FF4757] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Open Phone Settings</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Go to <strong className="text-slate-200">Settings → Safety & Emergency</strong> (Android) or <strong className="text-slate-200">Settings → Emergency SOS</strong> (iPhone)</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#FF4757] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Enable Emergency SOS</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Turn on <strong className="text-slate-200">"Press power button 3/5 times for Emergency SOS"</strong></p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#FF4757] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
+                <div>
+                  <p className="text-sm text-white font-medium">Set LifeLink as SOS Action</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Under <strong className="text-slate-200">"SOS actions"</strong>, add a website/URL and paste:</p>
+                  <div 
+                    className="mt-2 bg-black/60 border border-slate-700 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2 cursor-pointer hover:border-[#FF4757]/50 transition-colors group"
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://life-link-ai-psi.vercel.app/sos-trigger');
+                      alert('✅ SOS URL copied to clipboard!');
+                    }}
+                  >
+                    <code className="text-[10px] text-[#FF4757] font-mono break-all">https://life-link-ai-psi.vercel.app/sos-trigger</code>
+                    <span className="text-[9px] text-slate-500 group-hover:text-[#FF4757] flex-shrink-0 font-bold transition-colors">COPY</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-2">
+            <button 
+              className="flex-1 py-2.5 bg-[#FF4757]/10 border border-[#FF4757]/30 text-[#FF4757] rounded-xl text-xs font-bold hover:bg-[#FF4757]/20 transition-colors"
+              onClick={() => {
+                navigator.clipboard.writeText('https://life-link-ai-psi.vercel.app/sos-trigger');
+                alert('✅ SOS URL copied! Now paste it in your phone\'s Emergency SOS settings.');
+              }}
+            >
+              📋 Copy SOS URL
+            </button>
+            <button 
+              className="flex-1 py-2.5 bg-[#131B2F] border border-slate-700 text-slate-300 rounded-xl text-xs font-bold hover:bg-[#1A2542] transition-colors"
+              onClick={() => window.open('https://life-link-ai-psi.vercel.app/sos-trigger', '_blank')}
+            >
+              🔗 Test SOS Link
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-4">
         <h3 className="text-secondary text-sm font-semibold mb-2 uppercase tracking-wider">Personal Information</h3>
         
