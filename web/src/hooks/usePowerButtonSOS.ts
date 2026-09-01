@@ -6,28 +6,35 @@ import { useSOSGuardStore } from '../store/sosGuardStore';
 /**
  * Detects triple power-button press to trigger SOS.
  *
- * In a web app we cannot listen to the physical power button directly.
- * However, pressing the power button locks the screen, which fires a
- * `visibilitychange` event (hidden → visible cycle). Three rapid presses
- * produce three hidden→visible transitions within a short window.
+ * Strategy (multiple detection methods):
  *
- * We also listen for the keyboard shortcut: pressing 'P' three times
- * rapidly (within 1.5 s) as a desktop/testing fallback.
+ * 1. **visibilitychange** — Each power-button press toggles the screen
+ *    on/off, firing a visibilitychange event. We count ALL transitions
+ *    (hidden AND visible). Three rapid presses → 3 transitions within
+ *    the time window → SOS fires.
+ *
+ * 2. **Volume keys** — On mobile Chrome/Android, pressing the volume
+ *    buttons fires 'VolumeDown' / 'VolumeUp' KeyboardEvent. Three
+ *    rapid volume-down presses also triggers SOS.
+ *
+ * 3. **Desktop fallback** — Pressing 'P' three times rapidly triggers
+ *    SOS for testing purposes (ignored when typing in inputs).
  */
 export function usePowerButtonSOS() {
   const navigate = useNavigate();
   const { triggerSOS, isSOSActive } = useSOSStore();
   const { isCooldownActive, isLocked } = useSOSGuardStore();
 
-  // Track visibility transitions (power button proxy)
+  // Timestamp trackers for each detection method
   const visibilityTimestamps = useRef<number[]>([]);
-  // Track keyboard 'p' key presses (desktop fallback)
-  const keyTimestamps = useRef<number[]>([]);
+  const volumeKeyTimestamps = useRef<number[]>([]);
+  const pKeyTimestamps = useRef<number[]>([]);
+
   // Prevent double-fire
   const firedRef = useRef(false);
 
   const REQUIRED_PRESSES = 3;
-  const TIME_WINDOW_MS = 2000; // all 3 presses must happen within 2 s
+  const TIME_WINDOW_MS = 3000; // all 3 presses must happen within 3 s
 
   const fireSOS = useCallback(() => {
     if (firedRef.current || isSOSActive) return;
@@ -35,17 +42,20 @@ export function usePowerButtonSOS() {
 
     firedRef.current = true;
 
-    // Try to get real geolocation; fall back to mock coords
+    // Vibrate to confirm detection (if supported)
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 400]);
+    }
+
+    // Try to get real geolocation; fall back to default coords
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           triggerSOS('critical', 'hardware', pos.coords.latitude, pos.coords.longitude);
           navigate('/sos');
-          // Reset after a short delay so the hook can fire again next time
           setTimeout(() => { firedRef.current = false; }, 5000);
         },
         () => {
-          // Geolocation denied / error → use fallback coords
           triggerSOS('critical', 'hardware', 28.5355, 77.2690);
           navigate('/sos');
           setTimeout(() => { firedRef.current = false; }, 5000);
@@ -59,30 +69,46 @@ export function usePowerButtonSOS() {
     }
   }, [triggerSOS, isSOSActive, isLocked, isCooldownActive, navigate]);
 
-  useEffect(() => {
-    // ── Visibility-change detection (mobile power button) ──
-    const handleVisibilityChange = () => {
-      // We only care about the transition from hidden → visible
-      // (i.e., screen turned back on after a power-button press)
-      if (document.visibilityState === 'visible') {
-        const now = Date.now();
-        visibilityTimestamps.current.push(now);
-
-        // Keep only recent timestamps within the window
-        visibilityTimestamps.current = visibilityTimestamps.current.filter(
-          (t) => now - t <= TIME_WINDOW_MS
-        );
-
-        if (visibilityTimestamps.current.length >= REQUIRED_PRESSES) {
-          visibilityTimestamps.current = [];
-          fireSOS();
-        }
+  /**
+   * Helper: push a timestamp, prune old entries, and check if the
+   * threshold has been met.
+   */
+  const recordAndCheck = useCallback(
+    (timestamps: React.MutableRefObject<number[]>) => {
+      const now = Date.now();
+      timestamps.current.push(now);
+      timestamps.current = timestamps.current.filter(
+        (t) => now - t <= TIME_WINDOW_MS
+      );
+      if (timestamps.current.length >= REQUIRED_PRESSES) {
+        timestamps.current = [];
+        fireSOS();
       }
+    },
+    [fireSOS]
+  );
+
+  useEffect(() => {
+    // ── 1. Visibility-change detection (mobile power button) ──
+    // Each power button press causes one visibilitychange event.
+    // Count ALL transitions (both hidden→visible AND visible→hidden).
+    const handleVisibilityChange = () => {
+      recordAndCheck(visibilityTimestamps);
     };
 
-    // ── Keyboard detection (desktop fallback: press 'P' 3× rapidly) ──
+    // ── 2. Volume key detection (mobile browsers) ──
+    // ── 3. 'P' key detection (desktop testing) ──
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input / textarea / contentEditable
+      // Volume keys (works on Android Chrome)
+      if (e.key === 'VolumeDown' || e.key === 'VolumeUp' || 
+          e.key === 'AudioVolumeDown' || e.key === 'AudioVolumeUp') {
+        e.preventDefault();
+        recordAndCheck(volumeKeyTimestamps);
+        return;
+      }
+
+      // Desktop fallback: triple 'P' key
+      // Skip if user is typing in an input/textarea
       const target = e.target as HTMLElement;
       if (
         target.tagName === 'INPUT' ||
@@ -93,17 +119,7 @@ export function usePowerButtonSOS() {
       }
 
       if (e.key.toLowerCase() === 'p') {
-        const now = Date.now();
-        keyTimestamps.current.push(now);
-
-        keyTimestamps.current = keyTimestamps.current.filter(
-          (t) => now - t <= TIME_WINDOW_MS
-        );
-
-        if (keyTimestamps.current.length >= REQUIRED_PRESSES) {
-          keyTimestamps.current = [];
-          fireSOS();
-        }
+        recordAndCheck(pKeyTimestamps);
       }
     };
 
@@ -114,5 +130,5 @@ export function usePowerButtonSOS() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [fireSOS]);
+  }, [recordAndCheck]);
 }
