@@ -76,13 +76,14 @@ const B2BAuth: React.FC = () => {
     if (isAuthenticated) {
       if (user?.role === 'super_admin') {
         navigate('/admin/dashboard', { replace: true });
-      } else if (['doctor', 'hospital_admin', 'pharmacy_manager', 'lab_tech', 'driver', 'equipment'].includes(user?.role || '')) {
+      } else if (['doctor', 'hospital_admin', 'pharmacy_manager', 'lab_tech', 'driver', 'equipment', 'first_responder'].includes(user?.role || '')) {
         if (user?.role === 'hospital_admin') navigate('/partner/dashboard', { replace: true });
         else if (user?.role === 'doctor') navigate('/doctor/dashboard', { replace: true });
         else if (user?.role === 'pharmacy_manager') navigate('/b2b/pharmacy', { replace: true });
         else if (user?.role === 'lab_tech') navigate('/b2b/lab', { replace: true });
         else if (user?.role === 'driver') navigate('/b2b/driver', { replace: true });
         else if (user?.role === 'equipment') navigate('/b2b/equipment', { replace: true });
+        else if (user?.role === 'first_responder') navigate('/command-center', { replace: true });
       } else {
         navigate('/dashboard', { replace: true });
       }
