@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@jitsi/react-sdk": "^1.4.4",
+    "agora-rtc-sdk-ng": "^4.22.2",
+    "agora-rtc-react": "^2.2.0",
     "@supabase/supabase-js": "^2.112.2",
     "@types/leaflet": "^1.9.22",
     "axios": "^1.19.0",

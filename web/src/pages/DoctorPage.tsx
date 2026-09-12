@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Video, Phone, Star, Clock, Award, Filter, Search, ChevronRight, CheckCircle2, Languages, MapPin, Zap, VideoOff, MicOff, PhoneOff, Activity } from 'lucide-react';
 import type { Doctor } from '../types/health.types';
 import { useAuthStore } from '../store/authStore';
-import JitsiVideoCall from '../components/telemedicine/JitsiVideoCall';
+import AgoraVideoCall from '../components/telemedicine/AgoraVideoCall';
 
 const SPECIALITIES = [
   { name: 'General Physician', icon: '🩺', color: 'from-blue-500/20 to-blue-500/5', text: 'text-blue-400', border: 'border-blue-500/20' },
@@ -21,6 +21,10 @@ export default function DoctorPage() {
   const [selectedSpec, setSelectedSpec] = useState('All');
   const [activeCall, setActiveCall] = useState<Doctor | null>(null);
   const [callElapsed, setCallElapsed] = useState(0);
+
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string; appId: string; channel: string } | null>(null);
+  const [callLoading, setCallLoading] = useState(false);
+  const [agoraError, setAgoraError] = useState<string | null>(null);
 
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,6 +82,35 @@ export default function DoctorPage() {
 
   const startCall = async (doc: Doctor) => {
     setActiveCall(doc);
+    
+    // The channel should be unique but consistent for the doc and patient if we were doing true pairing.
+    // For demo purposes, we will use a deterministic channel name based on doctor ID so the doctor can join it.
+    const channelId = `consult_${doc.id}`;
+    
+    try {
+      setCallLoading(true);
+      setAgoraError(null);
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/agora/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_name: channelId, uid: 0, role: 1 })
+      });
+      if (!res.ok) {
+        throw new Error('Failed to fetch token');
+      }
+      const data = await res.json();
+      setAgoraConfig({ token: data.token, appId: data.app_id, channel: channelId });
+    } catch (err: any) {
+      console.error(err);
+      if (!import.meta.env.VITE_AGORA_APP_ID) {
+        setAgoraError("VITE_AGORA_APP_ID is not configured in .env.local");
+      } else {
+        setAgoraError("Failed to fetch Agora token. Please check backend configuration.");
+      }
+    } finally {
+      setCallLoading(false);
+    }
+
     const t = setInterval(() => setCallElapsed(e => e + 1), 1000);
     
     // Broadcast via Real-time to ensure Doctor Workspace rings instantly!
@@ -90,6 +123,7 @@ export default function DoctorPage() {
       triage_level: 'high', // Use high to ensure it pops up
       status: 'waiting',
       blood_group: 'O+',
+      channel_id: channelId,
       symptoms: `Consultation request for ${doc.specialization}`,
       created_at: new Date().toISOString()
     };
@@ -114,20 +148,39 @@ export default function DoctorPage() {
 
   const endCall = () => {
     setActiveCall(null);
+    setAgoraConfig(null);
+    setAgoraError(null);
     setCallElapsed(0);
   };
 
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-  // LIVE JITSI VIDEO CALL OVERLAY
+  // LIVE AGORA VIDEO CALL OVERLAY
   if (activeCall) {
     return (
       <div className="fixed inset-0 bg-black z-50 flex flex-col justify-between overflow-hidden">
-        <JitsiVideoCall 
-          roomName={`LifeLink_Consult_${activeCall.id}`}
-          displayName={user?.fullName || 'Patient'}
-          onReadyToClose={endCall}
-        />
+        {callLoading ? (
+           <div className="flex-1 flex flex-col items-center justify-center text-white gap-4">
+             <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+             <p className="font-bold tracking-tight">Connecting to Secure Server...</p>
+           </div>
+        ) : agoraError ? (
+           <div className="flex-1 flex flex-col items-center justify-center text-white p-6 text-center max-w-md mx-auto">
+             <div className="w-16 h-16 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mb-4 border border-rose-500/50">
+               <VideoOff size={32} />
+             </div>
+             <h3 className="text-xl font-bold mb-2">Configuration Required</h3>
+             <p className="text-slate-400 mb-6 text-sm">{agoraError}</p>
+             <button onClick={endCall} className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl transition-colors">Go Back</button>
+           </div>
+        ) : agoraConfig ? (
+           <AgoraVideoCall 
+             channelName={agoraConfig.channel}
+             token={agoraConfig.token}
+             appId={agoraConfig.appId}
+             onReadyToClose={endCall}
+           />
+        ) : null}
       </div>
     );
   }

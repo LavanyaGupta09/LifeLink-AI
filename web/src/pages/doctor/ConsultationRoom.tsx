@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Video, VideoOff, Mic, MicOff, PhoneOff, Activity, Droplets, HeartPulse, FileText, Pill, CheckCircle, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
+import AgoraVideoCall from '../../components/telemedicine/AgoraVideoCall';
 
 export default function ConsultationRoom() {
   const location = useLocation();
@@ -18,8 +19,39 @@ export default function ConsultationRoom() {
     gender: 'Male',
     blood_group: 'O+',
     triage_level: 'medium',
-    symptoms: 'Mild fever, dry cough for 3 days.'
+    symptoms: 'Mild fever, dry cough for 3 days.',
+    channel_id: 'consult_demo_channel'
   });
+
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string; appId: string; channel: string } | null>(null);
+  const [callLoading, setCallLoading] = useState(true);
+  const [agoraError, setAgoraError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const channelId = currentPatient.channel_id || `consult_${user?.id || 'demo'}`;
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/agora/token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channel_name: channelId, uid: 0, role: 1 })
+        });
+        if (!res.ok) throw new Error('Failed to fetch token');
+        const data = await res.json();
+        setAgoraConfig({ token: data.token, appId: data.app_id, channel: channelId });
+      } catch (err) {
+        console.error(err);
+        if (!import.meta.env.VITE_AGORA_APP_ID) {
+          setAgoraError("VITE_AGORA_APP_ID is not configured in .env.local");
+        } else {
+          setAgoraError("Failed to fetch Agora token. Please check backend configuration.");
+        }
+      } finally {
+        setCallLoading(false);
+      }
+    };
+    fetchToken();
+  }, [currentPatient, user]);
 
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
@@ -72,49 +104,29 @@ export default function ConsultationRoom() {
     <div className="w-full min-h-full flex flex-col xl:flex-row bg-[#060B14] relative animate-in fade-in zoom-in-95 duration-200">
       
       {/* VIDEO AREA (Left side) */}
-      <div className="h-[50vh] xl:h-auto xl:flex-1 bg-black relative flex flex-col border-b xl:border-b-0 xl:border-r border-slate-800 shrink-0">
-        {isVideoOn ? (
-          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1200&auto=format&fit=crop" alt="Patient Video" className="absolute inset-0 w-full h-full object-cover opacity-90" />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-900"><VideoOff size={64} className="text-slate-600" /></div>
-        )}
-        
-        {/* Top Overlay */}
-        <div className="absolute top-0 left-0 w-full bg-gradient-to-b from-black/80 to-transparent p-6 z-10 flex justify-between items-start">
-          <div>
-            <h3 className="text-white font-bold text-2xl drop-shadow-md flex items-center gap-3">
-              {currentPatient.patient_name}
-              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${getTriageColor(currentPatient.triage_level)}`}>
-                {currentPatient.triage_level}
-              </span>
-            </h3>
-            <p className="text-slate-300 text-sm drop-shadow-md font-medium mt-1">
-              {currentPatient.age}y • {currentPatient.gender} • Blood: {currentPatient.blood_group || 'N/A'}
-            </p>
-          </div>
-          <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse"></div>
-            <span className="text-white text-sm font-bold tracking-widest">04:23</span>
-          </div>
-        </div>
-
-        {/* Doctor PiP */}
-        <div className="absolute bottom-24 right-4 md:right-6 w-32 h-48 md:w-48 md:h-64 bg-slate-800 rounded-2xl border-2 border-slate-700 overflow-hidden shadow-2xl z-10">
-          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=300&auto=format&fit=crop" alt="Doctor Video" className="w-full h-full object-cover" />
-        </div>
-
-        {/* Controls Overlay */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/60 backdrop-blur-xl px-8 py-4 rounded-full border border-white/10 shadow-2xl z-20">
-          <button onClick={() => setIsMicOn(!isMicOn)} className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${isMicOn ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]'}`}>
-            {isMicOn ? <Mic size={24} /> : <MicOff size={24} />}
-          </button>
-          <button onClick={() => setIsVideoOn(!isVideoOn)} className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${isVideoOn ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]'}`}>
-            {isVideoOn ? <Video size={24} /> : <VideoOff size={24} />}
-          </button>
-          <button onClick={endConsultation} className="w-16 h-16 rounded-full flex items-center justify-center bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.5)] transition-all ml-4">
-            <PhoneOff size={28} />
-          </button>
-        </div>
+      <div className="h-[50vh] xl:h-auto xl:flex-1 bg-black relative flex flex-col border-b xl:border-b-0 xl:border-r border-slate-800 shrink-0 overflow-hidden">
+        {callLoading ? (
+           <div className="flex-1 flex flex-col items-center justify-center text-white gap-4 h-full">
+             <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+             <p className="font-bold tracking-tight">Connecting to Secure Server...</p>
+           </div>
+        ) : agoraError ? (
+           <div className="flex-1 flex flex-col items-center justify-center text-white p-6 text-center max-w-md mx-auto h-full">
+             <div className="w-16 h-16 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mb-4 border border-rose-500/50">
+               <VideoOff size={32} />
+             </div>
+             <h3 className="text-xl font-bold mb-2">Configuration Required</h3>
+             <p className="text-slate-400 mb-6 text-sm">{agoraError}</p>
+             <button onClick={() => navigate('/doctor/on-call')} className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl transition-colors">Go Back</button>
+           </div>
+        ) : agoraConfig ? (
+           <AgoraVideoCall 
+             channelName={agoraConfig.channel}
+             token={agoraConfig.token}
+             appId={agoraConfig.appId}
+             onReadyToClose={endConsultation}
+           />
+        ) : null}
       </div>
 
       {/* RIGHT SIDEBAR (EMR & Prescriptions) */}
