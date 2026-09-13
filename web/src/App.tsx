@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import SplashScreen from './pages/SplashScreen';
 import LiveTrackingPage from './pages/LiveTrackingPage';
 import RoleSelectionPage from './pages/RoleSelectionPage';
-import Dashboard from './pages/Dashboard';
+import DashboardRouter from './pages/DashboardRouter';
 import SymptomCheckerPage from './pages/SymptomCheckerPage';
 import SOSPage from './pages/SOSPage';
 import SOSTriggerPage from './pages/SOSTriggerPage';
@@ -14,6 +14,11 @@ import HealthPassport from './pages/HealthPassport';
 import MedicalVault from './pages/MedicalVault';
 import CommunityPage from './pages/CommunityPage';
 import BloodNetwork from './pages/BloodNetwork';
+import RuralDoctorSeSalah from './pages/asha/RuralDoctorSeSalah';
+import RuralNajdeekHospital from './pages/asha/RuralNajdeekHospital';
+import RuralSastiDawai from './pages/asha/RuralSastiDawai';
+import RuralSarkariYojna from './pages/asha/RuralSarkariYojna';
+import RuralFamilyHealth from './pages/asha/RuralFamilyHealth';
 import PharmacyPage from './pages/PharmacyPage';
 import LabPage from './pages/LabPage';
 import SettingsPage from './pages/SettingsPage';
@@ -174,7 +179,7 @@ const App: React.FC = () => {
         <Route path="/role-select" element={<ResponsiveLayout><RoleSelectionPage /></ResponsiveLayout>} />
         <Route path="/login" element={<ResponsiveLayout><AuthPage /></ResponsiveLayout>} />
         <Route path="/onboarding" element={<ResponsiveLayout><PatientOnboarding /></ResponsiveLayout>} />
-        <Route path="/dashboard" element={<AuthGuard><ResponsiveLayout><Dashboard /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/dashboard" element={<AuthGuard><ResponsiveLayout><DashboardRouter /></ResponsiveLayout></AuthGuard>} />
         <Route path="/profile" element={<AuthGuard><ResponsiveLayout><ProfilePage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/symptoms" element={<AuthGuard><ResponsiveLayout><SymptomCheckerPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/community" element={<AuthGuard><ResponsiveLayout><CommunityPage /></ResponsiveLayout></AuthGuard>} />
@@ -221,6 +226,11 @@ const App: React.FC = () => {
         <Route path="/asha/videos" element={<AuthGuard><ResponsiveLayout><AshaVideoLibrary /></ResponsiveLayout></AuthGuard>} />
         <Route path="/asha/alert" element={<AuthGuard><ResponsiveLayout><AshaEmergencyAlert /></ResponsiveLayout></AuthGuard>} />
         <Route path="/asha/profile" element={<AuthGuard><ResponsiveLayout><AshaProfile /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/doctor" element={<AuthGuard><ResponsiveLayout><RuralDoctorSeSalah /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/hospital" element={<AuthGuard><ResponsiveLayout><RuralNajdeekHospital /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/pharmacy" element={<AuthGuard><ResponsiveLayout><RuralSastiDawai /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/yojna" element={<AuthGuard><ResponsiveLayout><RuralSarkariYojna /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/family" element={<AuthGuard><ResponsiveLayout><RuralFamilyHealth /></ResponsiveLayout></AuthGuard>} />
 
         <Route path="/vendor" element={<ResponsiveLayout><VendorPortalPage /></ResponsiveLayout>} />
         <Route path="/privacy" element={<ResponsiveLayout><PrivacyConsentPage /></ResponsiveLayout>} />

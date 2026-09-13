@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Activity, Building2, MapPin, Briefcase, User, CloudOff } from 'lucide-react';
 import { useOfflineSyncStore } from '../store/offlineSyncStore';
 import { useAuthStore } from '../store/authStore';
+import { useAshaStore } from '../store/ashaStore';
 
-const navItems = [
+const urbanNavItems = [
   { icon: Home,      label: 'Home',      route: '/dashboard' },
   { icon: Activity,  label: 'Symptoms',  route: '/symptoms' },
   { icon: Building2, label: 'Hospitals', route: '/hospitals' },
@@ -13,15 +14,33 @@ const navItems = [
   { icon: User,      label: 'Profile',   route: '/profile' },
 ];
 
+import { HeartPulse, ShieldAlert, Users } from 'lucide-react';
+const ruralNavItems = [
+  { icon: Home,        label: 'Home',    route: '/dashboard' },
+  { icon: ShieldAlert, label: 'SOS',     route: '/sos' },
+  { icon: HeartPulse,  label: 'ASHA',    route: '/asha' },
+  { icon: Users,       label: 'Family',  route: '/asha/family' },
+  { icon: User,        label: 'Profile', route: '/profile' },
+];
+
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isOffline, queueSize } = useOfflineSyncStore();
   const { user } = useAuthStore();
 
+  const { areaType } = useAshaStore();
+
   const hiddenRoutes = ['/', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review', '/area-select'];
-  if (hiddenRoutes.some(r => location.pathname === r) || location.pathname.startsWith('/b2b/') || location.pathname.startsWith('/admin/') || location.pathname.startsWith('/asha') || user?.easyModeEnabled) return null;
+  // Keep NavBar on /asha if rural, otherwise hide it. 
+  // Wait, if we use /asha for rural, maybe we WANT the NavBar on /asha?
+  // Yes, because ASHA is a tab. So remove /asha from hidden routes if areaType === 'rural'
+  const isAshaHidden = areaType === 'rural' ? false : location.pathname.startsWith('/asha');
+
+  if (hiddenRoutes.some(r => location.pathname === r) || location.pathname.startsWith('/b2b/') || location.pathname.startsWith('/admin/') || isAshaHidden || user?.easyModeEnabled) return null;
   
+  const navItems = areaType === 'rural' ? ruralNavItems : urbanNavItems;
+
   return (
     <>
       {/* Offline Alert (Moved to top right if offline) */}
