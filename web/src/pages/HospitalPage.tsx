@@ -4,7 +4,7 @@ import {
   ArrowLeft, Search, Filter, MapPin, Clock, Star, Phone, Navigation,
   Building2, Bed, Users, ShieldCheck, Droplets, ChevronRight,
   CheckCircle2, AlertTriangle, Send, Zap, RefreshCw, ExternalLink,
-  Share2, Activity, X, SlidersHorizontal
+  Share2, Activity, X, SlidersHorizontal, AlertCircle
 } from 'lucide-react';
 import { MOCK_ER_DASHBOARDS, MOCK_PRE_ARRIVAL_ALERT, MOCK_HOSPITAL_ROUTES, MOCK_HEALTH_PROFILE, MOCK_USER } from '../data/mockData';
 import type { HospitalExtended, ERDashboard, HospitalRoute } from '../types/health.types';
