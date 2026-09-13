@@ -11,6 +11,7 @@ export interface OverpassFacility {
   tags?: Record<string, string>;
   costLevel?: 'Low' | 'Medium' | 'High';
   estimatedCost?: number;
+  isDemo?: boolean;
 }
 
 /**
@@ -172,15 +173,15 @@ export async function fetchNearbyFacilities(
       .slice(0, 20);
       
     if (!facilities || facilities.length === 0) {
-      throw new Error('No facilities found nearby');
+      console.log(`No ${type} found via API. Returning demo facilities...`);
+      return generateFallbackFacilities(lat, lng, type).map(f => ({ ...f, isDemo: true }));
     }
 
     apiCache.set(cacheKey, { timestamp: Date.now(), data: facilities });
     return facilities;
   } catch (error) {
-    console.error('Error fetching facilities from Overpass:', error);
-    // Explicitly throw the error so the UI can catch it and show a Retry button
-    throw error;
+    console.warn('Overpass API unavailable/slow. Returning demo facilities:', error);
+    return generateFallbackFacilities(lat, lng, type).map(f => ({ ...f, isDemo: true }));
   }
 }
 

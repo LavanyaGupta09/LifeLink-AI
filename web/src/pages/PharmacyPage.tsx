@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Star, Phone, MapPin, Tag, ShoppingCart, Upload, CheckCircle2, ChevronRight, Info } from 'lucide-react';
+import { ArrowLeft, Search, Star, Phone, MapPin, Tag, ShoppingCart, Upload, CheckCircle2, ChevronRight, Info, AlertCircle } from 'lucide-react';
 import { GENERIC_MAP } from '../data/mockData';
 import { useGeolocation } from '../hooks/useGeolocation';
 import LocationFallback from '../components/LocationFallback';
@@ -81,14 +81,14 @@ const PharmacyPage: React.FC = () => {
               rating: parseFloat((3.5 + (seed % 15) / 10).toFixed(1)),
               is24h: seed % 3 === 0,
               isJanAushadhi: isJanAushadhi,
-              medicines: MOCK_MEDS.filter((_, i) => ((seed + i) % 2) !== 0).slice(0, 5)
+              medicines: MOCK_MEDS.filter((_, i) => ((seed + i) % 2) !== 0).slice(0, 5),
+              isDemo: f.isDemo
             };
           });
           
           setPharmacies(mapped);
       } catch (e: any) {
         console.error(e);
-        setApiError(e.message || "Failed to load pharmacies");
       } finally {
         setLoadingPharmacies(false);
         isFetching.current = false;
@@ -233,17 +233,7 @@ const PharmacyPage: React.FC = () => {
                 />
               </div>
 
-              {apiError ? (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center animate-fade-in mb-4">
-                  <p className="text-red-400 font-bold mb-3">{apiError}</p>
-                  <button 
-                    onClick={() => location && fetchPharms(location.lat, location.lng)}
-                    className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-2 rounded-xl text-sm font-bold transition-colors"
-                  >
-                    Retry Loading
-                  </button>
-                </div>
-              ) : loadingPharmacies ? (
+              {loadingPharmacies ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map(i => (
                     <div key={i} className="bg-[#131B2F] rounded-3xl p-5 h-32 animate-pulse border border-slate-800"></div>
@@ -256,6 +246,12 @@ const PharmacyPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
+                  {filtered.length > 0 && filtered[0].isDemo && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg self-start flex items-center gap-1.5">
+                      <AlertCircle size={12} />
+                      Prototype Nearby Data
+                    </div>
+                  )}
                   {filtered.map((pharmacy, i) => (
                     <div key={pharmacy.id} className="bg-gradient-to-br from-[#131B2F] to-[#0B1121] border border-slate-800 rounded-3xl p-5 relative overflow-hidden group hover:border-slate-700 transition-colors">
                       {/* Jan Aushadhi Tag */}

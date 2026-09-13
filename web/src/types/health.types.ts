@@ -122,6 +122,7 @@ export interface HospitalExtended extends Hospital {
   hasHelipad: boolean;
   hasBloodBank: boolean;
   onCallSpecialists: OnCallSpecialist[];
+  isDemo?: boolean;
 }
 
 export interface ERDashboard {

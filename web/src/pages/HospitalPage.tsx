@@ -140,6 +140,7 @@ const HospitalPage: React.FC = () => {
             hasBloodBank: seed % 2 === 0,
             traumaLevel: 'Level ' + trauma,
             isPartner: seed % 4 === 0,
+            isDemo: f.isDemo
           };
         });
         setHospitals(mapped);
@@ -171,7 +172,6 @@ const HospitalPage: React.FC = () => {
         if (mapped.length > 0) setAlertHosp(mapped[0]);
       } catch (e: any) {
         console.error(e);
-        setApiError(e.message || "Failed to load hospitals");
       } finally {
         setLoadingHospitals(false);
         isFetching.current = false;
@@ -477,17 +477,7 @@ const HospitalPage: React.FC = () => {
 
             {/* Hospital cards */}
             
-            {apiError ? (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center animate-fade-in mb-4">
-                <p className="text-red-400 font-bold mb-3">{apiError}</p>
-                <button 
-                  onClick={() => location && fetchHospitals(location.lat, location.lng)}
-                  className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-2 rounded-xl text-sm font-bold transition-colors"
-                >
-                  Retry Loading
-                </button>
-              </div>
-            ) : loadingHospitals ? (
+            {loadingHospitals ? (
               <div className="space-y-4">
                 {[1,2,3,4].map(i => (
                   <div key={i} className="card animate-pulse" style={{ height: 140 }}>
@@ -514,7 +504,15 @@ const HospitalPage: React.FC = () => {
                   Clear filters
                 </button>
               </div>
-            ) : filtered.map((h, i) => {
+            ) : (
+              <>
+                {filtered.length > 0 && filtered[0].isDemo && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-3 self-start flex items-center gap-1.5">
+                    <AlertCircle size={12} />
+                    Prototype Nearby Data
+                  </div>
+                )}
+                {filtered.map((h, i) => {
               const erStatus = erForHosp(h.id);
               const avail = erStatus?.availabilityStatus ?? 'medium';
               return (
@@ -607,7 +605,9 @@ const HospitalPage: React.FC = () => {
                 </div>
               );
             })}
-          </div>
+            </>
+          )}
+        </div>
         )}
 
         {/* ══════════════════════════════════════════════════════════════

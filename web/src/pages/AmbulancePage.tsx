@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Star, Phone, ChevronRight, Navigation, Bed } from 'lucide-react';
+import { ArrowLeft, Search, Star, Phone, MapPin, Tag, Navigation, PhoneCall, HeartPulse, Stethoscope, ChevronRight, AlertCircle, Clock, Bed } from 'lucide-react';
 import FreeMap from '../components/FreeMap';
 import type { Hospital } from '../types/health.types';
 import { useGeolocation } from '../hooks/useGeolocation';
@@ -45,13 +45,11 @@ const AmbulancePage: React.FC = () => {
   const [amb2, setAmb2] = useState<[number, number]>([28.5355 - 0.005, 77.2690 + 0.009]);
   const [etaMin, setEtaMin] = useState(7);
   const [distKm, setDistKm] = useState(1.8);
-  const [apiError, setApiError] = useState<string | null>(null);
   const isFetching = React.useRef(false);
 
   const fetchHospitals = async (lat: number, lng: number) => {
     if (isFetching.current) return;
     isFetching.current = true;
-    setApiError(null);
     setAmb1([lat + 0.008, lng - 0.006]);
     setAmb2([lat - 0.005, lng + 0.009]);
 
@@ -61,7 +59,6 @@ const AmbulancePage: React.FC = () => {
       setHospitals(facilities.map(enrichHospital));
     } catch (e: any) {
       console.error(e);
-      setApiError(e.message || "Failed to load hospitals");
     } finally {
       isFetching.current = false;
     }
@@ -179,17 +176,13 @@ const AmbulancePage: React.FC = () => {
         {/* Hospital list */}
         <p className="section-title mb-3 animate-fade-in delay-300">Nearby Hospitals — ER Status</p>
 
-        {apiError ? (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center animate-fade-in mb-4">
-            <p className="text-red-400 font-bold mb-3">{apiError}</p>
-            <button 
-              onClick={() => location && !isFetching.current && fetchHospitals(location.lat, location.lng)}
-              className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-2 rounded-xl text-sm font-bold transition-colors"
-            >
-              Retry Loading
-            </button>
+        {hospitals.length > 0 && hospitals[0].isDemo && (
+          <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-3 self-start inline-flex items-center gap-1.5">
+            <AlertCircle size={12} />
+            Prototype Nearby Data
           </div>
-        ) : hospitals.length === 0 ? (
+        )}
+        {hospitals.length === 0 ? (
           <div className="animate-pulse">
             {[1,2,3].map(i => <div key={i} className="card mb-3" style={{ height: 140, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
           </div>
