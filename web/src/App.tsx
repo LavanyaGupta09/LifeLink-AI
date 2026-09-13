@@ -51,6 +51,18 @@ import EquipmentMarketplace from './pages/EquipmentMarketplace';
 import B2BEquipmentDashboard from './pages/B2BEquipmentDashboard';
 import HomeCareHub from './pages/HomeCareHub';
 import UberRideFlow from './components/UberRideFlow';
+import AreaSelectionPage from './pages/AreaSelectionPage';
+
+// ASHA Worker Module
+import AshaPortal from './pages/asha/AshaPortal';
+import AshaPatientTriage from './pages/asha/AshaPatientTriage';
+import AshaGharJaanch from './pages/asha/AshaGharJaanch';
+import AshaEmergencySOS from './pages/asha/AshaEmergencySOS';
+import AshaMeriSoochna from './pages/asha/AshaMeriSoochna';
+import AshaOfflineSupport from './pages/asha/AshaOfflineSupport';
+import AshaVideoLibrary from './pages/asha/AshaVideoLibrary';
+import AshaEmergencyAlert from './pages/asha/AshaEmergencyAlert';
+import AshaProfile from './pages/asha/AshaProfile';
 
 // Doctor Portal Refactor Components
 import DoctorLayout from './layouts/DoctorLayout';
@@ -195,6 +207,20 @@ const App: React.FC = () => {
         <Route path="/physiotherapy/directory" element={<AuthGuard><ResponsiveLayout><PhysioDirectory /></ResponsiveLayout></AuthGuard>} />
         <Route path="/physiotherapy/recovery" element={<AuthGuard><ResponsiveLayout><RecoveryTracker /></ResponsiveLayout></AuthGuard>} />
         <Route path="/equipment" element={<AuthGuard><ResponsiveLayout><EquipmentMarketplace /></ResponsiveLayout></AuthGuard>} />
+
+        {/* Area Selection (Pre-login, no AuthGuard) */}
+        <Route path="/area-select" element={<ResponsiveLayout><AreaSelectionPage /></ResponsiveLayout>} />
+
+        {/* ASHA Worker Module */}
+        <Route path="/asha" element={<AuthGuard><ResponsiveLayout><AshaPortal /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/triage" element={<AuthGuard><ResponsiveLayout><AshaPatientTriage /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/ghar-jaanch" element={<AuthGuard><ResponsiveLayout><AshaGharJaanch /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/emergency" element={<AuthGuard><ResponsiveLayout><AshaEmergencySOS /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/soochna" element={<AuthGuard><ResponsiveLayout><AshaMeriSoochna /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/offline" element={<AuthGuard><ResponsiveLayout><AshaOfflineSupport /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/videos" element={<AuthGuard><ResponsiveLayout><AshaVideoLibrary /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/alert" element={<AuthGuard><ResponsiveLayout><AshaEmergencyAlert /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/asha/profile" element={<AuthGuard><ResponsiveLayout><AshaProfile /></ResponsiveLayout></AuthGuard>} />
 
         <Route path="/vendor" element={<ResponsiveLayout><VendorPortalPage /></ResponsiveLayout>} />
         <Route path="/privacy" element={<ResponsiveLayout><PrivacyConsentPage /></ResponsiveLayout>} />

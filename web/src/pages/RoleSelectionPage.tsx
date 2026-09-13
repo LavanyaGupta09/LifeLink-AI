@@ -84,7 +84,7 @@ const RoleSelectionPage: React.FC = () => {
         <main className="w-full max-w-[1100px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 pb-10">
         
         {/* PATIENT CARD */}
-        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#00C9A7]/20 hover:border-[#00C9A7]/60 hover:shadow-[0_0_30px_rgba(0,201,167,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/login')}>
+        <div className="bg-[#0B1221] rounded-3xl p-6 relative overflow-hidden flex flex-col group border border-[#00C9A7]/20 hover:border-[#00C9A7]/60 hover:shadow-[0_0_30px_rgba(0,201,167,0.15)] transition-all duration-300 cursor-pointer" onClick={() => navigate('/area-select')}>
           <div className="absolute right-0 bottom-0 w-44 h-44 sm:w-52 sm:h-52 pointer-events-none origin-bottom-right">
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[#0B1221] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B1221] via-transparent to-transparent z-10" />

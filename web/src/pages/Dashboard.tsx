@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSOSStore } from '../store/sosStore';
+import { useAshaStore } from '../store/ashaStore';
 import { api } from '../services/api';
 import LifeLinkAIAssistant from '../components/LifeLinkAIAssistant';
 
@@ -14,6 +15,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { triggerSOS, isSOSActive, isCounting, countdown, decrementCountdown, startCountdown, stopCountdown } = useSOSStore();
+  const { areaType } = useAshaStore();
   
   const [sosTimeout, setSosTimeout] = useState<NodeJS.Timeout | null>(null);
   
@@ -573,6 +575,19 @@ const Dashboard: React.FC = () => {
               <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Insurance</h4>
             </div>
           </div>
+
+          {/* ASHA Worker - Only for Rural Users */}
+          {areaType === 'rural' && (
+            <div className="bg-[#131F35] border border-[#F97316]/30 rounded-xl p-3 flex gap-2 items-center hover:border-[#F97316]/60 cursor-pointer transition-colors group" onClick={() => navigate('/asha')}>
+              <div className="w-8 h-8 bg-[#F97316]/15 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <HeartPulse size={14} className="text-[#F97316]" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[10px] font-bold text-[#F97316] mb-0.5">ASHA Seva</h4>
+                <p className="text-[8px] text-slate-500">Gaon mein madad</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -19,8 +19,8 @@ const NavBar: React.FC = () => {
   const { isOffline, queueSize } = useOfflineSyncStore();
   const { user } = useAuthStore();
 
-  const hiddenRoutes = ['/', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review'];
-  if (hiddenRoutes.some(r => location.pathname === r) || location.pathname.startsWith('/b2b/') || location.pathname.startsWith('/admin/') || user?.easyModeEnabled) return null;
+  const hiddenRoutes = ['/', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review', '/area-select'];
+  if (hiddenRoutes.some(r => location.pathname === r) || location.pathname.startsWith('/b2b/') || location.pathname.startsWith('/admin/') || location.pathname.startsWith('/asha') || user?.easyModeEnabled) return null;
   
   return (
     <>
