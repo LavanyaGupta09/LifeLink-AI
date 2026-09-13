@@ -5,7 +5,7 @@ import LiveTrackingPage from './pages/LiveTrackingPage';
 import RoleSelectionPage from './pages/RoleSelectionPage';
 import DashboardRouter from './pages/DashboardRouter';
 import SymptomCheckerPage from './pages/SymptomCheckerPage';
-import SOSPage from './pages/SOSPage';
+import SOSRouter from './pages/SOSRouter';
 import SOSTriggerPage from './pages/SOSTriggerPage';
 import AmbulancePage from './pages/AmbulancePage';
 import DoctorPage from './pages/DoctorPage';
@@ -183,7 +183,7 @@ const App: React.FC = () => {
         <Route path="/profile" element={<AuthGuard><ResponsiveLayout><ProfilePage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/symptoms" element={<AuthGuard><ResponsiveLayout><SymptomCheckerPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/community" element={<AuthGuard><ResponsiveLayout><CommunityPage /></ResponsiveLayout></AuthGuard>} />
-        <Route path="/sos" element={<AuthGuard><ResponsiveLayout><SOSPage /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/sos" element={<AuthGuard><ResponsiveLayout><SOSRouter /></ResponsiveLayout></AuthGuard>} />
         <Route path="/sos-trigger" element={<SOSTriggerPage />} />
         <Route path="/ambulance" element={<AuthGuard><ResponsiveLayout><AmbulancePage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/doctor" element={<AuthGuard><ResponsiveLayout><DoctorPage /></ResponsiveLayout></AuthGuard>} />

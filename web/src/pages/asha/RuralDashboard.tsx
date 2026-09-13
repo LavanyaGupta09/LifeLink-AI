@@ -18,7 +18,6 @@ const RuralDashboard: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
 
   const handleSOS = () => {
-    triggerSOS('CRITICAL', 'MANUAL', 12.9716, 77.5946);
     navigate('/sos');
   };
 
