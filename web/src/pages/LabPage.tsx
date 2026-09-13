@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Search, MapPin, Calendar, Clock, ChevronRight, Activity, 
-  Droplets, Heart, FileText, CheckCircle2, Home, Building2, Download
+  Droplets, Heart, FileText, CheckCircle2, Home, Building2, Download,
+  UploadCloud, CheckSquare, Square, Package, ShieldCheck
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
@@ -57,6 +58,36 @@ const LabPage: React.FC = () => {
   const [myBookings, setMyBookings] = useState<any[]>([
     { id: 'b_old1', itemName: 'Lipid Profile', date: 'Oct 12, 2023', status: 'Completed', reportUrl: '#' }
   ]);
+
+  // OCR & Comparison State
+  const [ocrState, setOcrState] = useState<'idle' | 'uploading' | 'detected'>('idle');
+  const [detectedTests, setDetectedTests] = useState([
+    { id: 't_1', name: 'Complete Blood Count (CBC)', selected: true, price: 450 },
+    { id: 't_4', name: 'HbA1c', selected: true, price: 500 },
+    { id: 't_2', name: 'Lipid Profile', selected: true, price: 800 },
+    { id: 't_5', name: 'Vitamin B12', selected: true, price: 1200 }
+  ]);
+  const [showComparison, setShowComparison] = useState(false);
+
+  const toggleTest = (id: string) => {
+    setDetectedTests(tests => tests.map(t => t.id === id ? { ...t, selected: !t.selected } : t));
+  };
+
+  const handleUploadPrescription = () => {
+    setOcrState('uploading');
+    setTimeout(() => {
+      setOcrState('detected');
+    }, 2000);
+  };
+
+  const handleCompareTests = () => {
+    setShowComparison(true);
+    setOcrState('idle');
+  };
+
+  const totalIndividualPrice = detectedTests.filter(t => t.selected).reduce((acc, t) => acc + t.price, 0);
+  const bestPackagePrice = 1299; // Mock package price for "Full Body Checkup"
+  const savings = totalIndividualPrice - bestPackagePrice;
 
   const handleBook = async () => {
     if (!bookingItem) return;
@@ -122,16 +153,144 @@ const LabPage: React.FC = () => {
         
         {/* WIDGET 1: SEARCH & POPULAR PACKAGES */}
         <section>
-          <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-            <input 
-              className="w-full bg-[#131F35] border border-slate-700/50 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-[#3D91FF]/60 focus:ring-1 focus:ring-[#3D91FF]/50 transition-all text-base shadow-inner"
-              placeholder="Search for tests (e.g., CBC, Thyroid)..."
-              value={query} onChange={e => setQuery(e.target.value)}
-            />
-          </div>
+          {showComparison ? (
+            <div className="bg-[#131F35] border border-slate-700 rounded-3xl p-5 shadow-2xl animate-fade-in relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#3D91FF]/10 rounded-full blur-2xl" />
+              <button onClick={() => setShowComparison(false)} className="text-slate-400 hover:text-white mb-4 flex items-center gap-1 text-sm font-bold">
+                <ArrowLeft size={16} /> Back
+              </button>
+              
+              <h2 className="text-xl font-black text-white mb-2">Bundle Optimization</h2>
+              <p className="text-sm text-slate-400 mb-6">We analyzed your {detectedTests.filter(t=>t.selected).length} required tests to find the best value.</p>
+              
+              <div className="flex flex-col gap-4">
+                {/* OPTION A: BEST VALUE */}
+                <div className="bg-gradient-to-br from-emerald-500/10 to-[#0B1121] border border-emerald-500/30 rounded-2xl p-5 relative">
+                  <div className="absolute -top-3 right-4 bg-emerald-500 text-black text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg shadow-emerald-500/20">
+                    ⭐ BEST VALUE
+                  </div>
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Package size={18} className="text-emerald-400" />
+                        Full Body Checkup
+                      </h3>
+                      <p className="text-xs text-emerald-400 mt-1 font-bold">Includes ALL required tests + 80 more</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xl font-black text-white">₹{bestPackagePrice}</p>
+                    </div>
+                  </div>
+                  <div className="bg-emerald-500/20 text-emerald-400 text-xs font-bold p-2 rounded-lg mt-3 inline-block">
+                    💰 You save ₹{savings}
+                  </div>
+                  <button onClick={() => setBookingItem(HEALTH_PACKAGES[0])} className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black py-3 rounded-xl transition-colors">
+                    Choose Best Value
+                  </button>
+                </div>
 
-          {!query && (
+                <div className="text-center text-xs font-bold text-slate-500 my-1">OR</div>
+
+                {/* OPTION B: INDIVIDUAL */}
+                <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 flex justify-between items-center opacity-80">
+                  <div>
+                    <h3 className="font-bold text-white text-sm">Individual Tests</h3>
+                    <p className="text-[10px] text-slate-400">Book exactly what's on prescription</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <p className="font-bold text-white">₹{totalIndividualPrice}</p>
+                    <button onClick={() => setBookingItem({ name: 'Prescription Tests', price: totalIndividualPrice })} className="text-xs font-bold text-slate-300 border border-slate-700 px-4 py-1.5 rounded-lg hover:bg-slate-800">
+                      Book These
+                    </button>
+                  </div>
+                </div>
+
+                {/* OPTION C: ANOTHER LAB */}
+                <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 flex justify-between items-center opacity-80">
+                  <div>
+                    <h3 className="font-bold text-white text-sm">City Health Lab</h3>
+                    <p className="text-[10px] text-slate-400 flex items-center gap-1"><Home size={10}/> Home Collection Available</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <p className="font-bold text-white">₹{totalIndividualPrice - 150}</p>
+                    <button onClick={() => setBookingItem({ name: 'Prescription Tests (City Lab)', price: totalIndividualPrice - 150 })} className="text-xs font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-4 py-1.5 rounded-lg">
+                      Book Alternative
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Prescription Upload Button */}
+              {ocrState === 'idle' && (
+                <button 
+                  onClick={handleUploadPrescription}
+                  className="w-full bg-[#131F35] border border-dashed border-[#3D91FF]/50 hover:border-[#3D91FF] hover:bg-[#3D91FF]/5 rounded-2xl p-4 flex items-center justify-center gap-3 mb-4 transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-full bg-[#3D91FF]/10 flex items-center justify-center group-hover:bg-[#3D91FF]/20 transition-colors">
+                    <UploadCloud size={20} className="text-[#3D91FF]" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-bold text-white text-sm">Upload Prescription</h3>
+                    <p className="text-xs text-slate-400">AI will automatically find your tests</p>
+                  </div>
+                </button>
+              )}
+
+              {ocrState === 'uploading' && (
+                <div className="w-full bg-[#131F35] border border-[#3D91FF]/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 mb-4">
+                  <Activity size={32} className="text-[#3D91FF] animate-pulse" />
+                  <p className="text-sm font-bold text-[#3D91FF]">Scanning prescription with AI...</p>
+                </div>
+              )}
+
+              {ocrState === 'detected' && (
+                <div className="w-full bg-gradient-to-br from-[#131F35] to-[#0B1121] border border-[#3D91FF]/50 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(61,145,255,0.1)]">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="font-bold text-white flex items-center gap-2">
+                        <ShieldCheck size={18} className="text-[#3D91FF]" /> 
+                        {detectedTests.length} tests detected
+                      </h3>
+                      <p className="text-xs text-slate-400 mt-1">Please verify the tests detected from your prescription.</p>
+                    </div>
+                    <button onClick={() => setOcrState('idle')} className="text-slate-500 hover:text-white">✕</button>
+                  </div>
+                  
+                  <div className="space-y-2 mb-5">
+                    {detectedTests.map(test => (
+                      <div key={test.id} onClick={() => toggleTest(test.id)} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${test.selected ? 'bg-[#3D91FF]/10 border-[#3D91FF]/30' : 'bg-[#0B1121] border-slate-800'}`}>
+                        <div className="flex items-center gap-3">
+                          {test.selected ? <CheckSquare size={18} className="text-[#3D91FF]" /> : <Square size={18} className="text-slate-600" />}
+                          <span className={`text-sm font-bold ${test.selected ? 'text-white' : 'text-slate-400'}`}>{test.name}</span>
+                        </div>
+                        <span className="text-xs text-slate-400 font-bold">₹{test.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button 
+                    onClick={handleCompareTests}
+                    disabled={detectedTests.filter(t=>t.selected).length === 0}
+                    className="w-full bg-[#3D91FF] text-white font-bold py-3.5 rounded-xl active:scale-95 transition-transform flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(61,145,255,0.3)] disabled:opacity-50"
+                  >
+                    Compare All Tests <ChevronRight size={18} />
+                  </button>
+                </div>
+              )}
+
+              {/* Search Bar */}
+              <div className="relative mb-6">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                <input 
+                  className="w-full bg-[#131F35] border border-slate-700/50 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-[#3D91FF]/60 focus:ring-1 focus:ring-[#3D91FF]/50 transition-all text-base shadow-inner"
+                  placeholder="Search manually (e.g., CBC)..."
+                  value={query} onChange={e => setQuery(e.target.value)}
+                />
+              </div>
+
+              {!query && (
             <>
               <h3 className="text-lg font-bold text-white mb-3 px-1">Popular Health Packages</h3>
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide px-1" style={{ scrollSnapType: 'x mandatory' }}>
@@ -196,6 +355,8 @@ const LabPage: React.FC = () => {
               )}
             </div>
           </div>
+          </>
+          )}
         </section>
 
         {/* WIDGET 3: DIGITAL LAB REPORT VAULT */}
