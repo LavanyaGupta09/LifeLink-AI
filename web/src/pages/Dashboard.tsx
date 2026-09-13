@@ -321,26 +321,30 @@ const Dashboard: React.FC = () => {
             <span className="text-[10px] font-semibold text-slate-300">Doctors</span>
           </button>
 
-          <button onClick={() => navigate('/pharmacy')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
-            <div className="w-8 h-8 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573] group-hover:scale-110 transition-transform">
-              <Pill size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-slate-300">Pharmacy</span>
-          </button>
+          {areaType !== 'rural' && (
+            <>
+              <button onClick={() => navigate('/pharmacy')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+                <div className="w-8 h-8 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573] group-hover:scale-110 transition-transform">
+                  <Pill size={16} />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-300">Pharmacy</span>
+              </button>
 
-          <button onClick={() => navigate('/lab')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
-            <div className="w-8 h-8 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
-              <FlaskConical size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-slate-300">Lab Tests</span>
-          </button>
+              <button onClick={() => navigate('/lab')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+                <div className="w-8 h-8 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
+                  <FlaskConical size={16} />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-300">Lab Tests</span>
+              </button>
 
-          <button onClick={() => navigate('/blood')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
-            <div className="w-8 h-8 rounded-full bg-[#FF6B81]/10 flex items-center justify-center text-[#FF6B81] group-hover:scale-110 transition-transform">
-              <Droplets size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-slate-300">Blood Bank</span>
-          </button>
+              <button onClick={() => navigate('/blood')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+                <div className="w-8 h-8 rounded-full bg-[#FF6B81]/10 flex items-center justify-center text-[#FF6B81] group-hover:scale-110 transition-transform">
+                  <Droplets size={16} />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-300">Blood Bank</span>
+              </button>
+            </>
+          )}
 
           <button onClick={() => navigate('/symptoms')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
             <div className="w-8 h-8 rounded-full bg-[#38ADA9]/10 flex items-center justify-center text-[#38ADA9] group-hover:scale-110 transition-transform">
@@ -352,184 +356,188 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. 3-COLUMN GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        {/* Appointments */}
-        <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-xs flex items-center gap-1.5"><Calendar size={14} className="text-[#3D91FF]"/> Appointments</h3>
-            <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/doctor')}>View all</button>
-          </div>
+      {/* 4. 3-COLUMN GRID (Hidden for Rural) */}
+      {areaType !== 'rural' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           
-          <div className="flex flex-col gap-2 mb-3">
-            <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
-              <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
-                <img src="https://i.pravatar.cc/150?u=dr_ananya" alt="Dr. Ananya" className="w-full h-full object-cover"/>
+          {/* Appointments */}
+          <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-xs flex items-center gap-1.5"><Calendar size={14} className="text-[#3D91FF]"/> Appointments</h3>
+              <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/doctor')}>View all</button>
+            </div>
+            
+            <div className="flex flex-col gap-2 mb-3">
+              <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
+                <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
+                  <img src="https://i.pravatar.cc/150?u=dr_ananya" alt="Dr. Ananya" className="w-full h-full object-cover"/>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[10px] font-bold text-slate-200">Dr. Ananya Sharma</h4>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 18 May • 11:00 AM</p>
+                    <span className="text-[8px] font-bold bg-[#3D91FF]/10 text-[#3D91FF] px-1.5 py-0.5 rounded">Confirmed</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h4 className="text-[10px] font-bold text-slate-200">Dr. Ananya Sharma</h4>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 18 May • 11:00 AM</p>
-                  <span className="text-[8px] font-bold bg-[#3D91FF]/10 text-[#3D91FF] px-1.5 py-0.5 rounded">Confirmed</span>
+              
+              <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
+                <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
+                  <img src="https://i.pravatar.cc/150?u=dr_rahul" alt="Dr. Rahul" className="w-full h-full object-cover"/>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[10px] font-bold text-slate-200">Dr. Rahul Verma</h4>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 21 May • 04:30 PM</p>
+                    <span className="text-[8px] font-bold bg-[#8B5CF6]/10 text-[#8B5CF6] px-1.5 py-0.5 rounded">Scheduled</span>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
-              <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
-                <img src="https://i.pravatar.cc/150?u=dr_rahul" alt="Dr. Rahul" className="w-full h-full object-cover"/>
-              </div>
-              <div className="flex-1">
-                <h4 className="text-[10px] font-bold text-slate-200">Dr. Rahul Verma</h4>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 21 May • 04:30 PM</p>
-                  <span className="text-[8px] font-bold bg-[#8B5CF6]/10 text-[#8B5CF6] px-1.5 py-0.5 rounded">Scheduled</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <button className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5" onClick={() => navigate('/doctor')}>
-            <Calendar size={12} /> Book New <ChevronRight size={12}/>
-          </button>
-        </div>
-
-        {/* Health Overview */}
-        <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-xs flex items-center gap-1.5"><Heart size={14} className="text-[#FF4757]"/> Health Overview</h3>
-            <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/audit')}>View all</button>
-          </div>
-          
-          <div className="flex flex-col gap-4 flex-1 justify-center">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7]"><Activity size={10}/></div>
-                <div>
-                  <p className="text-[8px] text-slate-400">Steps</p>
-                  <p className="text-xs font-bold">7,245 <span className="text-[8px] font-normal text-slate-500">/10k</span></p>
-                </div>
-              </div>
-              <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
-                <div className="bg-[#00C9A7] h-full rounded-full" style={{ width: '72%' }}></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Droplets size={10}/></div>
-                <div>
-                  <p className="text-[8px] text-slate-400">Water</p>
-                  <p className="text-xs font-bold">6 <span className="text-[8px] font-normal text-slate-500">/ 8</span></p>
-                </div>
-              </div>
-              <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
-                <div className="bg-[#3D91FF] h-full rounded-full" style={{ width: '75%' }}></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]"><Moon size={10}/></div>
-                <div>
-                  <p className="text-[8px] text-slate-400">Sleep</p>
-                  <p className="text-xs font-bold">7h 15m</p>
-                </div>
-              </div>
-              <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
-                <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] h-full rounded-full" style={{ width: '85%' }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Reminders */}
-        <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-xs flex items-center gap-1.5"><Bell size={14} className="text-[#A78BFA]"/> Reminders</h3>
-            <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/reminders')}>View all</button>
-          </div>
-          
-          <div className="flex flex-col gap-3 mb-3">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2 items-start">
-                <div className="w-6 h-6 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573]"><Pill size={10}/></div>
-                <div>
-                  <h4 className="text-[10px] font-bold text-slate-200">Vitamin D3</h4>
-                  <p className="text-[8px] text-slate-400">1 Tab • Breakfast (08:00 AM)</p>
-                </div>
-              </div>
-              <div className="w-4 h-4 rounded-full bg-[#00C9A7] flex items-center justify-center shadow-[0_0_10px_rgba(0,201,167,0.3)]">
-                <Check size={8} className="text-white" />
-              </div>
-            </div>
-            
-            <div className="h-[1px] w-full bg-slate-800"></div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2 items-start">
-                <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Pill size={10}/></div>
-                <div>
-                  <h4 className="text-[10px] font-bold text-slate-200">Calcium</h4>
-                  <p className="text-[8px] text-slate-400">1 Tab • Dinner (08:00 PM)</p>
-                </div>
-              </div>
-              <div className="w-4 h-4 rounded-full border border-slate-500"></div>
-            </div>
-          </div>
-          
-          <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5">
-            <Bell size={12} /> All Reminders <ChevronRight size={12}/>
-          </button>
-        </div>
-
-      </div>
-
-      {/* 5. 2-COLUMN INSURANCE & VAULT */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        {/* Insurance Banner */}
-        <div className="bg-[#120F26] border border-[#312E81] rounded-2xl relative overflow-hidden shadow-md flex items-center min-h-[120px] group cursor-pointer" onClick={() => navigate('/insurance')}>
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-50 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#120F26] via-[#120F26]/80 to-transparent" />
-          </div>
-          
-          <div className="relative z-10 p-5 w-full md:w-3/4 flex flex-col justify-center text-left">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
-              <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Active Coverage</p>
-            </div>
-            <h3 className="text-base font-black text-white mb-1 leading-tight">Health Insurance</h3>
-            <p className="text-xs text-slate-300 mb-3 max-w-[200px] leading-snug">Protect your family with comprehensive health plans.</p>
-            <button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-all flex items-center gap-1.5 backdrop-blur-sm">
-              Explore Plans <ChevronRight size={12} />
+            <button className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5" onClick={() => navigate('/doctor')}>
+              <Calendar size={12} /> Book New <ChevronRight size={12}/>
             </button>
           </div>
-        </div>
 
-        {/* Health ID Locker */}
-        <div className="bg-[#0B141F] border border-[#162B3A] rounded-2xl p-4 shadow-md flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/passport')}>
-          <div className="w-16 h-16 shrink-0 bg-[#00C9A7]/10 rounded-xl border border-[#00C9A7]/30 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/20 transition-colors">
-            <QrCode size={32} className="text-[#00C9A7]" />
-            <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
-          </div>
-          
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-sm font-bold">Health Locker</h3>
-              <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">B+</span>
+          {/* Health Overview */}
+          <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-xs flex items-center gap-1.5"><Heart size={14} className="text-[#FF4757]"/> Health Overview</h3>
+              <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/audit')}>View all</button>
             </div>
-            <p className="text-[10px] text-[#00C9A7] font-bold mb-1">ID Verified</p>
-            <p className="text-[9px] text-slate-400 mb-2">Keep your records safe.</p>
             
-            <button className="bg-[#122A3B] hover:bg-[#1A3A52] border border-[#1E435E] text-[#3D91FF] text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-colors flex items-center gap-1.5">
-              View ID <ChevronRight size={12} />
+            <div className="flex flex-col gap-4 flex-1 justify-center">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-6 h-6 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7]"><Activity size={10}/></div>
+                  <div>
+                    <p className="text-[8px] text-slate-400">Steps</p>
+                    <p className="text-xs font-bold">7,245 <span className="text-[8px] font-normal text-slate-500">/10k</span></p>
+                  </div>
+                </div>
+                <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                  <div className="bg-[#00C9A7] h-full rounded-full" style={{ width: '72%' }}></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Droplets size={10}/></div>
+                  <div>
+                    <p className="text-[8px] text-slate-400">Water</p>
+                    <p className="text-xs font-bold">6 <span className="text-[8px] font-normal text-slate-500">/ 8</span></p>
+                  </div>
+                </div>
+                <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                  <div className="bg-[#3D91FF] h-full rounded-full" style={{ width: '75%' }}></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]"><Moon size={10}/></div>
+                  <div>
+                    <p className="text-[8px] text-slate-400">Sleep</p>
+                    <p className="text-xs font-bold">7h 15m</p>
+                  </div>
+                </div>
+                <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                  <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] h-full rounded-full" style={{ width: '85%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Reminders */}
+          <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-xs flex items-center gap-1.5"><Bell size={14} className="text-[#A78BFA]"/> Reminders</h3>
+              <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/reminders')}>View all</button>
+            </div>
+            
+            <div className="flex flex-col gap-3 mb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2 items-start">
+                  <div className="w-6 h-6 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573]"><Pill size={10}/></div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-slate-200">Vitamin D3</h4>
+                    <p className="text-[8px] text-slate-400">1 Tab • Breakfast (08:00 AM)</p>
+                  </div>
+                </div>
+                <div className="w-4 h-4 rounded-full bg-[#00C9A7] flex items-center justify-center shadow-[0_0_10px_rgba(0,201,167,0.3)]">
+                  <Check size={8} className="text-white" />
+                </div>
+              </div>
+              
+              <div className="h-[1px] w-full bg-slate-800"></div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2 items-start">
+                  <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Pill size={10}/></div>
+                  <div>
+                    <h4 className="text-[10px] font-bold text-slate-200">Calcium</h4>
+                    <p className="text-[8px] text-slate-400">1 Tab • Dinner (08:00 PM)</p>
+                  </div>
+                </div>
+                <div className="w-4 h-4 rounded-full border border-slate-500"></div>
+              </div>
+            </div>
+            
+            <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5">
+              <Bell size={12} /> All Reminders <ChevronRight size={12}/>
             </button>
           </div>
+
         </div>
-      </div>
+      )}
+
+      {/* 5. 2-COLUMN INSURANCE & VAULT (Hidden for Rural) */}
+      {areaType !== 'rural' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          {/* Insurance Banner */}
+          <div className="bg-[#120F26] border border-[#312E81] rounded-2xl relative overflow-hidden shadow-md flex items-center min-h-[120px] group cursor-pointer" onClick={() => navigate('/insurance')}>
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-50 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#120F26] via-[#120F26]/80 to-transparent" />
+            </div>
+            
+            <div className="relative z-10 p-5 w-full md:w-3/4 flex flex-col justify-center text-left">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+                <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Active Coverage</p>
+              </div>
+              <h3 className="text-base font-black text-white mb-1 leading-tight">Health Insurance</h3>
+              <p className="text-xs text-slate-300 mb-3 max-w-[200px] leading-snug">Protect your family with comprehensive health plans.</p>
+              <button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-all flex items-center gap-1.5 backdrop-blur-sm">
+                Explore Plans <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+
+          {/* Health ID Locker */}
+          <div className="bg-[#0B141F] border border-[#162B3A] rounded-2xl p-4 shadow-md flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/passport')}>
+            <div className="w-16 h-16 shrink-0 bg-[#00C9A7]/10 rounded-xl border border-[#00C9A7]/30 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/20 transition-colors">
+              <QrCode size={32} className="text-[#00C9A7]" />
+              <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
+            </div>
+            
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-bold">Health Locker</h3>
+                <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">B+</span>
+              </div>
+              <p className="text-[10px] text-[#00C9A7] font-bold mb-1">ID Verified</p>
+              <p className="text-[9px] text-slate-400 mb-2">Keep your records safe.</p>
+              
+              <button className="bg-[#122A3B] hover:bg-[#1A3A52] border border-[#1E435E] text-[#3D91FF] text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-colors flex items-center gap-1.5">
+                View ID <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 6. HEALTHCARE SERVICES GRID */}
       <div>
