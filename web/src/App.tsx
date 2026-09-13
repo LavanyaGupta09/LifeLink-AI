@@ -51,7 +51,7 @@ import B2BAuth from './pages/B2BAuth';
 import B2BLabDashboard from './pages/B2BLabDashboard';
 import B2BDriverApp from './pages/B2BDriverApp';
 import PendingReviewPage from './pages/PendingReviewPage';
-import ProfilePage from './pages/ProfilePage';
+import ProfileRouter from './pages/ProfileRouter';
 import EquipmentMarketplace from './pages/EquipmentMarketplace';
 import B2BEquipmentDashboard from './pages/B2BEquipmentDashboard';
 import HomeCareHub from './pages/HomeCareHub';
@@ -180,7 +180,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<ResponsiveLayout><AuthPage /></ResponsiveLayout>} />
         <Route path="/onboarding" element={<ResponsiveLayout><PatientOnboarding /></ResponsiveLayout>} />
         <Route path="/dashboard" element={<AuthGuard><ResponsiveLayout><DashboardRouter /></ResponsiveLayout></AuthGuard>} />
-        <Route path="/profile" element={<AuthGuard><ResponsiveLayout><ProfilePage /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/profile" element={<AuthGuard><ResponsiveLayout><ProfileRouter /></ResponsiveLayout></AuthGuard>} />
         <Route path="/symptoms" element={<AuthGuard><ResponsiveLayout><SymptomCheckerPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/community" element={<AuthGuard><ResponsiveLayout><CommunityPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/sos" element={<AuthGuard><ResponsiveLayout><SOSRouter /></ResponsiveLayout></AuthGuard>} />
