@@ -36,6 +36,7 @@ import PlanDetails from './pages/insurance/PlanDetails';
 import SavedPlans from './pages/insurance/SavedPlans';
 import MyInsurance from './pages/insurance/MyInsurance';
 import InsuranceApplication from './pages/insurance/InsuranceApplication';
+import GovSchemes from './pages/insurance/GovSchemes';
 import PhysiotherapyHub from './pages/PhysiotherapyHub';
 import PhysioHomeBooking from './pages/PhysioHomeBooking';
 import PhysioOnline from './pages/PhysioOnline';
@@ -197,6 +198,7 @@ const App: React.FC = () => {
         <Route path="/settings" element={<AuthGuard><ResponsiveLayout><SettingsPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/hospitals" element={<AuthGuard><ResponsiveLayout><HospitalPage /></ResponsiveLayout></AuthGuard>} />
         <Route path="/insurance" element={<AuthGuard><ResponsiveLayout><InsuranceHub /></ResponsiveLayout></AuthGuard>} />
+        <Route path="/insurance/schemes" element={<AuthGuard><ResponsiveLayout><GovSchemes /></ResponsiveLayout></AuthGuard>} />
         <Route path="/insurance/compare" element={<AuthGuard><ResponsiveLayout><InsuranceCompare /></ResponsiveLayout></AuthGuard>} />
         <Route path="/insurance/plan/:id" element={<AuthGuard><ResponsiveLayout><PlanDetails /></ResponsiveLayout></AuthGuard>} />
         <Route path="/insurance/saved" element={<AuthGuard><ResponsiveLayout><SavedPlans /></ResponsiveLayout></AuthGuard>} />

@@ -152,6 +152,7 @@ const InsuranceHub: React.FC = () => {
         {/* Quick Nav Links */}
         <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
           <button onClick={() => navigate('/insurance')} className="bg-[#3D91FF] text-white px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(61,145,255,0.3)]">Find Insurance</button>
+          <button onClick={() => navigate('/insurance/schemes')} className="bg-[#131F35] border border-indigo-500/30 text-indigo-400 hover:border-indigo-500 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition-colors">🏛️ Govt Schemes</button>
           <button onClick={() => navigate('/insurance/compare')} className="bg-[#131F35] border border-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap">Compare Plans</button>
           <button onClick={() => navigate('/insurance/saved')} className="bg-[#131F35] border border-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap">Saved Plans</button>
           <button onClick={() => navigate('/insurance/my-insurance')} className="bg-[#131F35] border border-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap">My Insurance</button>
