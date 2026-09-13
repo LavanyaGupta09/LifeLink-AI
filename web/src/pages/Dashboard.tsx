@@ -540,41 +540,45 @@ const Dashboard: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/physiotherapy')}>
-            <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <UserRound size={14} className="text-indigo-400" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Physiotherapy</h4>
-            </div>
-          </div>
-          
-          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/homecare')}>
-            <div className="w-8 h-8 bg-amber-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <HeartPulse size={14} className="text-amber-400" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Home Care</h4>
-            </div>
-          </div>
-          
-          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/equipment')}>
-            <div className="w-8 h-8 bg-blue-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Stethoscope size={14} className="text-blue-400" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Equipment</h4>
-            </div>
-          </div>
-          
-          <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/insurance')}>
-            <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <Shield size={14} className="text-indigo-400" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Insurance</h4>
-            </div>
-          </div>
+          {areaType !== 'rural' && (
+            <>
+              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/physiotherapy')}>
+                <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <UserRound size={14} className="text-indigo-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Physiotherapy</h4>
+                </div>
+              </div>
+              
+              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/homecare')}>
+                <div className="w-8 h-8 bg-amber-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <HeartPulse size={14} className="text-amber-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Home Care</h4>
+                </div>
+              </div>
+              
+              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/equipment')}>
+                <div className="w-8 h-8 bg-blue-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Stethoscope size={14} className="text-blue-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Equipment</h4>
+                </div>
+              </div>
+              
+              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/insurance')}>
+                <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Shield size={14} className="text-indigo-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Insurance</h4>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* ASHA Worker - Only for Rural Users */}
           {areaType === 'rural' && (
