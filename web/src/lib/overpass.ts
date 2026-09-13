@@ -28,6 +28,10 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return parseFloat((R * c).toFixed(2));
 }
 
+// In-memory cache to prevent re-fetching the same general area
+const apiCache = new Map<string, { timestamp: number, data: OverpassFacility[] }>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 /**
  * Fetches nearby facilities from the Overpass API based on user coordinates and a search radius.
  * @param lat Latitude
@@ -41,15 +45,22 @@ export async function fetchNearbyFacilities(
   type: FacilityType,
   radius: number = 5000 // default to 5000 as per directive
 ): Promise<OverpassFacility[]> {
+  // Cache Key: round coordinates to ~1.1km grid (2 decimal places)
+  const cacheKey = `${type}_${lat.toFixed(2)}_${lng.toFixed(2)}_${radius}`;
+  const cached = apiCache.get(cacheKey);
+  if (cached && (Date.now() - cached.timestamp < CACHE_TTL_MS)) {
+    return cached.data;
+  }
+
   // Use our backend proxy to avoid CORS issues with direct Overpass calls
   const API_BASE = import.meta.env.VITE_API_URL || 'https://lifelink-ai-rwru.onrender.com';
   const proxyUrl = `${API_BASE}/api/proxy/overpass`;
   
-  // Construct Overpass QL query
+  // Construct Overpass QL query with strict 5-second timeout
   let query = '';
   if (type === 'hospital') {
     query = `
-      [out:json][timeout:25];
+      [out:json][timeout:5];
       (
         node["amenity"="hospital"](around:${radius},${lat},${lng});
         way["amenity"="hospital"](around:${radius},${lat},${lng});
@@ -60,7 +71,7 @@ export async function fetchNearbyFacilities(
     `;
   } else if (type === 'pharmacy') {
     query = `
-      [out:json][timeout:25];
+      [out:json][timeout:5];
       (
         node["amenity"="pharmacy"](around:${radius},${lat},${lng});
         way["amenity"="pharmacy"](around:${radius},${lat},${lng});
@@ -70,7 +81,7 @@ export async function fetchNearbyFacilities(
     `;
   } else if (type === 'lab') {
     query = `
-      [out:json][timeout:25];
+      [out:json][timeout:5];
       (
         node["healthcare"="laboratory"](around:${radius},${lat},${lng});
         way["healthcare"="laboratory"](around:${radius},${lat},${lng});
@@ -81,7 +92,7 @@ export async function fetchNearbyFacilities(
     `;
   } else if (type === 'clinic') {
     query = `
-      [out:json][timeout:25];
+      [out:json][timeout:5];
       (
         node["amenity"="clinic"](around:${radius},${lat},${lng});
         way["amenity"="clinic"](around:${radius},${lat},${lng});
@@ -92,26 +103,27 @@ export async function fetchNearbyFacilities(
     `;
   }
 
+  // Set a hard 5-second timeout for the fetch request
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
   try {
     const response = await fetch(proxyUrl, {
       method: 'POST',
       body: query,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-      }
+      },
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`Overpass API error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    
-    // If no facilities found and radius is 5000, expand to 15000 and retry
-    if ((!data.elements || data.elements.length === 0) && radius === 5000) {
-      console.log(`No ${type} found within 5km. Expanding radius to 15km...`);
-      return fetchNearbyFacilities(lat, lng, type, 15000);
-    }
     
     // Parse results
     const facilities: OverpassFacility[] = data.elements
@@ -155,17 +167,20 @@ export async function fetchNearbyFacilities(
       })
       .filter(Boolean)
       // Sort by closest distance
-      .sort((a: OverpassFacility, b: OverpassFacility) => (a.distanceKm || 0) - (b.distanceKm || 0));
+      // Sort by closest distance and limit to top 20 results for performance
+      .sort((a: OverpassFacility, b: OverpassFacility) => (a.distanceKm || 0) - (b.distanceKm || 0))
+      .slice(0, 20);
       
     if (!facilities || facilities.length === 0) {
-      console.log(`No ${type} found via API. Generating location-based fallback facilities...`);
-      return generateFallbackFacilities(lat, lng, type);
+      throw new Error('No facilities found nearby');
     }
 
+    apiCache.set(cacheKey, { timestamp: Date.now(), data: facilities });
     return facilities;
   } catch (error) {
     console.error('Error fetching facilities from Overpass:', error);
-    return generateFallbackFacilities(lat, lng, type);
+    // Explicitly throw the error so the UI can catch it and show a Retry button
+    throw error;
   }
 }
 

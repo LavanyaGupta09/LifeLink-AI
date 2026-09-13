@@ -100,16 +100,21 @@ const HospitalPage: React.FC = () => {
   // Dynamic Hospitals
   const [hospitals, setHospitals] = useState<HospitalExtended[]>([]);
   const [loadingHospitals, setLoadingHospitals] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const isFetching = React.useRef(false);
   const [userLoc, setUserLoc] = useState<[number, number] | null>(null);
   
   const { location, status, errorMessage, searchCity } = useGeolocation();
 
-  useEffect(() => {
-    if (!location) return;
-    const handleGeoSuccess = async (lat: number, lng: number) => {
-      setUserLoc([lat, lng]);
-      try {
-        const { fetchNearbyFacilities } = await import('../lib/overpass');
+  const fetchHospitals = async (lat: number, lng: number) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+    setLoadingHospitals(true);
+    setApiError(null);
+    setUserLoc([lat, lng]);
+    
+    try {
+      const { fetchNearbyFacilities } = await import('../lib/overpass');
         const facilities = await fetchNearbyFacilities(lat, lng, 'hospital');
         if (facilities.length === 0) {
           setHospitals([]);
@@ -164,14 +169,18 @@ const HospitalPage: React.FC = () => {
         setErData(erMapped);
         if (erMapped.length > 0) setSelectedER(erMapped[0]);
         if (mapped.length > 0) setAlertHosp(mapped[0]);
-      } catch (e) {
+      } catch (e: any) {
         console.error(e);
+        setApiError(e.message || "Failed to load hospitals");
       } finally {
         setLoadingHospitals(false);
+        isFetching.current = false;
       }
     };
 
-    handleGeoSuccess(location.lat, location.lng);
+  useEffect(() => {
+    if (!location) return;
+    fetchHospitals(location.lat, location.lng);
   }, [location]);
 
 
@@ -442,7 +451,7 @@ const HospitalPage: React.FC = () => {
             </p>
 
             {/* Interactive Map */}
-            {filtered.length > 0 && !loadingHospitals && userLoc && (
+            {userLoc && (
               <div style={{ height: '200px', borderRadius: '12px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
                 <FreeMap
                   center={[userLoc[0], userLoc[1]]}
@@ -468,7 +477,17 @@ const HospitalPage: React.FC = () => {
 
             {/* Hospital cards */}
             
-            {loadingHospitals ? (
+            {apiError ? (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center animate-fade-in mb-4">
+                <p className="text-red-400 font-bold mb-3">{apiError}</p>
+                <button 
+                  onClick={() => location && fetchHospitals(location.lat, location.lng)}
+                  className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-2 rounded-xl text-sm font-bold transition-colors"
+                >
+                  Retry Loading
+                </button>
+              </div>
+            ) : loadingHospitals ? (
               <div className="space-y-4">
                 {[1,2,3,4].map(i => (
                   <div key={i} className="card animate-pulse" style={{ height: 140 }}>

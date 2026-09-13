@@ -45,25 +45,31 @@ const AmbulancePage: React.FC = () => {
   const [amb2, setAmb2] = useState<[number, number]>([28.5355 - 0.005, 77.2690 + 0.009]);
   const [etaMin, setEtaMin] = useState(7);
   const [distKm, setDistKm] = useState(1.8);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const isFetching = React.useRef(false);
+
+  const fetchHospitals = async (lat: number, lng: number) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+    setApiError(null);
+    setAmb1([lat + 0.008, lng - 0.006]);
+    setAmb2([lat - 0.005, lng + 0.009]);
+
+    try {
+      const { fetchNearbyFacilities } = await import('../lib/overpass');
+      const facilities = await fetchNearbyFacilities(lat, lng, 'hospital', 15000);
+      setHospitals(facilities.map(enrichHospital));
+    } catch (e: any) {
+      console.error(e);
+      setApiError(e.message || "Failed to load hospitals");
+    } finally {
+      isFetching.current = false;
+    }
+  };
 
   useEffect(() => {
     if (!location) return;
-
-    const fetchHospitals = async () => {
-      const { lat, lng } = location;
-      setAmb1([lat + 0.008, lng - 0.006]);
-      setAmb2([lat - 0.005, lng + 0.009]);
-
-      try {
-        const { fetchNearbyFacilities } = await import('../lib/overpass');
-        const facilities = await fetchNearbyFacilities(lat, lng, 'hospital', 15000);
-        setHospitals(facilities.map(enrichHospital));
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchHospitals();
+    fetchHospitals(location.lat, location.lng);
   }, [location]);
 
   // Animate ambulances toward user
@@ -173,7 +179,17 @@ const AmbulancePage: React.FC = () => {
         {/* Hospital list */}
         <p className="section-title mb-3 animate-fade-in delay-300">Nearby Hospitals — ER Status</p>
 
-        {hospitals.length === 0 ? (
+        {apiError ? (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center animate-fade-in mb-4">
+            <p className="text-red-400 font-bold mb-3">{apiError}</p>
+            <button 
+              onClick={() => location && !isFetching.current && fetchHospitals(location.lat, location.lng)}
+              className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-2 rounded-xl text-sm font-bold transition-colors"
+            >
+              Retry Loading
+            </button>
+          </div>
+        ) : hospitals.length === 0 ? (
           <div className="animate-pulse">
             {[1,2,3].map(i => <div key={i} className="card mb-3" style={{ height: 140, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
           </div>

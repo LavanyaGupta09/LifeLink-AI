@@ -39,13 +39,17 @@ const PharmacyPage: React.FC = () => {
 
   const { location, status, errorMessage, searchCity } = useGeolocation();
 
-  useEffect(() => {
-    if (!location) return;
+  const [apiError, setApiError] = useState<string | null>(null);
+  const isFetching = React.useRef(false);
 
-    const fetchPharms = async () => {
-      try {
-          const { fetchNearbyFacilities } = await import('../lib/overpass');
-          const facilities = await fetchNearbyFacilities(location.lat, location.lng, 'pharmacy');
+  const fetchPharms = async (lat: number, lng: number) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+    setLoadingPharmacies(true);
+    setApiError(null);
+    try {
+        const { fetchNearbyFacilities } = await import('../lib/overpass');
+        const facilities = await fetchNearbyFacilities(lat, lng, 'pharmacy');
           
           if (facilities.length === 0) {
             setPharmacies([]);
@@ -82,13 +86,18 @@ const PharmacyPage: React.FC = () => {
           });
           
           setPharmacies(mapped);
-      } catch (e) {
+      } catch (e: any) {
         console.error(e);
+        setApiError(e.message || "Failed to load pharmacies");
       } finally {
         setLoadingPharmacies(false);
+        isFetching.current = false;
       }
-    };
-    fetchPharms();
+  };
+
+  useEffect(() => {
+    if (!location) return;
+    fetchPharms(location.lat, location.lng);
   }, [location]);
 
   useEffect(() => {
@@ -224,7 +233,17 @@ const PharmacyPage: React.FC = () => {
                 />
               </div>
 
-              {loadingPharmacies ? (
+              {apiError ? (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center animate-fade-in mb-4">
+                  <p className="text-red-400 font-bold mb-3">{apiError}</p>
+                  <button 
+                    onClick={() => location && fetchPharms(location.lat, location.lng)}
+                    className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-2 rounded-xl text-sm font-bold transition-colors"
+                  >
+                    Retry Loading
+                  </button>
+                </div>
+              ) : loadingPharmacies ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map(i => (
                     <div key={i} className="bg-[#131B2F] rounded-3xl p-5 h-32 animate-pulse border border-slate-800"></div>
