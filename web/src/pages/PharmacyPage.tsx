@@ -65,7 +65,15 @@ const PharmacyPage: React.FC = () => {
             { name: 'Salbutamol Inhaler', price: 150, available: true, quantity: 15 },
             { name: 'Vitamin D3 60k', price: 95, available: true, quantity: 80 },
             { name: 'Pantoprazole 40mg', price: 65, available: false, quantity: 0 },
-            { name: 'Metformin 500mg', price: 55, available: true, quantity: 300 }
+            { name: 'Metformin 500mg', price: 55, available: true, quantity: 300 },
+            { name: 'Ibuprofen 400mg', price: 50, available: true, quantity: 100 },
+            { name: 'Omeprazole 20mg', price: 70, available: true, quantity: 150 },
+            { name: 'Losartan 50mg', price: 85, available: true, quantity: 90 },
+            { name: 'Amlodipine 5mg', price: 40, available: true, quantity: 200 },
+            { name: 'Atorvastatin 20mg', price: 110, available: false, quantity: 0 },
+            { name: 'Levothyroxine 50mcg', price: 130, available: true, quantity: 60 },
+            { name: 'Ciprofloxacin 500mg', price: 90, available: true, quantity: 75 },
+            { name: 'Sertraline 50mg', price: 160, available: true, quantity: 40 }
           ];
 
           const mapped = facilities.map(f => {
