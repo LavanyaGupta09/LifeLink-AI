@@ -76,7 +76,7 @@ const RuralSOSPage: React.FC = () => {
           </button>
           <div className="flex items-center gap-2">
             <ShieldAlert size={20} className="text-red-500" />
-            <h1 className="text-lg font-bold">Emergency</h1>
+            <h1 className="text-lg font-bold">आपातकाल</h1>
           </div>
           <div className="w-10"></div> {/* spacer */}
         </div>
@@ -88,8 +88,8 @@ const RuralSOSPage: React.FC = () => {
         >
           <ShieldAlert size={64} className="text-white" />
           <div className="text-center">
-            <h2 className="text-3xl font-black tracking-tight leading-none mb-1">TURANT<br/>MADAD</h2>
-            <p className="text-xs font-bold text-white/80">Emergency mein dabayein</p>
+            <h2 className="text-3xl font-black tracking-tight leading-none mb-1">🚨 आपातकालीन<br/>मदद</h2>
+            <p className="text-xs font-bold text-white/80">इमरजेंसी में दबाएँ</p>
           </div>
         </button>
 
@@ -101,19 +101,19 @@ const RuralSOSPage: React.FC = () => {
           <div className="w-10 h-10 bg-[#8B5CF6] rounded-full flex items-center justify-center">
             <Mic size={20} className="text-white" />
           </div>
-          <span className="font-bold text-sm">🎙️ Bolkar SOS karein</span>
+          <span className="font-bold text-sm">🎙️ बोलकर मदद माँगें</span>
         </button>
 
         <div className="w-full max-w-sm mt-10">
-          <p className="text-center text-sm font-bold text-slate-400 mb-4">Kya hua hai? (Optional)</p>
+          <p className="text-center text-sm font-bold text-slate-400 mb-4">क्या हुआ है? (वैकल्पिक)</p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { id: 'CHEST', icon: Heart, label: 'Chest problem', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-              { id: 'BREATHING', icon: Activity, label: 'Saans ki dikkat', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/30' },
-              { id: 'BLEEDING', icon: HeartPulse, label: 'Khoon behna', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30' },
-              { id: 'INJURY', icon: AlertTriangle, label: 'Gambhir chot', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
-              { id: 'BURN', icon: Flame, label: 'Jalna', color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
-              { id: 'OTHER', icon: UserPlus, label: 'Other', color: 'text-slate-300', bg: 'bg-slate-700/30', border: 'border-slate-600' }
+              { id: 'CHEST', icon: Heart, label: 'छाती में दर्द', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+              { id: 'BREATHING', icon: Activity, label: 'साँस की दिक्कत', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/30' },
+              { id: 'BLEEDING', icon: HeartPulse, label: 'खून बहना', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30' },
+              { id: 'INJURY', icon: AlertTriangle, label: 'गंभीर चोट', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
+              { id: 'BURN', icon: Flame, label: 'जलना', color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/30' },
+              { id: 'OTHER', icon: UserPlus, label: 'अन्य', color: 'text-slate-300', bg: 'bg-slate-700/30', border: 'border-slate-600' }
             ].map(type => (
               <button 
                 key={type.id}
@@ -155,8 +155,8 @@ const RuralSOSPage: React.FC = () => {
               <Phone size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-orange-400">📶 Internet nahi hai</h3>
-              <p className="text-xs text-orange-200 mt-1">Koi chinta nahi. SMS bheja gaya hai.</p>
+              <h3 className="font-bold text-orange-400">📶 इंटरनेट नहीं है</h3>
+              <p className="text-xs text-orange-200 mt-1">कोई चिंता नहीं। एसएमएस भेजा गया है।</p>
             </div>
           </div>
         )}
@@ -167,8 +167,8 @@ const RuralSOSPage: React.FC = () => {
             <MapPin size={24} className="text-[#00C9A7]" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-300 text-sm">📍 Aapki Location</h3>
-            <p className="text-lg font-bold text-[#00C9A7] mt-0.5">Rampur Village</p>
+            <h3 className="font-bold text-slate-300 text-sm">📍 आपकी जगह</h3>
+            <p className="text-lg font-bold text-[#00C9A7] mt-0.5">रामपुर गाँव</p>
           </div>
         </div>
 
@@ -183,8 +183,8 @@ const RuralSOSPage: React.FC = () => {
               <div className={`w-0.5 h-8 ${statusStep >= 1 ? 'bg-red-500' : 'bg-slate-800'}`}></div>
             </div>
             <div className="pt-1">
-              <h3 className={`font-bold ${statusStep >= 0 ? 'text-white' : 'text-slate-500'}`}>🆘 SOS Sent</h3>
-              <p className="text-[10px] text-slate-400">Madad maangi gayi hai</p>
+              <h3 className={`font-bold ${statusStep >= 0 ? 'text-white' : 'text-slate-500'}`}>🆘 मदद के लिए संदेश भेजा गया</h3>
+              <p className="text-[10px] text-slate-400">मदद माँगी गई है</p>
             </div>
           </div>
 
@@ -196,8 +196,8 @@ const RuralSOSPage: React.FC = () => {
               <div className={`w-0.5 h-8 ${statusStep >= 2 ? 'bg-emerald-500' : 'bg-slate-800'}`}></div>
             </div>
             <div className="pt-1">
-              <h3 className={`font-bold ${statusStep >= 1 ? 'text-emerald-400' : 'text-slate-500'}`}>Family ko inform kar diya gaya hai</h3>
-              <p className="text-[10px] text-slate-400">Ramesh, Sita (Contacts)</p>
+              <h3 className={`font-bold ${statusStep >= 1 ? 'text-emerald-400' : 'text-slate-500'}`}>परिवार को बता दिया गया है</h3>
+              <p className="text-[10px] text-slate-400">रमेश, सीता (संपर्क)</p>
             </div>
           </div>
 
@@ -209,17 +209,17 @@ const RuralSOSPage: React.FC = () => {
               <div className={`w-0.5 h-8 ${statusStep >= 3 ? 'bg-blue-500' : 'bg-slate-800'}`}></div>
             </div>
             <div className="pt-1 w-full">
-              <h3 className={`font-bold ${statusStep >= 2 ? 'text-blue-400' : 'text-slate-500'}`}>👩‍⚕️ ASHA Worker ko batayein</h3>
+              <h3 className={`font-bold ${statusStep >= 2 ? 'text-blue-400' : 'text-slate-500'}`}>👩‍⚕️ आशा दीदी को बता दिया गया है</h3>
               {statusStep >= 2 && (
                 <div className="mt-2 bg-[#131F35] border border-blue-500/30 rounded-xl p-3">
-                  <p className="text-xs font-bold">Sunita Devi (ASHA)</p>
-                  <p className="text-[10px] text-slate-400">500m door</p>
+                  <p className="text-xs font-bold">सुनीता देवी (आशा)</p>
+                  <p className="text-[10px] text-slate-400">500 मीटर दूर</p>
                   <div className="flex gap-2 mt-2">
                     <button className="flex-1 bg-blue-600 hover:bg-blue-500 py-1.5 rounded-lg text-xs font-bold flex justify-center items-center gap-1">
-                      <Phone size={12} /> Call
+                      <Phone size={12} /> कॉल करें
                     </button>
                     <button className="flex-1 bg-white/10 hover:bg-white/20 py-1.5 rounded-lg text-xs font-bold flex justify-center items-center gap-1">
-                      Help Request
+                      मदद माँगें
                     </button>
                   </div>
                 </div>
@@ -235,8 +235,8 @@ const RuralSOSPage: React.FC = () => {
               <div className={`w-0.5 h-8 ${statusStep >= 4 ? 'bg-orange-500' : 'bg-slate-800'}`}></div>
             </div>
             <div className="pt-1">
-              <h3 className={`font-bold ${statusStep >= 3 ? 'text-orange-400' : 'text-slate-500'}`}>🚑 Ambulance Assigned</h3>
-              <p className="text-[10px] text-slate-400">Help aa rahi hai</p>
+              <h3 className={`font-bold ${statusStep >= 3 ? 'text-orange-400' : 'text-slate-500'}`}>🚑 एम्बुलेंस आ रही है</h3>
+              <p className="text-[10px] text-slate-400">मदद आ रही है</p>
             </div>
           </div>
 
@@ -247,8 +247,8 @@ const RuralSOSPage: React.FC = () => {
               </div>
             </div>
             <div className="pt-1">
-              <h3 className={`font-bold ${statusStep >= 4 ? 'text-indigo-400' : 'text-slate-500'}`}>🏥 Hospital ko alert bheja gaya hai</h3>
-              <p className="text-[10px] text-slate-400">District Hospital, 15km</p>
+              <h3 className={`font-bold ${statusStep >= 4 ? 'text-indigo-400' : 'text-slate-500'}`}>🏥 अस्पताल को बता दिया गया है</h3>
+              <p className="text-[10px] text-slate-400">ज़िला अस्पताल, 15 किमी</p>
             </div>
           </div>
 
@@ -258,7 +258,7 @@ const RuralSOSPage: React.FC = () => {
           onClick={handleCancel}
           className="mt-6 bg-[#131F35] border border-slate-700 hover:border-slate-500 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 text-slate-300"
         >
-          <X size={20} /> Cancel SOS
+          <X size={20} /> मदद रद्द करें
         </button>
 
       </div>

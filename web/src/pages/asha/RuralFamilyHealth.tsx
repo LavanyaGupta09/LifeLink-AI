@@ -6,9 +6,9 @@ const RuralFamilyHealth: React.FC = () => {
   const navigate = useNavigate();
 
   const family = [
-    { name: 'Ramesh (Papa)', age: 58, condition: 'BP, Sugar', avatar: '👨' },
-    { name: 'Sita (Maa)', age: 54, condition: 'Theek hain', avatar: '👩' },
-    { name: 'Rahul (Beta)', age: 12, condition: 'Theek hain', avatar: '👦' },
+    { name: 'रमेश (पापा)', age: 58, condition: 'बीपी, शुगर', avatar: '👨' },
+    { name: 'सीता (माँ)', age: 54, condition: 'ठीक हैं', avatar: '👩' },
+    { name: 'राहुल (बेटा)', age: 12, condition: 'ठीक हैं', avatar: '👦' },
   ];
 
   return (
@@ -20,10 +20,10 @@ const RuralFamilyHealth: React.FC = () => {
           <button onClick={() => navigate(-1)} className="p-2 bg-[#131F35] rounded-full text-slate-300">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-bold text-white">Mere Parivaar Ki Sehat</h1>
+          <h1 className="text-xl font-bold text-white">मेरे परिवार की सेहत</h1>
         </div>
 
-        <p className="text-slate-300 text-sm">Apne parivaar ki health details dekhein.</p>
+        <p className="text-slate-300 text-sm">अपने परिवार की स्वास्थ्य जानकारी देखें।</p>
 
         {/* Family List */}
         <div className="flex flex-col gap-4">
@@ -34,9 +34,9 @@ const RuralFamilyHealth: React.FC = () => {
               </div>
               <div className="flex-1">
                 <h2 className="text-base font-bold text-white">{f.name}</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Umar: {f.age} saal</p>
+                <p className="text-xs text-slate-400 mt-0.5">उम्र: {f.age} साल</p>
                 <div className="bg-[#0B1121] rounded p-2 mt-2 border border-slate-800">
-                  <span className="text-[10px] text-slate-400">Health Status:</span>
+                  <span className="text-[10px] text-slate-400">सेहत की स्थिति:</span>
                   <p className="text-xs font-bold text-emerald-400">{f.condition}</p>
                 </div>
               </div>
@@ -44,7 +44,7 @@ const RuralFamilyHealth: React.FC = () => {
           ))}
 
           <button className="bg-[#131F35] border border-dashed border-[#00C9A7]/50 rounded-2xl p-4 flex items-center justify-center gap-3 text-[#00C9A7] font-bold active:scale-95 transition-transform">
-            <Users size={20} /> Naya Member Jodein
+            <Users size={20} /> नया सदस्य जोड़ें
           </button>
         </div>
 

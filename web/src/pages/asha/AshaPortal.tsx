@@ -7,32 +7,32 @@ const AshaPortal: React.FC = () => {
 
   const menuItems = [
     {
-      title: 'Doctor se Salah',
-      subtitle: 'Pehle salah — Toll-free call',
+      title: 'डॉक्टर से सलाह',
+      subtitle: 'पहली सलाह — टोल-फ्री कॉल',
       icon: Phone,
       color: '#2ED573',
       bgColor: '#2ED573',
       route: '/asha/triage',
     },
     {
-      title: 'Ghar Par Jaakar Jaanch',
-      subtitle: 'ASHA visit — Patient ki jaanch',
+      title: 'घर पर जाकर जाँच',
+      subtitle: 'आशा दीदी — मरीज़ की जाँच',
       icon: Stethoscope,
       color: '#3B82F6',
       bgColor: '#3B82F6',
       route: '/asha/ghar-jaanch',
     },
     {
-      title: 'Emergency SOS',
-      subtitle: 'Gambhir sthiti mein — Turant madad',
+      title: 'आपातकालीन मदद',
+      subtitle: 'गंभीर स्थिति में — तुरंत मदद',
       icon: AlertTriangle,
       color: '#FF4757',
       bgColor: '#FF4757',
       route: '/asha/emergency',
     },
     {
-      title: 'Meri Soochna',
-      subtitle: 'Mere patients — Records dekhein',
+      title: 'मेरी सूचना',
+      subtitle: 'मेरे मरीज़ — जानकारी देखें',
       icon: FileText,
       color: '#8B5CF6',
       bgColor: '#8B5CF6',
@@ -51,8 +51,8 @@ const AshaPortal: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 className="text-lg font-bold">ASHA Worker</h1>
-          <p className="text-[10px] text-slate-400">Gaon mein sehat ki seva</p>
+          <h1 className="text-lg font-bold">आशा दीदी</h1>
+          <p className="text-[10px] text-slate-400">गाँव में सेहत की सेवा</p>
         </div>
       </div>
 
@@ -65,9 +65,9 @@ const AshaPortal: React.FC = () => {
             <Users size={36} className="text-white" />
           </div>
 
-          <h2 className="text-2xl font-bold mb-2">ASHA Worker Portal</h2>
+          <h2 className="text-2xl font-bold mb-2">आशा दीदी पोर्टल</h2>
           <p className="text-slate-400 text-sm leading-relaxed">
-            Aap logon ki sehat ke liye humesha saath hain.
+            आप लोगों की सेहत के लिए हमेशा साथ हैं।
           </p>
 
           {/* Quick links */}
@@ -76,19 +76,19 @@ const AshaPortal: React.FC = () => {
               onClick={() => navigate('/asha/videos')}
               className="flex items-center gap-1.5 bg-[#131F35] border border-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
             >
-              <Heart size={12} className="text-[#FF4757]" /> Videos
+              <Heart size={12} className="text-[#FF4757]" /> वीडियो
             </button>
             <button
               onClick={() => navigate('/asha/offline')}
               className="flex items-center gap-1.5 bg-[#131F35] border border-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
             >
-              📡 Offline
+              📡 ऑफलाइन
             </button>
             <button
               onClick={() => navigate('/asha/profile')}
               className="flex items-center gap-1.5 bg-[#131F35] border border-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
             >
-              👩 Mera Profile
+              👩 मेरी जानकारी
             </button>
           </div>
         </div>
