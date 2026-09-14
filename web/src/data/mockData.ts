@@ -77,9 +77,21 @@ export const MOCK_BLOOD_DONORS: BloodDonor[] = [];
 export const GENERIC_MAP: Record<string, string> = {
   'ventolin': 'Salbutamol Inhaler',
   'crocin': 'Paracetamol 500mg',
+  'dolo': 'Paracetamol 500mg',
+  'calpol': 'Paracetamol 500mg',
+  'paracetamol': 'Paracetamol 500mg',
   'augmentin': 'Amoxicillin 500mg',
   'glucophage': 'Metformin 500mg',
   'pan40': 'Pantoprazole 40mg',
+  'brufen': 'Ibuprofen 400mg',
+  'advil': 'Ibuprofen 400mg',
+  'osec': 'Omeprazole 20mg',
+  'losar': 'Losartan 50mg',
+  'amlo': 'Amlodipine 5mg',
+  'lipitor': 'Atorvastatin 20mg',
+  'thyrox': 'Levothyroxine 50mcg',
+  'ciprox': 'Ciprofloxacin 500mg',
+  'zoloft': 'Sertraline 50mg',
 };
 
 export const MOCK_PHARMACIES: Pharmacy[] = [
