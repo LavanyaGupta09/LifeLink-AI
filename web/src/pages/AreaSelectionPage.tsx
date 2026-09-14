@@ -54,7 +54,7 @@ const AreaSelectionPage: React.FC = () => {
               <Building2 size={32} />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl md:text-2xl font-bold text-[#3B82F6] mb-1">🏙️ Shehar / City</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-[#3B82F6] mb-1">🏙️ शहर / City</h3>
               <p className="text-slate-400 text-sm">Urban Area — City / Town</p>
             </div>
             <ChevronRight size={24} className="text-slate-500 group-hover:text-[#3B82F6] transition-colors shrink-0" />
@@ -69,7 +69,7 @@ const AreaSelectionPage: React.FC = () => {
               <TreePine size={32} />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl md:text-2xl font-bold text-[#00C9A7] mb-1">🌾 Gaon / Rural</h3>
+              <h3 className="text-xl md:text-2xl font-bold text-[#00C9A7] mb-1">🌾 गाँव / Rural</h3>
               <p className="text-slate-400 text-sm">Village / Rural Area — Gramin kshetra</p>
             </div>
             <ChevronRight size={24} className="text-slate-500 group-hover:text-[#00C9A7] transition-colors shrink-0" />
