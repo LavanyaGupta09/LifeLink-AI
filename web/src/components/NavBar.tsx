@@ -16,11 +16,11 @@ const urbanNavItems = [
 
 import { HeartPulse, ShieldAlert, Users } from 'lucide-react';
 const ruralNavItems = [
-  { icon: Home,        label: 'Home',    route: '/dashboard' },
-  { icon: ShieldAlert, label: 'SOS',     route: '/sos' },
-  { icon: HeartPulse,  label: 'ASHA',    route: '/asha' },
-  { icon: Users,       label: 'Family',  route: '/asha/family' },
-  { icon: User,        label: 'Profile', route: '/profile' },
+  { icon: Home,        label: 'होम',    route: '/dashboard' },
+  { icon: ShieldAlert, label: 'मदद',     route: '/sos' },
+  { icon: HeartPulse,  label: 'आशा दीदी',    route: '/asha' },
+  { icon: Users,       label: 'परिवार',  route: '/asha/family' },
+  { icon: User,        label: 'मेरी जानकारी', route: '/profile' },
 ];
 
 const NavBar: React.FC = () => {

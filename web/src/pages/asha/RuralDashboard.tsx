@@ -60,10 +60,10 @@ const RuralDashboard: React.FC = () => {
         const data = await res.json();
         setAiResponse(data.message);
       } else {
-        setAiResponse("Maaf karein, abhi internet slow hai.");
+        setAiResponse("माफ़ करें, अभी इंटरनेट धीमा है।");
       }
     } catch (error) {
-      setAiResponse("Maaf karein, abhi internet slow hai.");
+      setAiResponse("माफ़ करें, अभी इंटरनेट धीमा है।");
     } finally {
       setIsAiLoading(false);
       if (query === aiQuery) setAiQuery('');
@@ -77,11 +77,11 @@ const RuralDashboard: React.FC = () => {
         {/* HEADER */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-black text-[#00C9A7]">Namaste 👋</h1>
+            <h1 className="text-3xl font-black text-[#00C9A7]">नमस्ते 👋</h1>
             <h2 className="text-lg font-bold mt-1">{user?.fullName || 'LifeLink User'}</h2>
             <div className="flex items-center gap-1 mt-1 bg-white/10 px-2 py-1 rounded-full w-max">
               <MapPin size={12} className="text-emerald-400" />
-              <span className="text-[10px] font-bold text-emerald-400">Rampur Village</span>
+              <span className="text-[10px] font-bold text-emerald-400">रामपुर गाँव</span>
             </div>
           </div>
           <div className="w-14 h-14 bg-[#131F35] border border-slate-700 rounded-full flex items-center justify-center shadow-lg">
@@ -98,8 +98,8 @@ const RuralDashboard: React.FC = () => {
               <Stethoscope size={20} className="text-white" />
             </div>
             <div>
-              <h3 className="font-black text-lg text-white">Sehat Saathi 🎙️</h3>
-              <p className="text-xs text-slate-300">Apni health ke baare mein poochhein</p>
+              <h3 className="font-black text-lg text-white">सेहत साथी 🎙️</h3>
+              <p className="text-xs text-slate-300">अपनी सेहत के बारे में पूछें</p>
             </div>
           </div>
 
@@ -122,7 +122,7 @@ const RuralDashboard: React.FC = () => {
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAiSubmit(); }}
                 disabled={isAiLoading} 
                 className="w-full h-full bg-[#0B1121] border border-slate-700 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-[#8B5CF6] transition-colors shadow-inner"
-                placeholder="Boliye, hum sun rahe hain..."
+                placeholder="बोलिए, हम सुन रहे हैं..."
               />
               <button 
                 onClick={() => handleAiSubmit()}
@@ -140,7 +140,7 @@ const RuralDashboard: React.FC = () => {
 
           {/* Quick AI Suggestions */}
           <div className="flex gap-2 overflow-x-auto hide-scrollbar mt-3 relative z-10 pb-1">
-            {['🤒 Bukhar', '🤧 Khansi', '🩹 Chot', '🫁 Saans ki dikkat'].map(q => (
+            {['🤒 बुखार', '🤧 खांसी', '🩹 चोट', '🫁 साँस की दिक्कत'].map(q => (
               <button 
                 key={q}
                 onClick={() => { setAiQuery(q); handleAiSubmit(q); }}
@@ -170,8 +170,8 @@ const RuralDashboard: React.FC = () => {
             className="col-span-2 bg-gradient-to-br from-[#FF4757] to-[#D63031] border-2 border-[#FF4757] rounded-[24px] p-5 shadow-[0_10px_30px_rgba(255,71,87,0.3)] flex items-center justify-between group transition-transform active:scale-95"
           >
             <div className="text-left">
-              <h2 className="text-2xl font-black text-white mb-1 tracking-tight">🆘 TURANT MADAD</h2>
-              <p className="text-white/90 text-sm font-semibold">Emergency mein dabayein</p>
+              <h2 className="text-2xl font-black text-white mb-1 tracking-tight">🚨 आपातकालीन मदद</h2>
+              <p className="text-white/90 text-sm font-semibold">इमरजेंसी में दबाएँ</p>
             </div>
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
               <ShieldAlert size={32} className="text-white" />
@@ -184,8 +184,8 @@ const RuralDashboard: React.FC = () => {
               <Video size={28} className="text-[#3D91FF]" />
             </div>
             <div className="text-center">
-              <h3 className="font-bold text-sm text-white">Doctor Se Salah</h3>
-              <p className="text-[10px] text-slate-400 mt-1">Video Call Karein</p>
+              <h3 className="font-bold text-sm text-white">👨‍⚕️ डॉक्टर</h3>
+              <p className="text-[10px] text-slate-400 mt-1">वीडियो कॉल करें</p>
             </div>
           </button>
 
@@ -195,8 +195,8 @@ const RuralDashboard: React.FC = () => {
               <MapPin size={28} className="text-[#00C9A7]" />
             </div>
             <div className="text-center">
-              <h3 className="font-bold text-sm text-white">Najdeek Hospital</h3>
-              <p className="text-[10px] text-slate-400 mt-1">Hospital dhoondein</p>
+              <h3 className="font-bold text-sm text-white">🏥 अस्पताल</h3>
+              <p className="text-[10px] text-slate-400 mt-1">अस्पताल ढूँढें</p>
             </div>
           </button>
 
@@ -206,8 +206,8 @@ const RuralDashboard: React.FC = () => {
               <HeartPulse size={24} className="text-[#F97316]" />
             </div>
             <div className="text-left flex-1">
-              <h3 className="font-black text-lg text-white">👩‍⚕️ ASHA Seva</h3>
-              <p className="text-xs text-slate-300 mt-0.5">Apne paas ki ASHA worker se madad lein</p>
+              <h3 className="font-black text-lg text-white">👩‍⚕️ आशा दीदी</h3>
+              <p className="text-xs text-slate-300 mt-0.5">आशा दीदी से मदद लें</p>
             </div>
             <div className="w-8 h-8 rounded-full bg-[#F97316] flex items-center justify-center">
               <span className="text-white text-lg font-bold">›</span>
@@ -220,7 +220,7 @@ const RuralDashboard: React.FC = () => {
               <Pill size={18} className="text-[#2ED573]" />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-sm text-white">Sasti Dawai</h3>
+              <h3 className="font-bold text-sm text-white">💊 दवा की दुकान</h3>
             </div>
           </button>
 
@@ -230,7 +230,7 @@ const RuralDashboard: React.FC = () => {
               <Heart size={18} className="text-amber-500" />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-sm text-white">Ghar Par Jaanch</h3>
+              <h3 className="font-bold text-sm text-white">🧪 जाँच</h3>
             </div>
           </button>
 
@@ -240,8 +240,8 @@ const RuralDashboard: React.FC = () => {
               <FileText size={20} className="text-indigo-400" />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-base text-white">🏛️ Sarkari Swasthya Yojna</h3>
-              <p className="text-[10px] text-slate-400 mt-1">Yojna ki jankari dekhein</p>
+              <h3 className="font-bold text-base text-white">🏛️ सरकारी योजनाएँ</h3>
+              <p className="text-[10px] text-slate-400 mt-1">योजनाओं की जानकारी देखें</p>
             </div>
           </button>
 
@@ -251,8 +251,8 @@ const RuralDashboard: React.FC = () => {
               <CloudOff size={20} className="text-slate-300" />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-base text-white">📶 Offline Help</h3>
-              <p className="text-[10px] text-slate-400 mt-1">Bina internet zaroori madad</p>
+              <h3 className="font-bold text-base text-white">📶 बिना इंटरनेट मदद</h3>
+              <p className="text-[10px] text-slate-400 mt-1">बिना इंटरनेट के चलाएं</p>
             </div>
           </button>
 
