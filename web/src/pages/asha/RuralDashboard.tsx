@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  HeartPulse, ShieldAlert, PhoneCall, Pill, Heart, 
-  MapPin, CloudOff, FileText, Mic, Send, Stethoscope, Video
+  HeartPulse, ShieldAlert, Pill, MapPin, CloudOff, 
+  Mic, UserRound, Video, Building2, FileText, ChevronRight, FlaskConical, Stethoscope
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useSOSStore } from '../../store/sosStore';
@@ -28,12 +28,12 @@ const RuralDashboard: React.FC = () => {
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
-        recognition.lang = 'hi-IN'; // Using Hindi for rural mode
+        recognition.lang = 'hi-IN';
         recognition.onresult = (e: any) => {
           const text = e.results[0][0].transcript;
           setAiQuery(text);
           setIsListening(false);
-          // Optional auto-submit: handleAiSubmit(text);
+          handleAiSubmit(text);
         };
         recognition.onerror = () => setIsListening(false);
         recognition.onend = () => setIsListening(false);
@@ -71,192 +71,241 @@ const RuralDashboard: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex justify-center pb-32">
-      <div className="flex flex-col gap-5 p-4 w-full max-w-[1400px] text-white">
+    <div className="w-full flex justify-center pb-32 bg-[#FAFBFF] min-h-screen text-slate-800 font-sans">
+      <div className="flex flex-col gap-4 p-4 w-full max-w-[1400px]">
         
-        {/* HEADER */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-black text-[#00C9A7]">नमस्ते 👋</h1>
-            <h2 className="text-lg font-bold mt-1">{user?.fullName || 'LifeLink User'}</h2>
-            <div className="flex items-center gap-1 mt-1 bg-white/10 px-2 py-1 rounded-full w-max">
-              <MapPin size={12} className="text-emerald-400" />
-              <span className="text-[10px] font-bold text-emerald-400">रामपुर गाँव</span>
+        {/* HEADER SECTION (Light Theme with Village bg style) */}
+        <div className="relative overflow-hidden bg-gradient-to-b from-[#E6F4FB] to-[#F1F9FE] -mx-4 -mt-4 px-4 pt-6 pb-8 mb-2 border-b border-blue-100 rounded-b-3xl">
+          {/* Abstract village shapes / background graphic simulation */}
+          <div className="absolute bottom-0 right-0 w-[200px] h-[100px] pointer-events-none opacity-40">
+            <div className="absolute bottom-0 right-4 w-12 h-10 bg-[#B8E1C2] rounded-t-sm"></div>
+            <div className="absolute bottom-10 right-2 w-16 h-8 bg-amber-700 rounded-t-full rotate-[-10deg]"></div>
+            <div className="absolute bottom-0 right-20 w-16 h-14 bg-[#B8E1C2] rounded-t-sm"></div>
+            <div className="absolute bottom-14 right-16 w-24 h-12 bg-amber-700 rounded-t-full rotate-[5deg]"></div>
+            <div className="absolute bottom-0 right-10 w-8 h-16 bg-green-500 rounded-t-full opacity-60"></div>
+            <div className="absolute bottom-0 right-32 w-12 h-20 bg-green-400 rounded-t-full opacity-60"></div>
+          </div>
+
+          <div className="relative z-10 flex items-start justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#1E88E5] to-[#0D47A1] rounded-full flex items-center justify-center shadow-md">
+                <HeartPulse size={20} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black text-[#0D47A1] leading-tight">LifeLink AI</h1>
+                <p className="text-[9px] font-medium text-slate-600">हर गाँव, हर परिवार का स्वास्थ्य साथी</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100">
+              <MapPin size={12} className="text-[#0D47A1]" />
+              <span className="text-[11px] font-bold text-[#0D47A1]">रामपुर गाँव</span>
             </div>
           </div>
-          <div className="w-14 h-14 bg-[#131F35] border border-slate-700 rounded-full flex items-center justify-center shadow-lg">
-            <HeartPulse size={28} className="text-[#00C9A7]" />
+
+          <div className="relative z-10 mt-6 flex items-center gap-3">
+             <div className="w-12 h-12 bg-blue-100 rounded-full border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
+                <UserRound className="text-blue-500" size={24} />
+             </div>
+             <div>
+                <h2 className="text-xl font-bold text-slate-800">नमस्ते!</h2>
+                <p className="text-xs font-medium text-slate-600 mt-0.5">आपका स्वास्थ्य, हमारी प्राथमिकता</p>
+             </div>
           </div>
         </div>
 
         {/* VOICE AI ASSISTANT (SEHAT SAATHI) */}
-        <div className="bg-[#131B31] border-2 border-[#8B5CF6]/50 rounded-[24px] p-5 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#8B5CF6]/20 rounded-full blur-[40px] pointer-events-none" />
-          
-          <div className="flex items-center gap-3 mb-4 relative z-10">
-            <div className="w-10 h-10 bg-[#8B5CF6] rounded-full flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(139,92,246,0.5)]">
-              <Stethoscope size={20} className="text-white" />
+        <div className="bg-gradient-to-r from-[#EBF4FA] to-[#E3F2FD] border border-blue-100 rounded-2xl p-4 shadow-sm flex items-center justify-between mt-2 relative overflow-hidden">
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-16 h-16 bg-[#BBDEFB] rounded-full flex items-center justify-center shrink-0 border border-white shadow-inner">
+               {/* Simulating the bot icon from the image */}
+              <div className="relative w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                    </div>
+                 </div>
+                 {/* Headphones simulation */}
+                 <div className="absolute top-0 w-12 h-6 border-t-2 border-l-2 border-r-2 border-blue-800 rounded-t-full"></div>
+                 <div className="absolute -left-1.5 top-5 w-2 h-4 bg-blue-800 rounded-full"></div>
+                 <div className="absolute -right-1.5 top-5 w-2 h-4 bg-blue-800 rounded-full"></div>
+              </div>
             </div>
             <div>
-              <h3 className="font-black text-lg text-white">सेहत साथी 🎙️</h3>
-              <p className="text-xs text-slate-300">अपनी सेहत के बारे में पूछें</p>
+              <h3 className="font-bold text-[17px] text-[#0D47A1] mb-0.5 flex items-center gap-1">
+                सेहत साथी <Mic size={16} className="text-blue-500" />
+              </h3>
+              <p className="text-[11px] text-slate-600 leading-snug">अपनी सेहत की बात करें,<br/>हमसे पूछें</p>
             </div>
           </div>
 
-          <div className="relative z-10 flex gap-2">
+          <div className="relative z-10 flex flex-col items-center">
             <button 
               onClick={handleVoice}
-              className={`w-14 h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg ${
+              className={`w-14 h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-md border-2 border-white ${
                 isListening 
-                  ? 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-pulse' 
-                  : 'bg-[#8B5CF6] hover:bg-[#7C3AED]'
+                  ? 'bg-red-500 animate-pulse' 
+                  : 'bg-blue-600 hover:bg-blue-700'
               }`}
             >
-              <Mic size={24} className="text-white" />
+              {isAiLoading ? (
+                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <Mic size={24} className="text-white" />
+              )}
             </button>
-            <div className="flex-1 relative">
-              <input 
-                type="text"
-                value={aiQuery}
-                onChange={(e) => setAiQuery(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleAiSubmit(); }}
-                disabled={isAiLoading} 
-                className="w-full h-full bg-[#0B1121] border border-slate-700 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-[#8B5CF6] transition-colors shadow-inner"
-                placeholder="बोलिए, हम सुन रहे हैं..."
-              />
-              <button 
-                onClick={() => handleAiSubmit()}
-                disabled={isAiLoading || !aiQuery.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-[#2D1B4E] flex items-center justify-center disabled:opacity-50"
-              >
-                {isAiLoading ? (
-                  <div className="w-4 h-4 border-2 border-[#8B5CF6] border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <Send size={16} className="text-[#8B5CF6] ml-1" />
-                )}
-              </button>
-            </div>
+            <span className="text-[11px] font-bold text-blue-700 mt-1">बोलिए...</span>
           </div>
 
-          {/* Quick AI Suggestions */}
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar mt-3 relative z-10 pb-1">
-            {['🤒 बुखार', '🤧 खांसी', '🩹 चोट', '🫁 साँस की दिक्कत'].map(q => (
-              <button 
-                key={q}
-                onClick={() => { setAiQuery(q); handleAiSubmit(q); }}
-                className="shrink-0 bg-[#2D1B4E] border border-[#8B5CF6]/30 text-white text-[11px] font-bold px-3 py-1.5 rounded-full whitespace-nowrap"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
-
-          {aiResponse && (
-            <div className="mt-4 bg-[#0B1121] border border-[#8B5CF6]/40 rounded-xl p-4 relative z-10 animate-fade-in">
-              <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-slate-400">
-                ✕
-              </button>
-              <p className="text-sm text-slate-200 pr-4 leading-relaxed">{aiResponse}</p>
+           {aiResponse && (
+            <div className="absolute top-0 left-0 w-full h-full bg-white/95 z-20 p-4 flex flex-col justify-center animate-fade-in">
+              <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-slate-500">✕</button>
+              <p className="text-sm font-semibold text-slate-800 text-center">{aiResponse}</p>
             </div>
           )}
         </div>
 
+        {/* EMERGENCY BANNER */}
+        <button 
+          onClick={handleSOS}
+          className="w-full bg-[#FFEFEF] border border-[#FFCDCD] rounded-xl p-4 shadow-sm flex items-center justify-between mt-1 active:scale-95 transition-transform"
+        >
+          <div className="flex items-center gap-3">
+             <div className="relative w-12 h-12 flex items-center justify-center">
+                <div className="w-10 h-10 bg-red-600 rounded-t-lg rounded-b flex items-center justify-center">
+                    <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                        <div className="w-3 h-1 bg-red-600 absolute"></div>
+                        <div className="w-1 h-3 bg-red-600 absolute"></div>
+                    </div>
+                </div>
+                <div className="absolute -top-1 w-4 h-2 bg-red-400 rounded-t-full"></div>
+                <div className="absolute -top-2 w-1 h-1 bg-red-500 animate-ping rounded-full"></div>
+             </div>
+             <div className="text-left">
+                <h3 className="font-bold text-lg text-red-600 mb-0.5">आपातकालीन मदद</h3>
+                <p className="text-[11px] text-red-700/80 font-medium">तुरंत सहायता के लिए बटन दबाएं</p>
+             </div>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center shadow-sm">
+             <ChevronRight size={20} className="text-white" />
+          </div>
+        </button>
+
         {/* MAIN GRID */}
-        <div className="grid grid-cols-2 gap-3 md:gap-4 mt-2">
+        <div className="grid grid-cols-2 gap-3 mt-1">
           
-          {/* 1. Emergency Help */}
-          <button 
-            onClick={handleSOS}
-            className="col-span-2 bg-gradient-to-br from-[#FF4757] to-[#D63031] border-2 border-[#FF4757] rounded-[24px] p-5 shadow-[0_10px_30px_rgba(255,71,87,0.3)] flex items-center justify-between group transition-transform active:scale-95"
-          >
-            <div className="text-left">
-              <h2 className="text-2xl font-black text-white mb-1 tracking-tight">🚨 आपातकालीन मदद</h2>
-              <p className="text-white/90 text-sm font-semibold">इमरजेंसी में दबाएँ</p>
-            </div>
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-              <ShieldAlert size={32} className="text-white" />
-            </div>
+          {/* 1. Doctor */}
+          <button onClick={() => navigate('/asha/doctor')} className="bg-[#EAF6FF] border border-blue-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
+             <div className="flex justify-between items-start w-full">
+                <div className="w-12 h-12 bg-[#D1ECFF] rounded-full flex items-center justify-center">
+                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                       <UserRound size={20} className="text-white mt-2" />
+                   </div>
+                </div>
+                <ChevronRight size={16} className="text-slate-400" />
+             </div>
+             <div className="text-left w-full">
+               <h3 className="font-bold text-[15px] text-slate-800">डॉक्टर</h3>
+               <p className="text-[10px] text-slate-500 font-medium">वीडियो कॉल करें</p>
+             </div>
           </button>
 
-          {/* 2. Doctor Se Salah */}
-          <button onClick={() => navigate('/asha/doctor')} className="bg-[#131F35] border border-[#3D91FF]/40 rounded-2xl p-4 flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform hover:border-[#3D91FF]">
-            <div className="w-16 h-16 bg-[#3D91FF]/10 rounded-full flex items-center justify-center shadow-inner">
-              <Video size={28} className="text-[#3D91FF]" />
-            </div>
-            <div className="text-center">
-              <h3 className="font-bold text-sm text-white">👨‍⚕️ डॉक्टर</h3>
-              <p className="text-[10px] text-slate-400 mt-1">वीडियो कॉल करें</p>
-            </div>
+          {/* 2. Hospital */}
+          <button onClick={() => navigate('/asha/hospital')} className="bg-[#EFFFF6] border border-green-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
+             <div className="flex justify-between items-start w-full">
+                <div className="w-12 h-12 bg-[#D1F6E2] rounded-full flex items-center justify-center">
+                   <div className="w-8 h-8 bg-[#00C9A7] rounded-md flex items-center justify-center">
+                       <Building2 size={18} className="text-white" />
+                   </div>
+                </div>
+                <ChevronRight size={16} className="text-slate-400" />
+             </div>
+             <div className="text-left w-full">
+               <h3 className="font-bold text-[15px] text-slate-800">अस्पताल</h3>
+               <p className="text-[10px] text-slate-500 font-medium">अस्पताल ढूँढें</p>
+             </div>
           </button>
 
-          {/* 3. Najdeek Ka Hospital */}
-          <button onClick={() => navigate('/asha/hospital')} className="bg-[#131F35] border border-[#00C9A7]/40 rounded-2xl p-4 flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform hover:border-[#00C9A7]">
-            <div className="w-16 h-16 bg-[#00C9A7]/10 rounded-full flex items-center justify-center shadow-inner">
-              <MapPin size={28} className="text-[#00C9A7]" />
-            </div>
-            <div className="text-center">
-              <h3 className="font-bold text-sm text-white">🏥 अस्पताल</h3>
-              <p className="text-[10px] text-slate-400 mt-1">अस्पताल ढूँढें</p>
-            </div>
+          {/* 3. Asha Didi */}
+          <button onClick={() => navigate('/asha')} className="bg-[#F4EFFF] border border-purple-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
+             <div className="flex justify-between items-start w-full">
+                <div className="w-12 h-12 bg-[#E6D9FF] rounded-full flex items-center justify-center overflow-hidden">
+                   <div className="w-full h-full bg-purple-500 flex items-center justify-center pt-2">
+                      <UserRound size={24} className="text-white" />
+                   </div>
+                </div>
+                <ChevronRight size={16} className="text-slate-400" />
+             </div>
+             <div className="text-left w-full">
+               <h3 className="font-bold text-[15px] text-slate-800">आशा दीदी</h3>
+               <p className="text-[10px] text-slate-500 font-medium">आपकी मदद के लिए</p>
+             </div>
           </button>
 
-          {/* 4. ASHA Seva */}
-          <button onClick={() => navigate('/asha')} className="col-span-2 bg-[#190F24] border border-[#F97316]/50 rounded-[20px] p-4 flex items-center gap-4 active:scale-95 transition-transform">
-            <div className="w-14 h-14 bg-[#F97316]/20 rounded-full flex items-center justify-center shrink-0 shadow-inner">
-              <HeartPulse size={24} className="text-[#F97316]" />
-            </div>
-            <div className="text-left flex-1">
-              <h3 className="font-black text-lg text-white">👩‍⚕️ आशा दीदी</h3>
-              <p className="text-xs text-slate-300 mt-0.5">आशा दीदी से मदद लें</p>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-[#F97316] flex items-center justify-center">
-              <span className="text-white text-lg font-bold">›</span>
-            </div>
+          {/* 4. Pharmacy */}
+          <button onClick={() => navigate('/asha/pharmacy')} className="bg-[#FFF8EA] border border-orange-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
+             <div className="flex justify-between items-start w-full">
+                <div className="w-12 h-12 bg-[#FFECCC] rounded-full flex items-center justify-center">
+                   <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center">
+                      <Pill size={16} className="text-white" />
+                   </div>
+                </div>
+                <ChevronRight size={16} className="text-slate-400" />
+             </div>
+             <div className="text-left w-full">
+               <h3 className="font-bold text-[15px] text-slate-800">दवा की दुकान</h3>
+               <p className="text-[10px] text-slate-500 font-medium">दवा खरीदें</p>
+             </div>
           </button>
 
-          {/* 5. Sasti Dawai */}
-          <button onClick={() => navigate('/asha/pharmacy')} className="bg-[#131F35] border border-[#2ED573]/30 rounded-xl p-3 flex items-center gap-3 active:scale-95 transition-transform">
-            <div className="w-10 h-10 bg-[#2ED573]/10 rounded-full flex items-center justify-center shrink-0">
-              <Pill size={18} className="text-[#2ED573]" />
-            </div>
-            <div className="text-left">
-              <h3 className="font-bold text-sm text-white">💊 दवा की दुकान</h3>
-            </div>
+          {/* 5. Lab Test */}
+          <button onClick={() => navigate('/asha/ghar-jaanch')} className="bg-[#EAFBFF] border border-cyan-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
+             <div className="flex justify-between items-start w-full">
+                <div className="w-12 h-12 bg-[#CCF4FF] rounded-full flex items-center justify-center">
+                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
+                      <FlaskConical size={16} className="text-white" />
+                   </div>
+                </div>
+                <ChevronRight size={16} className="text-slate-400" />
+             </div>
+             <div className="text-left w-full">
+               <h3 className="font-bold text-[15px] text-slate-800">जाँच</h3>
+               <p className="text-[10px] text-slate-500 font-medium">लैब टेस्ट कराएं</p>
+             </div>
           </button>
 
-          {/* 6. Ghar Par Jaanch */}
-          <button onClick={() => navigate('/asha/ghar-jaanch')} className="bg-[#131F35] border border-amber-500/30 rounded-xl p-3 flex items-center gap-3 active:scale-95 transition-transform">
-            <div className="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center shrink-0">
-              <Heart size={18} className="text-amber-500" />
-            </div>
-            <div className="text-left">
-              <h3 className="font-bold text-sm text-white">🧪 जाँच</h3>
-            </div>
+          {/* 6. Govt Schemes */}
+          <button onClick={() => navigate('/asha/yojna')} className="bg-[#F8EFFF] border border-fuchsia-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
+             <div className="flex justify-between items-start w-full">
+                <div className="w-12 h-12 bg-[#EFD9FF] rounded-full flex items-center justify-center">
+                   <div className="w-8 h-8 bg-fuchsia-500 rounded-full flex items-center justify-center">
+                      <FileText size={16} className="text-white" />
+                   </div>
+                </div>
+                <ChevronRight size={16} className="text-slate-400" />
+             </div>
+             <div className="text-left w-full">
+               <h3 className="font-bold text-[15px] text-slate-800">सरकारी योजनाएँ</h3>
+               <p className="text-[10px] text-slate-500 font-medium">योजनाओं की जानकारी</p>
+             </div>
           </button>
-
-          {/* 7. Sarkari Swasthya Yojna */}
-          <button onClick={() => navigate('/asha/yojna')} className="col-span-2 bg-[#131F35] border border-indigo-500/30 rounded-xl p-4 flex items-center gap-4 active:scale-95 transition-transform">
-            <div className="w-12 h-12 bg-indigo-500/10 rounded-full flex items-center justify-center shrink-0">
-              <FileText size={20} className="text-indigo-400" />
-            </div>
-            <div className="text-left">
-              <h3 className="font-bold text-base text-white">🏛️ सरकारी योजनाएँ</h3>
-              <p className="text-[10px] text-slate-400 mt-1">योजनाओं की जानकारी देखें</p>
-            </div>
-          </button>
-
-          {/* 8. Offline Help */}
-          <button onClick={() => navigate('/asha/offline')} className="col-span-2 bg-[#0B1221] border border-slate-700 rounded-xl p-4 flex items-center gap-4 active:scale-95 transition-transform">
-            <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shrink-0">
-              <CloudOff size={20} className="text-slate-300" />
-            </div>
-            <div className="text-left">
-              <h3 className="font-bold text-base text-white">📶 बिना इंटरनेट मदद</h3>
-              <p className="text-[10px] text-slate-400 mt-1">बिना इंटरनेट के चलाएं</p>
-            </div>
-          </button>
-
         </div>
+
+        {/* OFFLINE BANNER */}
+        <button onClick={() => navigate('/asha/offline')} className="w-full bg-[#E8EDF2] border border-slate-200 rounded-xl p-4 flex items-center justify-between mt-2 active:scale-95 transition-transform">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 bg-slate-300 rounded-full flex items-center justify-center">
+                <CloudOff size={18} className="text-slate-700" />
+             </div>
+             <div className="text-left">
+                <h3 className="font-bold text-base text-slate-800">बिना इंटरनेट मदद</h3>
+                <p className="text-[10px] text-slate-500 font-medium">ऑफलाइन सेवाएँ और जरूरी जानकारी</p>
+             </div>
+          </div>
+          <ChevronRight size={18} className="text-slate-400" />
+        </button>
+
       </div>
     </div>
   );

@@ -52,10 +52,15 @@ const NavBar: React.FC = () => {
       )}
 
       {/* Floating Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 h-[72px] bg-[#0B1121]/90 backdrop-blur-md border-t border-slate-800 flex items-center justify-around px-2 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+      <div className={`fixed bottom-0 left-0 right-0 h-[72px] backdrop-blur-md flex items-center justify-around px-2 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] ${areaType === 'rural' ? 'bg-white border-t border-slate-200' : 'bg-[#0B1121]/90 border-t border-slate-800'}`}>
         {navItems.map(item => {
           const Icon = item.icon;
           const isActive = location.pathname === item.route;
+          
+          const activeColor = areaType === 'rural' ? 'text-[#1E40AF]' : 'text-[#00C9A7]';
+          const inactiveColor = areaType === 'rural' ? 'text-slate-500 group-hover:text-slate-700' : 'text-slate-500 group-hover:text-slate-400';
+          const activeBg = areaType === 'rural' ? 'bg-[#1E40AF]' : 'bg-[#00C9A7]';
+
           return (
             <button
               key={item.route}
@@ -65,15 +70,15 @@ const NavBar: React.FC = () => {
             >
               {/* Active Accent Indicator */}
               {isActive && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-[#00C9A7] rounded-b-full shadow-[0_2px_10px_rgba(0,201,167,0.5)]" />
+                <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 ${activeBg} rounded-b-full shadow-[0_2px_10px_rgba(0,0,0,0.1)]`} />
               )}
               
               <Icon 
                 size={22} 
                 strokeWidth={isActive ? 2.5 : 2} 
-                className={`mb-1 transition-all duration-300 ${isActive ? 'text-[#00C9A7] scale-110' : 'text-slate-500 group-hover:text-slate-400'}`} 
+                className={`mb-1 transition-all duration-300 ${isActive ? `${activeColor} scale-110` : inactiveColor}`} 
               />
-              <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'text-[#00C9A7]' : 'text-slate-500 group-hover:text-slate-400'}`}>
+              <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? activeColor : inactiveColor}`}>
                 {item.label}
               </span>
             </button>
