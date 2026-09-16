@@ -192,102 +192,90 @@ const RuralDashboard: React.FC = () => {
           </div>
         </button>
 
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-2 gap-3 mt-1">
+        {/* MAIN GRID - 3 columns like the app */}
+        <div className="grid grid-cols-3 gap-3 mt-1">
           
           {/* 1. Doctor */}
-          <button onClick={() => navigate('/asha/doctor')} className="bg-[#EAF6FF] border border-blue-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
-             <div className="flex justify-between items-start w-full">
-                <div className="w-12 h-12 bg-[#D1ECFF] rounded-full flex items-center justify-center">
-                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
-                       <UserRound size={20} className="text-white mt-2" />
-                   </div>
+          <button onClick={() => navigate('/asha/doctor')} className="bg-[#EAF6FF] border border-blue-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 h-[130px] active:scale-95 transition-transform relative">
+             <ChevronRight size={14} className="text-slate-400 absolute top-2 right-2" />
+             <div className="w-14 h-14 bg-[#D1ECFF] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                    <UserRound size={22} className="text-white mt-1" />
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
              </div>
-             <div className="text-left w-full">
-               <h3 className="font-bold text-[15px] text-slate-800">डॉक्टर</h3>
-               <p className="text-[10px] text-slate-500 font-medium">वीडियो कॉल करें</p>
+             <div className="text-center">
+               <h3 className="font-bold text-[14px] text-slate-800 leading-tight">डॉक्टर</h3>
+               <p className="text-[9px] text-slate-500 font-medium mt-0.5">वीडियो कॉल करें</p>
              </div>
           </button>
 
           {/* 2. Hospital */}
-          <button onClick={() => navigate('/asha/hospital')} className="bg-[#EFFFF6] border border-green-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
-             <div className="flex justify-between items-start w-full">
-                <div className="w-12 h-12 bg-[#D1F6E2] rounded-full flex items-center justify-center">
-                   <div className="w-8 h-8 bg-[#00C9A7] rounded-md flex items-center justify-center">
-                       <Building2 size={18} className="text-white" />
-                   </div>
+          <button onClick={() => navigate('/asha/hospital')} className="bg-[#EFFFF6] border border-green-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 h-[130px] active:scale-95 transition-transform relative">
+             <ChevronRight size={14} className="text-slate-400 absolute top-2 right-2" />
+             <div className="w-14 h-14 bg-[#D1F6E2] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-[#00C9A7] rounded-md flex items-center justify-center">
+                    <Building2 size={20} className="text-white" />
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
              </div>
-             <div className="text-left w-full">
-               <h3 className="font-bold text-[15px] text-slate-800">अस्पताल</h3>
-               <p className="text-[10px] text-slate-500 font-medium">अस्पताल ढूँढें</p>
+             <div className="text-center">
+               <h3 className="font-bold text-[14px] text-slate-800 leading-tight">अस्पताल</h3>
+               <p className="text-[9px] text-slate-500 font-medium mt-0.5">अस्पताल ढूँढें</p>
              </div>
           </button>
 
           {/* 3. Asha Didi */}
-          <button onClick={() => navigate('/asha')} className="bg-[#F4EFFF] border border-purple-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
-             <div className="flex justify-between items-start w-full">
-                <div className="w-12 h-12 bg-[#E6D9FF] rounded-full flex items-center justify-center overflow-hidden">
-                   <div className="w-full h-full bg-purple-500 flex items-center justify-center pt-2">
-                      <UserRound size={24} className="text-white" />
-                   </div>
+          <button onClick={() => navigate('/asha')} className="bg-[#F4EFFF] border border-purple-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 h-[130px] active:scale-95 transition-transform relative">
+             <ChevronRight size={14} className="text-slate-400 absolute top-2 right-2" />
+             <div className="w-14 h-14 bg-[#E6D9FF] rounded-full flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-purple-500 flex items-center justify-center pt-2">
+                   <UserRound size={24} className="text-white" />
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
              </div>
-             <div className="text-left w-full">
-               <h3 className="font-bold text-[15px] text-slate-800">आशा दीदी</h3>
-               <p className="text-[10px] text-slate-500 font-medium">आपकी मदद के लिए</p>
+             <div className="text-center">
+               <h3 className="font-bold text-[14px] text-slate-800 leading-tight">आशा दीदी</h3>
+               <p className="text-[9px] text-slate-500 font-medium mt-0.5">आपकी मदद के लिए</p>
              </div>
           </button>
 
           {/* 4. Pharmacy */}
-          <button onClick={() => navigate('/asha/pharmacy')} className="bg-[#FFF8EA] border border-orange-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
-             <div className="flex justify-between items-start w-full">
-                <div className="w-12 h-12 bg-[#FFECCC] rounded-full flex items-center justify-center">
-                   <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center">
-                      <Pill size={16} className="text-white" />
-                   </div>
+          <button onClick={() => navigate('/asha/pharmacy')} className="bg-[#FFF8EA] border border-orange-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 h-[130px] active:scale-95 transition-transform relative">
+             <ChevronRight size={14} className="text-slate-400 absolute top-2 right-2" />
+             <div className="w-14 h-14 bg-[#FFECCC] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center">
+                   <Pill size={18} className="text-white" />
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
              </div>
-             <div className="text-left w-full">
-               <h3 className="font-bold text-[15px] text-slate-800">दवा की दुकान</h3>
-               <p className="text-[10px] text-slate-500 font-medium">दवा खरीदें</p>
+             <div className="text-center">
+               <h3 className="font-bold text-[14px] text-slate-800 leading-tight">दवा की दुकान</h3>
+               <p className="text-[9px] text-slate-500 font-medium mt-0.5">दवा खरीदें</p>
              </div>
           </button>
 
           {/* 5. Lab Test */}
-          <button onClick={() => navigate('/asha/ghar-jaanch')} className="bg-[#EAFBFF] border border-cyan-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
-             <div className="flex justify-between items-start w-full">
-                <div className="w-12 h-12 bg-[#CCF4FF] rounded-full flex items-center justify-center">
-                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
-                      <FlaskConical size={16} className="text-white" />
-                   </div>
+          <button onClick={() => navigate('/asha/ghar-jaanch')} className="bg-[#EAFBFF] border border-cyan-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 h-[130px] active:scale-95 transition-transform relative">
+             <ChevronRight size={14} className="text-slate-400 absolute top-2 right-2" />
+             <div className="w-14 h-14 bg-[#CCF4FF] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center">
+                   <FlaskConical size={18} className="text-white" />
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
              </div>
-             <div className="text-left w-full">
-               <h3 className="font-bold text-[15px] text-slate-800">जाँच</h3>
-               <p className="text-[10px] text-slate-500 font-medium">लैब टेस्ट कराएं</p>
+             <div className="text-center">
+               <h3 className="font-bold text-[14px] text-slate-800 leading-tight">जाँच</h3>
+               <p className="text-[9px] text-slate-500 font-medium mt-0.5">लैब टेस्ट कराएं</p>
              </div>
           </button>
 
           {/* 6. Govt Schemes */}
-          <button onClick={() => navigate('/asha/yojna')} className="bg-[#F8EFFF] border border-fuchsia-100 rounded-2xl p-4 flex flex-col justify-between h-28 active:scale-95 transition-transform">
-             <div className="flex justify-between items-start w-full">
-                <div className="w-12 h-12 bg-[#EFD9FF] rounded-full flex items-center justify-center">
-                   <div className="w-8 h-8 bg-fuchsia-500 rounded-full flex items-center justify-center">
-                      <FileText size={16} className="text-white" />
-                   </div>
+          <button onClick={() => navigate('/asha/yojna')} className="bg-[#F8EFFF] border border-fuchsia-100 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 h-[130px] active:scale-95 transition-transform relative">
+             <ChevronRight size={14} className="text-slate-400 absolute top-2 right-2" />
+             <div className="w-14 h-14 bg-[#EFD9FF] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-fuchsia-500 rounded-full flex items-center justify-center">
+                   <FileText size={18} className="text-white" />
                 </div>
-                <ChevronRight size={16} className="text-slate-400" />
              </div>
-             <div className="text-left w-full">
-               <h3 className="font-bold text-[15px] text-slate-800">सरकारी योजनाएँ</h3>
-               <p className="text-[10px] text-slate-500 font-medium">योजनाओं की जानकारी</p>
+             <div className="text-center">
+               <h3 className="font-bold text-[14px] text-slate-800 leading-tight">सरकारी योजनाएँ</h3>
+               <p className="text-[9px] text-slate-500 font-medium mt-0.5">योजनाओं की जानकारी</p>
              </div>
           </button>
         </div>
