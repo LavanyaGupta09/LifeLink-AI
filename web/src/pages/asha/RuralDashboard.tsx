@@ -113,29 +113,29 @@ const RuralDashboard: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <HeartPulse size={26} className="text-[#00C9A7]" />
               <div>
-                <h1 className="text-lg font-black text-white tracking-tight leading-none">
+                <h1 className="text-lg font-black text-textPrimary tracking-tight leading-none">
                   LifeLink <span className="text-[#00C9A7]">AI</span>
                 </h1>
-                <p className="text-[9px] text-slate-400 mt-0.5">हर गाँव, हर परिवार का स्वास्थ्य साथी</p>
+                <p className="text-[9px] text-textSecondary mt-0.5">हर गाँव, हर परिवार का स्वास्थ्य साथी</p>
               </div>
             </div>
             {/* Location */}
-            <div className="flex items-center gap-1.5 bg-[#0F1D32] px-3 py-1.5 rounded-full border border-slate-700/50">
+            <div className="flex items-center gap-1.5 bg-surface px-3 py-1.5 rounded-full border border-border">
               <MapPin size={12} className="text-[#00C9A7]" />
-              <span className="text-[11px] font-semibold text-slate-300">{displayVillage}</span>
+              <span className="text-[11px] font-semibold text-textSecondary">{displayVillage}</span>
             </div>
           </div>
 
           {/* Greeting */}
           <div className="mt-5 flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-[#0F1D32] border border-slate-700/50 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-full bg-surface border border-border flex items-center justify-center shrink-0">
               <UserRound size={22} className="text-[#00C9A7]" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white leading-tight">
+              <h2 className="text-xl font-bold text-textPrimary leading-tight">
                 नमस्ते, {formatName(displayName)}! 👋
               </h2>
-              <p className="text-[12px] text-slate-400 mt-0.5">आपका स्वास्थ्य, हमारी प्राथमिकता</p>
+              <p className="text-[12px] text-textSecondary mt-0.5">आपका स्वास्थ्य, हमारी प्राथमिकता</p>
             </div>
           </div>
         </div>
@@ -144,15 +144,15 @@ const RuralDashboard: React.FC = () => {
             2. SEHAT SAATHI (Voice AI Assistant)
         ═══════════════════════════════════════════ */}
         <div className="px-4 mb-4">
-          <div className="bg-[#0F1D32] border border-slate-700/40 rounded-2xl p-4 relative overflow-hidden">
+          <div className="bg-surface border border-border rounded-2xl p-4 relative overflow-hidden">
 
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-[#00C9A7]/15 flex items-center justify-center shrink-0">
                 <Stethoscope size={22} className="text-[#00C9A7]" />
               </div>
               <div>
-                <h3 className="text-[16px] font-bold text-white leading-tight">सेहत साथी 🎙️</h3>
-                <p className="text-[12px] text-slate-400 mt-0.5">अपनी सेहत के बारे में पूछें</p>
+                <h3 className="text-[16px] font-bold text-textPrimary leading-tight">सेहत साथी 🎙️</h3>
+                <p className="text-[12px] text-textSecondary mt-0.5">अपनी सेहत के बारे में पूछें</p>
               </div>
             </div>
 
@@ -169,7 +169,7 @@ const RuralDashboard: React.FC = () => {
                 {isAiLoading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <Mic size={24} className="text-white" />
+                  <Mic size={24} className="text-textPrimary" />
                 )}
               </button>
 
@@ -180,7 +180,7 @@ const RuralDashboard: React.FC = () => {
                   onChange={(e) => setAiQuery(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleAiSubmit(); }}
                   disabled={isAiLoading}
-                  className="w-full bg-[#0A1628] border border-slate-700/50 rounded-xl py-3 px-4 pr-11 text-[13px] text-white placeholder-slate-500 focus:outline-none focus:border-[#00C9A7]/50 transition-colors disabled:opacity-50"
+                  className="w-full bg-background border border-border rounded-xl py-3 px-4 pr-11 text-[13px] text-textPrimary placeholder-slate-500 focus:outline-none focus:border-[#00C9A7]/50 transition-colors disabled:opacity-50"
                   placeholder="बोलिए या लिखिए..."
                 />
                 <button
@@ -188,7 +188,7 @@ const RuralDashboard: React.FC = () => {
                   disabled={isAiLoading || !aiQuery.trim()}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-[#00C9A7] flex items-center justify-center disabled:opacity-30 active:scale-90 transition-transform"
                 >
-                  <Send size={14} className="text-white ml-0.5" />
+                  <Send size={14} className="text-textPrimary ml-0.5" />
                 </button>
               </div>
             </div>
@@ -199,7 +199,7 @@ const RuralDashboard: React.FC = () => {
                 <button
                   key={q}
                   onClick={() => { setAiQuery(q); handleAiSubmit(q); }}
-                  className="shrink-0 bg-[#0A1628] border border-slate-700/40 text-slate-300 text-[12px] font-medium px-3 py-1.5 rounded-full whitespace-nowrap hover:border-[#00C9A7]/40 hover:text-white transition-colors active:scale-95"
+                  className="shrink-0 bg-background border border-border text-textSecondary text-[12px] font-medium px-3 py-1.5 rounded-full whitespace-nowrap hover:border-[#00C9A7]/40 hover:text-textPrimary transition-colors active:scale-95"
                 >
                   {q}
                 </button>
@@ -208,11 +208,11 @@ const RuralDashboard: React.FC = () => {
 
             {/* AI Response */}
             {aiResponse && (
-              <div className="mt-3 bg-[#0A1628] border border-slate-700/40 rounded-xl p-3.5 relative">
-                <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-slate-500 hover:text-white transition-colors">✕</button>
+              <div className="mt-3 bg-background border border-border rounded-xl p-3.5 relative">
+                <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-textTertiary hover:text-textPrimary transition-colors">✕</button>
                 <div className="flex gap-2 items-start">
                   <HeartPulse size={16} className="text-[#00C9A7] shrink-0 mt-0.5" />
-                  <p className="text-[13px] text-slate-200 leading-relaxed pr-5">{aiResponse}</p>
+                  <p className="text-[13px] text-textPrimary leading-relaxed pr-5">{aiResponse}</p>
                 </div>
               </div>
             )}
@@ -229,7 +229,7 @@ const RuralDashboard: React.FC = () => {
           >
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-[#DC2626] flex items-center justify-center shrink-0">
-                <ShieldAlert size={24} className="text-white" />
+                <ShieldAlert size={24} className="text-textPrimary" />
               </div>
               <div className="text-left">
                 <h3 className="text-[16px] font-bold text-[#FCA5A5] leading-tight">आपातकालीन मदद</h3>
@@ -237,7 +237,7 @@ const RuralDashboard: React.FC = () => {
               </div>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#DC2626] flex items-center justify-center shrink-0">
-              <ChevronRight size={20} className="text-white" />
+              <ChevronRight size={20} className="text-textPrimary" />
             </div>
           </button>
         </div>
@@ -253,14 +253,14 @@ const RuralDashboard: React.FC = () => {
                 <button
                   key={s.id}
                   onClick={() => navigate(s.route)}
-                  className="bg-[#0F1D32] border border-slate-700/40 rounded-2xl p-3 flex flex-col items-center justify-center gap-2.5 aspect-[4/5] active:scale-[0.94] active:bg-[#142640] transition-all"
+                  className="bg-surface border border-border rounded-2xl p-3 flex flex-col items-center justify-center gap-2.5 aspect-[4/5] active:scale-[0.94] active:bg-accent-blue transition-all"
                 >
                   <div className="w-12 h-12 rounded-full bg-[#00C9A7]/12 flex items-center justify-center">
                     <SIcon size={22} className="text-[#00C9A7]" />
                   </div>
                   <div className="text-center w-full">
-                    <h3 className="text-[13px] font-bold text-white leading-tight">{s.label}</h3>
-                    <p className="text-[9px] text-slate-500 mt-0.5 leading-tight truncate">{s.sub}</p>
+                    <h3 className="text-[13px] font-bold text-textPrimary leading-tight">{s.label}</h3>
+                    <p className="text-[9px] text-textTertiary mt-0.5 leading-tight truncate">{s.sub}</p>
                   </div>
                 </button>
               );
@@ -274,18 +274,18 @@ const RuralDashboard: React.FC = () => {
         <div className="px-4 mb-6">
           <button
             onClick={() => navigate('/asha/offline')}
-            className="w-full bg-[#0F1D32] border border-slate-700/40 rounded-2xl px-4 py-4 flex items-center justify-between active:scale-[0.97] transition-transform"
+            className="w-full bg-surface border border-border rounded-2xl px-4 py-4 flex items-center justify-between active:scale-[0.97] transition-transform"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-slate-700/40 flex items-center justify-center shrink-0">
-                <CloudOff size={18} className="text-slate-400" />
+              <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0">
+                <CloudOff size={18} className="text-textSecondary" />
               </div>
               <div className="text-left">
-                <h3 className="text-[14px] font-bold text-white leading-tight">📶 बिना इंटरनेट मदद</h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">ऑफलाइन सेवाएँ और जरूरी जानकारी</p>
+                <h3 className="text-[14px] font-bold text-textPrimary leading-tight">📶 बिना इंटरनेट मदद</h3>
+                <p className="text-[11px] text-textTertiary mt-0.5">ऑफलाइन सेवाएँ और जरूरी जानकारी</p>
               </div>
             </div>
-            <ChevronRight size={18} className="text-slate-500 shrink-0" />
+            <ChevronRight size={18} className="text-textTertiary shrink-0" />
           </button>
         </div>
 

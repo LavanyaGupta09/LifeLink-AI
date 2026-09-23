@@ -135,14 +135,14 @@ const LabPage: React.FC = () => {
   const filteredTests = INDIVIDUAL_TESTS.filter(t => t.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-24 relative px-6 py-6 ">
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-24 relative px-6 py-6 ">
       {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
-        <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
+        <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
           <ArrowLeft size={20} />
         </button>
         <div className="flex-1">
-          <h1 className="text-xl font-bold tracking-tight text-white">Diagnostics</h1>
+          <h1 className="text-xl font-bold tracking-tight text-textPrimary">Diagnostics</h1>
           <p className="text-xs text-emerald-400 font-medium flex items-center gap-1">
             <MapPin size={10} /> {location ? 'Apollo Labs Near You' : 'Locating...'}
           </p>
@@ -154,31 +154,31 @@ const LabPage: React.FC = () => {
         {/* WIDGET 1: SEARCH & POPULAR PACKAGES */}
         <section>
           {showComparison ? (
-            <div className="bg-[#131F35] border border-slate-700 rounded-3xl p-5 shadow-2xl animate-fade-in relative overflow-hidden">
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-2xl animate-fade-in relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#3D91FF]/10 rounded-full blur-2xl" />
-              <button onClick={() => setShowComparison(false)} className="text-slate-400 hover:text-white mb-4 flex items-center gap-1 text-sm font-bold">
+              <button onClick={() => setShowComparison(false)} className="text-textSecondary hover:text-textPrimary mb-4 flex items-center gap-1 text-sm font-bold">
                 <ArrowLeft size={16} /> Back
               </button>
               
-              <h2 className="text-xl font-black text-white mb-2">Bundle Optimization</h2>
-              <p className="text-sm text-slate-400 mb-6">We analyzed your {detectedTests.filter(t=>t.selected).length} required tests to find the best value.</p>
+              <h2 className="text-xl font-black text-textPrimary mb-2">Bundle Optimization</h2>
+              <p className="text-sm text-textSecondary mb-6">We analyzed your {detectedTests.filter(t=>t.selected).length} required tests to find the best value.</p>
               
               <div className="flex flex-col gap-4">
                 {/* OPTION A: BEST VALUE */}
-                <div className="bg-gradient-to-br from-emerald-500/10 to-[#0B1121] border border-emerald-500/30 rounded-2xl p-5 relative">
+                <div className="bg-gradient-to-br from-emerald-500/10 to-background border border-emerald-500/30 rounded-2xl p-5 relative">
                   <div className="absolute -top-3 right-4 bg-emerald-500 text-black text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg shadow-emerald-500/20">
                     ⭐ BEST VALUE
                   </div>
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-textPrimary flex items-center gap-2">
                         <Package size={18} className="text-emerald-400" />
                         Full Body Checkup
                       </h3>
                       <p className="text-xs text-emerald-400 mt-1 font-bold">Includes ALL required tests + 80 more</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-black text-white">₹{bestPackagePrice}</p>
+                      <p className="text-xl font-black text-textPrimary">₹{bestPackagePrice}</p>
                     </div>
                   </div>
                   <div className="bg-emerald-500/20 text-emerald-400 text-xs font-bold p-2 rounded-lg mt-3 inline-block">
@@ -189,30 +189,30 @@ const LabPage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="text-center text-xs font-bold text-slate-500 my-1">OR</div>
+                <div className="text-center text-xs font-bold text-textTertiary my-1">OR</div>
 
                 {/* OPTION B: INDIVIDUAL */}
-                <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 flex justify-between items-center opacity-80">
+                <div className="bg-background border border-border rounded-2xl p-4 flex justify-between items-center opacity-80">
                   <div>
-                    <h3 className="font-bold text-white text-sm">Individual Tests</h3>
-                    <p className="text-[10px] text-slate-400">Book exactly what's on prescription</p>
+                    <h3 className="font-bold text-textPrimary text-sm">Individual Tests</h3>
+                    <p className="text-[10px] text-textSecondary">Book exactly what's on prescription</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <p className="font-bold text-white">₹{totalIndividualPrice}</p>
-                    <button onClick={() => setBookingItem({ name: 'Prescription Tests', price: totalIndividualPrice })} className="text-xs font-bold text-slate-300 border border-slate-700 px-4 py-1.5 rounded-lg hover:bg-slate-800">
+                    <p className="font-bold text-textPrimary">₹{totalIndividualPrice}</p>
+                    <button onClick={() => setBookingItem({ name: 'Prescription Tests', price: totalIndividualPrice })} className="text-xs font-bold text-textSecondary border border-border px-4 py-1.5 rounded-lg hover:bg-surface">
                       Book These
                     </button>
                   </div>
                 </div>
 
                 {/* OPTION C: ANOTHER LAB */}
-                <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 flex justify-between items-center opacity-80">
+                <div className="bg-background border border-border rounded-2xl p-4 flex justify-between items-center opacity-80">
                   <div>
-                    <h3 className="font-bold text-white text-sm">City Health Lab</h3>
-                    <p className="text-[10px] text-slate-400 flex items-center gap-1"><Home size={10}/> Home Collection Available</p>
+                    <h3 className="font-bold text-textPrimary text-sm">City Health Lab</h3>
+                    <p className="text-[10px] text-textSecondary flex items-center gap-1"><Home size={10}/> Home Collection Available</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <p className="font-bold text-white">₹{totalIndividualPrice - 150}</p>
+                    <p className="font-bold text-textPrimary">₹{totalIndividualPrice - 150}</p>
                     <button onClick={() => setBookingItem({ name: 'Prescription Tests (City Lab)', price: totalIndividualPrice - 150 })} className="text-xs font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-4 py-1.5 rounded-lg">
                       Book Alternative
                     </button>
@@ -226,46 +226,46 @@ const LabPage: React.FC = () => {
               {ocrState === 'idle' && (
                 <button 
                   onClick={handleUploadPrescription}
-                  className="w-full bg-[#131F35] border border-dashed border-[#3D91FF]/50 hover:border-[#3D91FF] hover:bg-[#3D91FF]/5 rounded-2xl p-4 flex items-center justify-center gap-3 mb-4 transition-all group"
+                  className="w-full bg-card border border-dashed border-[#3D91FF]/50 hover:border-[#3D91FF] hover:bg-[#3D91FF]/5 rounded-2xl p-4 flex items-center justify-center gap-3 mb-4 transition-all group"
                 >
                   <div className="w-10 h-10 rounded-full bg-[#3D91FF]/10 flex items-center justify-center group-hover:bg-[#3D91FF]/20 transition-colors">
                     <UploadCloud size={20} className="text-[#3D91FF]" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-bold text-white text-sm">Upload Prescription</h3>
-                    <p className="text-xs text-slate-400">AI will automatically find your tests</p>
+                    <h3 className="font-bold text-textPrimary text-sm">Upload Prescription</h3>
+                    <p className="text-xs text-textSecondary">AI will automatically find your tests</p>
                   </div>
                 </button>
               )}
 
               {ocrState === 'uploading' && (
-                <div className="w-full bg-[#131F35] border border-[#3D91FF]/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 mb-4">
+                <div className="w-full bg-card border border-[#3D91FF]/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 mb-4">
                   <Activity size={32} className="text-[#3D91FF] animate-pulse" />
                   <p className="text-sm font-bold text-[#3D91FF]">Scanning prescription with AI...</p>
                 </div>
               )}
 
               {ocrState === 'detected' && (
-                <div className="w-full bg-gradient-to-br from-[#131F35] to-[#0B1121] border border-[#3D91FF]/50 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(61,145,255,0.1)]">
+                <div className="w-full bg-gradient-to-br from-[#131F35] to-background border border-[#3D91FF]/50 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(61,145,255,0.1)]">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-bold text-white flex items-center gap-2">
+                      <h3 className="font-bold text-textPrimary flex items-center gap-2">
                         <ShieldCheck size={18} className="text-[#3D91FF]" /> 
                         {detectedTests.length} tests detected
                       </h3>
-                      <p className="text-xs text-slate-400 mt-1">Please verify the tests detected from your prescription.</p>
+                      <p className="text-xs text-textSecondary mt-1">Please verify the tests detected from your prescription.</p>
                     </div>
-                    <button onClick={() => setOcrState('idle')} className="text-slate-500 hover:text-white">✕</button>
+                    <button onClick={() => setOcrState('idle')} className="text-textTertiary hover:text-textPrimary">✕</button>
                   </div>
                   
                   <div className="space-y-2 mb-5">
                     {detectedTests.map(test => (
-                      <div key={test.id} onClick={() => toggleTest(test.id)} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${test.selected ? 'bg-[#3D91FF]/10 border-[#3D91FF]/30' : 'bg-[#0B1121] border-slate-800'}`}>
+                      <div key={test.id} onClick={() => toggleTest(test.id)} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${test.selected ? 'bg-[#3D91FF]/10 border-[#3D91FF]/30' : 'bg-background border-border'}`}>
                         <div className="flex items-center gap-3">
-                          {test.selected ? <CheckSquare size={18} className="text-[#3D91FF]" /> : <Square size={18} className="text-slate-600" />}
-                          <span className={`text-sm font-bold ${test.selected ? 'text-white' : 'text-slate-400'}`}>{test.name}</span>
+                          {test.selected ? <CheckSquare size={18} className="text-[#3D91FF]" /> : <Square size={18} className="text-textTertiary" />}
+                          <span className={`text-sm font-bold ${test.selected ? 'text-textPrimary' : 'text-textSecondary'}`}>{test.name}</span>
                         </div>
-                        <span className="text-xs text-slate-400 font-bold">₹{test.price}</span>
+                        <span className="text-xs text-textSecondary font-bold">₹{test.price}</span>
                       </div>
                     ))}
                   </div>
@@ -282,9 +282,9 @@ const LabPage: React.FC = () => {
 
               {/* Search Bar */}
               <div className="relative mb-6">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-textSecondary" size={20} />
                 <input 
-                  className="w-full bg-[#131F35] border border-slate-700/50 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-[#3D91FF]/60 focus:ring-1 focus:ring-[#3D91FF]/50 transition-all text-base shadow-inner"
+                  className="w-full bg-card border border-border rounded-2xl py-4 pl-12 pr-4 text-textPrimary placeholder-slate-500 focus:outline-none focus:border-[#3D91FF]/60 focus:ring-1 focus:ring-[#3D91FF]/50 transition-all text-base shadow-inner"
                   placeholder="Search manually (e.g., CBC)..."
                   value={query} onChange={e => setQuery(e.target.value)}
                 />
@@ -292,29 +292,29 @@ const LabPage: React.FC = () => {
 
               {!query && (
             <>
-              <h3 className="text-lg font-bold text-white mb-3 px-1">Popular Health Packages</h3>
+              <h3 className="text-lg font-bold text-textPrimary mb-3 px-1">Popular Health Packages</h3>
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide px-1" style={{ scrollSnapType: 'x mandatory' }}>
                 {HEALTH_PACKAGES.map(pkg => (
-                  <div key={pkg.id} className="min-w-[260px] bg-gradient-to-br from-[#131F35] to-[#0B1121] border border-slate-800 rounded-3xl p-5 flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
+                  <div key={pkg.id} className="min-w-[260px] bg-gradient-to-br from-[#131F35] to-background border border-border rounded-3xl p-5 flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
                     <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-800/50 flex items-center justify-center border border-slate-700/50">
+                      <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center border border-border">
                         {pkg.icon}
                       </div>
                       <div className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg border border-emerald-500/20">
                         SAVE {Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)}%
                       </div>
                     </div>
-                    <h4 className="font-bold text-white text-lg mb-1">{pkg.name}</h4>
+                    <h4 className="font-bold text-textPrimary text-lg mb-1">{pkg.name}</h4>
                     <p className="text-xs font-medium text-[#3D91FF] mb-4">Includes {pkg.tests} Tests</p>
                     
-                    <div className="flex items-center gap-4 text-xs text-slate-400 mb-4">
+                    <div className="flex items-center gap-4 text-xs text-textSecondary mb-4">
                       <div className="flex items-center gap-1"><Clock size={12} /> Fasting: {pkg.fasting}</div>
                     </div>
                     
-                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-800/80">
+                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
                       <div>
-                        <span className="text-lg font-black text-white">₹{pkg.price}</span>
-                        <span className="text-[10px] text-slate-500 line-through ml-1">₹{pkg.originalPrice}</span>
+                        <span className="text-lg font-black text-textPrimary">₹{pkg.price}</span>
+                        <span className="text-[10px] text-textTertiary line-through ml-1">₹{pkg.originalPrice}</span>
                       </div>
                       <button 
                         onClick={() => setBookingItem(pkg)}
@@ -331,16 +331,16 @@ const LabPage: React.FC = () => {
 
           {/* INDIVIDUAL TESTS LIST */}
           <div className="mt-4">
-            <h3 className="text-lg font-bold text-white mb-3 px-1">{query ? 'Search Results' : 'Individual Tests'}</h3>
+            <h3 className="text-lg font-bold text-textPrimary mb-3 px-1">{query ? 'Search Results' : 'Individual Tests'}</h3>
             <div className="flex flex-col gap-3">
               {filteredTests.map(test => (
-                <div key={test.id} className="bg-[#131F35] border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                <div key={test.id} className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between">
                   <div>
-                    <h4 className="font-bold text-white text-sm mb-1">{test.name}</h4>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{test.category}</p>
+                    <h4 className="font-bold text-textPrimary text-sm mb-1">{test.name}</h4>
+                    <p className="text-[10px] font-bold text-textTertiary uppercase tracking-wider">{test.category}</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <span className="font-bold text-white">₹{test.price}</span>
+                    <span className="font-bold text-textPrimary">₹{test.price}</span>
                     <button 
                       onClick={() => setBookingItem(test)}
                       className="text-xs font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-3 py-1 rounded-lg border border-[#3D91FF]/20"
@@ -351,7 +351,7 @@ const LabPage: React.FC = () => {
                 </div>
               ))}
               {filteredTests.length === 0 && (
-                <p className="text-center text-slate-500 text-sm py-4">No tests found matching "{query}"</p>
+                <p className="text-center text-textTertiary text-sm py-4">No tests found matching "{query}"</p>
               )}
             </div>
           </div>
@@ -361,10 +361,10 @@ const LabPage: React.FC = () => {
 
         {/* WIDGET 3: DIGITAL LAB REPORT VAULT */}
         <section className="mt-4">
-          <h3 className="text-lg font-bold text-white mb-3 px-1">My Bookings & Reports</h3>
+          <h3 className="text-lg font-bold text-textPrimary mb-3 px-1">My Bookings & Reports</h3>
           <div className="flex flex-col gap-3">
             {myBookings.map((bk, i) => (
-              <div key={bk.id} className="bg-gradient-to-br from-[#131B2F] to-[#0B1121] border border-slate-800 rounded-3xl p-4 relative overflow-hidden group hover:border-slate-700 transition-colors">
+              <div key={bk.id} className="bg-gradient-to-br from-[#131B2F] to-background border border-border rounded-3xl p-4 relative overflow-hidden group hover:border-border transition-colors">
                 {bk.isNew && <div className="absolute top-0 right-0 bg-emerald-500 text-black text-[9px] font-black px-2 py-0.5 rounded-bl-lg">NEW</div>}
                 <div className="flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-inner ${
@@ -373,8 +373,8 @@ const LabPage: React.FC = () => {
                     {bk.status === 'Completed' ? <FileText size={18} /> : <Activity size={18} />}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-bold text-white text-sm leading-tight mb-0.5">{bk.itemName}</h4>
-                    <p className="text-xs text-slate-400 mb-2">{bk.date}</p>
+                    <h4 className="font-bold text-textPrimary text-sm leading-tight mb-0.5">{bk.itemName}</h4>
+                    <p className="text-xs text-textSecondary mb-2">{bk.date}</p>
                     <div className="flex items-center gap-2">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                         bk.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
@@ -384,7 +384,7 @@ const LabPage: React.FC = () => {
                     </div>
                   </div>
                   {bk.status === 'Completed' && (
-                    <button className="p-2 bg-slate-800 rounded-xl text-white hover:bg-slate-700 transition-colors">
+                    <button className="p-2 bg-surface rounded-xl text-textPrimary hover:bg-surface transition-colors">
                       <Download size={16} />
                     </button>
                   )}
@@ -398,24 +398,24 @@ const LabPage: React.FC = () => {
       {/* WIDGET 2: BOOKING MODAL/DRAWER */}
       {bookingItem && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end animate-fade-in">
-          <div className="bg-[#131F35] w-full rounded-t-3xl border-t border-slate-700 shadow-2xl pb-[env(safe-area-inset-bottom,20px)] flex flex-col max-h-[85vh]">
-            <div className="p-5 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-[#131F35] rounded-t-3xl z-10">
+          <div className="bg-card w-full rounded-t-3xl border-t border-border shadow-2xl pb-[env(safe-area-inset-bottom,20px)] flex flex-col max-h-[85vh]">
+            <div className="p-5 border-b border-border flex justify-between items-center sticky top-0 bg-card rounded-t-3xl z-10">
               <div>
-                <h3 className="font-bold text-lg text-white leading-tight">{bookingItem.name}</h3>
+                <h3 className="font-bold text-lg text-textPrimary leading-tight">{bookingItem.name}</h3>
                 <p className="text-sm font-black text-[#3D91FF]">₹{bookingItem.price}</p>
               </div>
-              <button onClick={() => setBookingItem(null)} className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400">✕</button>
+              <button onClick={() => setBookingItem(null)} className="w-8 h-8 bg-surface rounded-full flex items-center justify-center text-textSecondary">✕</button>
             </div>
             
             <div className="p-5 overflow-y-auto">
-              <h4 className="text-sm font-bold text-white mb-3">Collection Mode</h4>
+              <h4 className="text-sm font-bold text-textPrimary mb-3">Collection Mode</h4>
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <button 
                   onClick={() => setCollectionType('home')}
                   className={`p-3 rounded-2xl border flex flex-col items-center gap-2 transition-all ${
                     collectionType === 'home' 
                       ? 'bg-[#3D91FF]/10 border-[#3D91FF] text-[#3D91FF] shadow-[0_0_15px_rgba(61,145,255,0.15)]' 
-                      : 'bg-[#0B1121] border-slate-800 text-slate-400 hover:border-slate-700'
+                      : 'bg-background border-border text-textSecondary hover:border-border'
                   }`}
                 >
                   <Home size={20} />
@@ -426,7 +426,7 @@ const LabPage: React.FC = () => {
                   className={`p-3 rounded-2xl border flex flex-col items-center gap-2 transition-all ${
                     collectionType === 'lab' 
                       ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' 
-                      : 'bg-[#0B1121] border-slate-800 text-slate-400 hover:border-slate-700'
+                      : 'bg-background border-border text-textSecondary hover:border-border'
                   }`}
                 >
                   <Building2 size={20} />
@@ -434,7 +434,7 @@ const LabPage: React.FC = () => {
                 </button>
               </div>
 
-              <h4 className="text-sm font-bold text-white mb-3">Select Date</h4>
+              <h4 className="text-sm font-bold text-textPrimary mb-3">Select Date</h4>
               <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide mb-4">
                 {DATES.map(d => {
                   const isSelected = selectedDate.getDate() === d.date.getDate();
@@ -445,7 +445,7 @@ const LabPage: React.FC = () => {
                       className={`min-w-[60px] p-3 rounded-2xl border flex flex-col items-center justify-center transition-all ${
                         isSelected 
                           ? 'bg-white border-white text-black shadow-lg shadow-white/10' 
-                          : 'bg-[#0B1121] border-slate-800 text-slate-400'
+                          : 'bg-background border-border text-textSecondary'
                       }`}
                     >
                       <span className="text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">{d.dayStr}</span>
@@ -455,7 +455,7 @@ const LabPage: React.FC = () => {
                 })}
               </div>
 
-              <h4 className="text-sm font-bold text-white mb-3">Select Time Slot</h4>
+              <h4 className="text-sm font-bold text-textPrimary mb-3">Select Time Slot</h4>
               <div className="grid grid-cols-2 gap-3 mb-6">
                 {TIME_SLOTS.map(t => (
                   <button 
@@ -463,8 +463,8 @@ const LabPage: React.FC = () => {
                     onClick={() => setSelectedTime(t)}
                     className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all ${
                       selectedTime === t 
-                        ? 'bg-slate-700 border-slate-600 text-white' 
-                        : 'bg-[#0B1121] border-slate-800 text-slate-400'
+                        ? 'bg-surface border-border text-textPrimary' 
+                        : 'bg-background border-border text-textSecondary'
                     }`}
                   >
                     {t}
@@ -473,7 +473,7 @@ const LabPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-5 border-t border-slate-800 bg-[#131F35] sticky bottom-0">
+            <div className="p-5 border-t border-border bg-card sticky bottom-0">
               <button 
                 onClick={handleBook}
                 disabled={isBooking}

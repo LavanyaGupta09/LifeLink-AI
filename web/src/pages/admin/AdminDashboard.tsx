@@ -80,16 +80,16 @@ const AdminDashboard: React.FC = () => {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Good morning, Administrator</h1>
-          <p className="text-slate-400 mt-1 text-sm">Monitor and manage the LifeLink healthcare network.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-textPrimary tracking-tight">Good morning, Administrator</h1>
+          <p className="text-textSecondary mt-1 text-sm">Monitor and manage the LifeLink healthcare network.</p>
         </div>
         
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-[#111827] border border-slate-700 rounded-lg p-1">
-            <button className="px-3 py-1.5 text-xs font-medium bg-indigo-500 text-white rounded-md shadow">Today</button>
-            <button className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors rounded-md">7 Days</button>
-            <button className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors rounded-md">30 Days</button>
-            <button className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors rounded-md flex items-center gap-1">
+          <div className="flex items-center bg-background border border-border rounded-lg p-1">
+            <button className="px-3 py-1.5 text-xs font-medium bg-indigo-500 text-textPrimary rounded-md shadow">Today</button>
+            <button className="px-3 py-1.5 text-xs font-medium text-textSecondary hover:text-textPrimary transition-colors rounded-md">7 Days</button>
+            <button className="px-3 py-1.5 text-xs font-medium text-textSecondary hover:text-textPrimary transition-colors rounded-md">30 Days</button>
+            <button className="px-3 py-1.5 text-xs font-medium text-textSecondary hover:text-textPrimary transition-colors rounded-md flex items-center gap-1">
               Custom <Calendar size={12} />
             </button>
           </div>
@@ -111,12 +111,12 @@ const AdminDashboard: React.FC = () => {
               <div className="p-2 bg-[#060b14]/50 rounded-lg backdrop-blur-sm">
                 {kpi.icon}
               </div>
-              <ArrowUpRight size={16} className="text-slate-500 group-hover:text-white transition-colors" />
+              <ArrowUpRight size={16} className="text-textTertiary group-hover:text-textPrimary transition-colors" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-2xl font-black text-white tracking-tight">{kpi.value}</h3>
-              <p className="text-xs font-medium text-slate-300 mt-0.5">{kpi.title}</p>
-              <p className="text-[10px] text-slate-400 mt-2 font-medium">{kpi.change}</p>
+              <h3 className="text-2xl font-black text-textPrimary tracking-tight">{kpi.value}</h3>
+              <p className="text-xs font-medium text-textSecondary mt-0.5">{kpi.title}</p>
+              <p className="text-[10px] text-textSecondary mt-2 font-medium">{kpi.change}</p>
             </div>
           </div>
         ))}
@@ -125,9 +125,9 @@ const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* RECENT PROVIDER VERIFICATIONS */}
-        <div className="lg:col-span-2 bg-[#0B1221] border border-slate-800 rounded-xl flex flex-col overflow-hidden">
-          <div className="p-5 border-b border-slate-800/50 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="lg:col-span-2 bg-background border border-border rounded-xl flex flex-col overflow-hidden">
+          <div className="p-5 border-b border-border flex items-center justify-between">
+            <h2 className="text-lg font-bold text-textPrimary flex items-center gap-2">
               <UserCheck size={18} className="text-indigo-400" />
               Pending Verifications
             </h2>
@@ -142,21 +142,21 @@ const AdminDashboard: React.FC = () => {
             <table className="w-full text-left border-collapse min-w-[600px]">
               <thead>
                 <tr className="bg-[#060b14]/50">
-                  <th className="px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Provider</th>
-                  <th className="px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Type</th>
-                  <th className="px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Action</th>
+                  <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider">Provider</th>
+                  <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider">Type</th>
+                  <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/50">
                 {providers.filter(p => p.status === 'pending' || p.status === 'action_required').slice(0, 5).map(provider => (
-                  <tr key={provider.id} className="hover:bg-slate-800/20 transition-colors">
+                  <tr key={provider.id} className="hover:bg-surface transition-colors">
                     <td className="px-5 py-3">
-                      <p className="text-sm font-bold text-white">{provider.name}</p>
-                      <p className="text-xs text-slate-400">{provider.registrationId}</p>
+                      <p className="text-sm font-bold text-textPrimary">{provider.name}</p>
+                      <p className="text-xs text-textSecondary">{provider.registrationId}</p>
                     </td>
                     <td className="px-5 py-3">
-                      <span className="px-2.5 py-1 bg-slate-800 text-slate-300 text-xs rounded-md font-medium">
+                      <span className="px-2.5 py-1 bg-surface text-textSecondary text-xs rounded-md font-medium">
                         {provider.type}
                       </span>
                     </td>
@@ -180,7 +180,7 @@ const AdminDashboard: React.FC = () => {
                 ))}
                 {providers.filter(p => p.status === 'pending' || p.status === 'action_required').length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-5 py-8 text-center text-slate-500 text-sm">
+                    <td colSpan={4} className="px-5 py-8 text-center text-textTertiary text-sm">
                       No pending verifications.
                     </td>
                   </tr>
@@ -191,9 +191,9 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* RECENT ACTIVITY */}
-        <div className="bg-[#0B1221] border border-slate-800 rounded-xl flex flex-col">
-          <div className="p-5 border-b border-slate-800/50 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="bg-background border border-border rounded-xl flex flex-col">
+          <div className="p-5 border-b border-border flex items-center justify-between">
+            <h2 className="text-lg font-bold text-textPrimary flex items-center gap-2">
               <Activity size={18} className="text-teal-400" />
               Live Activity
             </h2>
@@ -208,20 +208,20 @@ const AdminDashboard: React.FC = () => {
                   {act.status === 'info' && <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>}
                 </div>
                 <div>
-                  <p className="text-sm text-slate-300 font-medium">{act.action}</p>
+                  <p className="text-sm text-textSecondary font-medium">{act.action}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">{act.category}</span>
-                    <span className="w-1 h-1 rounded-full bg-slate-700"></span>
-                    <span className="text-[10px] text-slate-400">{new Date(act.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-[10px] font-bold text-textTertiary uppercase">{act.category}</span>
+                    <span className="w-1 h-1 rounded-full bg-surface"></span>
+                    <span className="text-[10px] text-textSecondary">{new Date(act.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-auto p-4 border-t border-slate-800/50">
+          <div className="mt-auto p-4 border-t border-border">
             <button 
               onClick={() => navigate('/admin/activity')}
-              className="w-full py-2 bg-slate-800/50 hover:bg-slate-800 text-slate-300 text-xs font-bold rounded-lg transition-colors"
+              className="w-full py-2 bg-surface hover:bg-surface text-textSecondary text-xs font-bold rounded-lg transition-colors"
             >
               View Full Feed
             </button>

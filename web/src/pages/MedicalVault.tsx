@@ -108,15 +108,15 @@ const MedicalVault: React.FC = () => {
     : records.filter(r => r.fileType.toLowerCase() === filter.toLowerCase());
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-24 px-6 py-6 ">
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-24 px-6 py-6 ">
       {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
+          <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">Medical Vault</h1>
+            <h1 className="text-xl font-bold tracking-tight text-textPrimary">Medical Vault</h1>
             <p className="text-xs text-emerald-400 font-medium flex items-center gap-1"><Shield size={10} /> 256-bit Encrypted</p>
           </div>
         </div>
@@ -138,15 +138,15 @@ const MedicalVault: React.FC = () => {
       <div className="flex-1 p-4 flex flex-col gap-6">
         
         {/* WIDGET 1: EMERGENCY QR CODE CARD */}
-        <div className="w-full bg-gradient-to-br from-[#131F35] to-[#0B1121] border border-red-500/30 rounded-3xl p-5 shadow-[0_0_30px_rgba(239,68,68,0.05)] relative overflow-hidden group">
+        <div className="w-full bg-gradient-to-br from-[#131F35] to-background border border-red-500/30 rounded-3xl p-5 shadow-[0_0_30px_rgba(239,68,68,0.05)] relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl"></div>
           <div className="flex items-start justify-between mb-4 relative z-10">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Shield size={16} className="text-red-400" />
-                <h2 className="text-lg font-bold text-white tracking-tight">Emergency Profile</h2>
+                <h2 className="text-lg font-bold text-textPrimary tracking-tight">Emergency Profile</h2>
               </div>
-              <p className="text-xs text-slate-400">First-responder access enabled</p>
+              <p className="text-xs text-textSecondary">First-responder access enabled</p>
             </div>
             <div className="bg-white p-1 rounded-xl shadow-lg border-2 border-red-500/50">
               <QrCode size={40} className="text-black" />
@@ -154,21 +154,21 @@ const MedicalVault: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-2 gap-3 mb-4 relative z-10">
-            <div className="bg-[#060B14]/50 rounded-2xl p-3 border border-slate-800">
-              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Blood Group</span>
+            <div className="bg-background rounded-2xl p-3 border border-border">
+              <span className="text-[10px] uppercase font-bold text-textTertiary tracking-wider">Blood Group</span>
               <p className="text-red-400 font-black text-xl leading-tight mt-1">O+</p>
             </div>
-            <div className="bg-[#060B14]/50 rounded-2xl p-3 border border-slate-800">
-              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Allergies</span>
-              <p className="text-white font-bold text-sm leading-tight mt-1">Penicillin, Peanuts</p>
+            <div className="bg-background rounded-2xl p-3 border border-border">
+              <span className="text-[10px] uppercase font-bold text-textTertiary tracking-wider">Allergies</span>
+              <p className="text-textPrimary font-bold text-sm leading-tight mt-1">Penicillin, Peanuts</p>
             </div>
-            <div className="col-span-2 bg-[#060B14]/50 rounded-2xl p-3 border border-slate-800">
-              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Chronic Conditions</span>
+            <div className="col-span-2 bg-background rounded-2xl p-3 border border-border">
+              <span className="text-[10px] uppercase font-bold text-textTertiary tracking-wider">Chronic Conditions</span>
               <p className="text-emerald-400 font-bold text-sm leading-tight mt-1">Hypertension, Mild Asthma</p>
             </div>
           </div>
           
-          <button className="w-full bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold py-3 rounded-xl transition-colors relative z-10 flex items-center justify-center gap-2">
+          <button className="w-full bg-surface hover:bg-surface text-textPrimary text-sm font-bold py-3 rounded-xl transition-colors relative z-10 flex items-center justify-center gap-2">
             <QrCode size={16} /> View Full Medical QR
           </button>
         </div>
@@ -176,15 +176,15 @@ const MedicalVault: React.FC = () => {
         {/* WIDGET 2: BIOMARKER TREND VISUALIZER */}
         <section>
           <div className="flex items-center justify-between mb-3 px-1">
-            <h3 className="text-base font-bold text-white">Biomarker Trends</h3>
+            <h3 className="text-base font-bold text-textPrimary">Biomarker Trends</h3>
             <button className="text-xs font-bold text-[#3D91FF]">View All</button>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollSnapType: 'x mandatory' }}>
             {BIOMARKERS.map(bm => (
-              <div key={bm.id} className="min-w-[140px] bg-[#131B2F] border border-slate-800 rounded-3xl p-4 flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
+              <div key={bm.id} className="min-w-[140px] bg-card border border-border rounded-3xl p-4 flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
                 <div className={`absolute top-0 right-0 w-16 h-16 rounded-full blur-2xl opacity-20 ${bm.status === 'optimal' ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">{bm.name}</span>
-                <h4 className="text-lg font-black text-white mb-3">{bm.value}</h4>
+                <span className="text-[10px] uppercase font-bold text-textSecondary tracking-widest mb-1">{bm.name}</span>
+                <h4 className="text-lg font-black text-textPrimary mb-3">{bm.value}</h4>
                 
                 {/* SVG Trend Line Mockup */}
                 <svg className="w-full h-8 mb-2 overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
@@ -202,7 +202,7 @@ const MedicalVault: React.FC = () => {
                 <div className="flex items-center gap-1 mt-auto">
                   {bm.trend === 'down' ? <TrendingDown size={12} className={bm.status === 'optimal' ? 'text-emerald-400' : 'text-rose-400'} /> : 
                    bm.trend === 'up' ? <TrendingUp size={12} className={bm.status === 'optimal' ? 'text-emerald-400' : 'text-rose-400'} /> : 
-                   <Minus size={12} className="text-slate-400" />}
+                   <Minus size={12} className="text-textSecondary" />}
                   <span className={`text-[10px] font-bold ${bm.status === 'optimal' ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {bm.status === 'optimal' ? 'Optimal' : 'Warning'}
                   </span>
@@ -214,8 +214,8 @@ const MedicalVault: React.FC = () => {
 
         {/* WIDGET 3: SMART CHRONOLOGICAL TIMELINE */}
         <section className="flex-1 flex flex-col">
-          <div className="sticky top-[73px] z-30 bg-[#060B14]/90 backdrop-blur-md py-2 px-1 mb-2">
-            <h3 className="text-base font-bold text-white mb-3">Clinical Timeline</h3>
+          <div className="sticky top-[73px] z-30 bg-background backdrop-blur-md py-2 px-1 mb-2">
+            <h3 className="text-base font-bold text-textPrimary mb-3">Clinical Timeline</h3>
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {['All', 'Prescription', 'Report', 'Scan'].map(f => (
                 <button
@@ -223,8 +223,8 @@ const MedicalVault: React.FC = () => {
                   onClick={() => setFilter(f)}
                   className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                     filter === f 
-                      ? 'bg-[#3D91FF] text-white shadow-[0_0_15px_rgba(61,145,255,0.3)]' 
-                      : 'bg-slate-800/50 text-slate-400 border border-slate-700 hover:bg-slate-800'
+                      ? 'bg-[#3D91FF] text-textPrimary shadow-[0_0_15px_rgba(61,145,255,0.3)]' 
+                      : 'bg-surface text-textSecondary border border-border hover:bg-surface'
                   }`}
                 >
                   {f === 'All' ? 'Timeline' : `${f}s`}
@@ -233,50 +233,50 @@ const MedicalVault: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative pl-4 border-l-2 border-slate-800 ml-2 flex flex-col gap-6 pt-2">
+          <div className="relative pl-4 border-l-2 border-border ml-2 flex flex-col gap-6 pt-2">
             {loadingRecords ? (
               [1, 2, 3].map(i => (
-                <div key={i} className="bg-[#131B2F] rounded-2xl p-4 h-24 animate-pulse ml-4 border border-slate-800 relative">
-                   <div className="absolute -left-10 top-4 w-4 h-4 rounded-full bg-slate-800"></div>
+                <div key={i} className="bg-card rounded-2xl p-4 h-24 animate-pulse ml-4 border border-border relative">
+                   <div className="absolute -left-10 top-4 w-4 h-4 rounded-full bg-surface"></div>
                 </div>
               ))
             ) : filteredRecords.length === 0 ? (
-              <div className="ml-4 py-8 text-center bg-[#131B2F] rounded-2xl border border-slate-800">
-                <FileText size={32} className="mx-auto text-slate-600 mb-2" />
-                <p className="text-sm text-slate-400 font-medium">No documents found.</p>
+              <div className="ml-4 py-8 text-center bg-card rounded-2xl border border-border">
+                <FileText size={32} className="mx-auto text-textTertiary mb-2" />
+                <p className="text-sm text-textSecondary font-medium">No documents found.</p>
               </div>
             ) : (
               filteredRecords.map((record, i) => (
-                <div key={record.id} className="relative ml-4 bg-[#131B2F] border border-slate-800 rounded-3xl p-4 transition-all hover:border-slate-700 group">
+                <div key={record.id} className="relative ml-4 bg-card border border-border rounded-3xl p-4 transition-all hover:border-border group">
                   {/* Timeline Dot */}
                   <div className="absolute -left-9 top-6 w-3.5 h-3.5 rounded-full border-4 border-[#060B14] z-10" style={{ backgroundColor: record.iconColor || '#3D91FF' }}></div>
                   
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-800/50 text-lg border border-slate-700/50 shadow-inner">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-surface text-lg border border-border shadow-inner">
                         {record.fileType === 'prescription' ? '💊' : record.fileType === 'report' ? '📊' : record.fileType === 'scan' ? '🔬' : '📄'}
                       </div>
                       <div>
-                        <h4 className="font-bold text-white text-sm leading-tight mb-0.5 max-w-[180px] truncate">{record.fileName}</h4>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{record.fileType}</p>
+                        <h4 className="font-bold text-textPrimary text-sm leading-tight mb-0.5 max-w-[180px] truncate">{record.fileName}</h4>
+                        <p className="text-[10px] font-bold text-textSecondary uppercase tracking-widest">{record.fileType}</p>
                       </div>
                     </div>
                   </div>
                   
-                  <p className="text-xs text-slate-500 mb-4">{record.description}</p>
+                  <p className="text-xs text-textTertiary mb-4">{record.description}</p>
                   
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-800/50">
-                    <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500">
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
+                    <div className="flex items-center gap-1 text-[10px] font-bold text-textTertiary">
                       <Clock size={12} /> {record.uploadDate}
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="p-1.5 text-slate-400 hover:text-emerald-400 transition-colors bg-slate-800/50 rounded-lg">
+                      <button className="p-1.5 text-textSecondary hover:text-emerald-400 transition-colors bg-surface rounded-lg">
                         <Eye size={14} />
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:text-blue-400 transition-colors bg-slate-800/50 rounded-lg">
+                      <button className="p-1.5 text-textSecondary hover:text-blue-400 transition-colors bg-surface rounded-lg">
                         <Share2 size={14} />
                       </button>
-                      <button className="p-1.5 text-slate-400 hover:text-rose-400 transition-colors bg-slate-800/50 rounded-lg">
+                      <button className="p-1.5 text-textSecondary hover:text-rose-400 transition-colors bg-surface rounded-lg">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -288,15 +288,15 @@ const MedicalVault: React.FC = () => {
         </section>
 
         {/* WIDGET 4: CONSENT MANAGER & SECURE SHARING */}
-        <section className="bg-[#131F35] border border-slate-800 rounded-3xl p-5 relative overflow-hidden mt-2 mb-4">
+        <section className="bg-card border border-border rounded-3xl p-5 relative overflow-hidden mt-2 mb-4">
           <div className="absolute top-0 right-0 w-40 h-40 bg-[#3D91FF]/5 rounded-full blur-3xl"></div>
           <div className="flex items-center gap-2 mb-4 relative z-10">
             <Lock size={18} className="text-[#3D91FF]" />
-            <h3 className="text-base font-bold text-white">Data Sharing Hub</h3>
+            <h3 className="text-base font-bold text-textPrimary">Data Sharing Hub</h3>
           </div>
           
-          <div className="bg-[#060B14]/50 border border-slate-800 rounded-2xl p-4 mb-4 relative z-10">
-            <p className="text-xs text-slate-400 mb-4 font-medium leading-relaxed">
+          <div className="bg-background border border-border rounded-2xl p-4 mb-4 relative z-10">
+            <p className="text-xs text-textSecondary mb-4 font-medium leading-relaxed">
               Generate a secure, expiring link to share your complete medical timeline with an external doctor or pharmacy.
             </p>
             
@@ -323,8 +323,8 @@ const MedicalVault: React.FC = () => {
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-white">Apollo Hospital ER</p>
-                <p className="text-xs text-slate-500 font-medium">Expires in 2 hrs</p>
+                <p className="text-sm font-bold text-textPrimary">Apollo Hospital ER</p>
+                <p className="text-xs text-textTertiary font-medium">Expires in 2 hrs</p>
               </div>
               <div className="w-10 h-5 bg-emerald-500 rounded-full flex items-center justify-end p-0.5 cursor-pointer">
                 <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
@@ -332,8 +332,8 @@ const MedicalVault: React.FC = () => {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-slate-300">Dr. Meera Nair (Family Doc)</p>
-                <p className="text-xs text-slate-500 font-medium">Permanent Access</p>
+                <p className="text-sm font-bold text-textSecondary">Dr. Meera Nair (Family Doc)</p>
+                <p className="text-xs text-textTertiary font-medium">Permanent Access</p>
               </div>
               <div className="w-10 h-5 bg-emerald-500 rounded-full flex items-center justify-end p-0.5 cursor-pointer">
                 <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>

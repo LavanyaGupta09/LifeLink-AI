@@ -232,69 +232,69 @@ const SettingsPage: React.FC = () => {
   };
 
   if (sessionLoading) {
-    return <div className="text-white text-center mt-20">Loading Profile...</div>;
+    return <div className="text-textPrimary text-center mt-20">Loading Profile...</div>;
   }
 
   if (user?.role === 'equipment') {
     return (
-      <div className="w-full px-6 overflow-y-auto pb-36 bg-[#0B1121] min-h-screen text-white">
+      <div className="w-full px-6 overflow-y-auto pb-36 bg-background min-h-screen text-textPrimary">
         {/* Header */}
-        <div className="header sticky pt-[env(safe-area-inset-top)] z-50 bg-[#0B1121] border-b border-slate-800 -mx-4 px-4 pb-4 mb-6 mt-4 flex items-center justify-between">
-          <button className="text-slate-400 hover:text-white transition-colors" onClick={() => navigate(-1)}>
+        <div className="header sticky pt-[env(safe-area-inset-top)] z-50 bg-background border-b border-border -mx-4 px-4 pb-4 mb-6 mt-4 flex items-center justify-between">
+          <button className="text-textSecondary hover:text-textPrimary transition-colors" onClick={() => navigate(-1)}>
             <ArrowLeft size={24} />
           </button>
-          <h2 className="text-xl font-bold text-white">Provider Settings</h2>
+          <h2 className="text-xl font-bold text-textPrimary">Provider Settings</h2>
           <div style={{ width: 24 }} />
         </div>
 
         <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-          <h3 className="text-slate-400 text-sm font-bold mb-2 uppercase tracking-wider">Business Profile</h3>
+          <h3 className="text-textSecondary text-sm font-bold mb-2 uppercase tracking-wider">Business Profile</h3>
           
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Business Name</label>
+            <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Business Name</label>
             <input 
               type="text" 
               defaultValue="LifeCare Medical Equipments Ltd."
-              className="w-full bg-[#131B2F] text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all placeholder-slate-500"
+              className="w-full bg-card text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all placeholder-slate-500"
             />
           </div>
 
           <div className="flex flex-col gap-1.5 mt-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Support Phone</label>
-            <div className="flex items-center w-full bg-[#131B2F] text-white border border-slate-700 rounded-xl focus-within:ring-2 focus-within:ring-cyan-500/50 focus-within:border-cyan-500 transition-all overflow-hidden">
-              <span className="pl-3.5 pr-2 py-3.5 text-slate-400 font-semibold border-r border-slate-700 bg-slate-800/80 text-sm">+91</span>
+            <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Support Phone</label>
+            <div className="flex items-center w-full bg-card text-textPrimary border border-border rounded-xl focus-within:ring-2 focus-within:ring-cyan-500/50 focus-within:border-cyan-500 transition-all overflow-hidden">
+              <span className="pl-3.5 pr-2 py-3.5 text-textSecondary font-semibold border-r border-border bg-surface text-sm">+91</span>
               <input 
                 type="tel" 
                 defaultValue="9876543210"
-                className="w-full bg-transparent text-white p-3.5 outline-none placeholder-slate-500"
+                className="w-full bg-transparent text-textPrimary p-3.5 outline-none placeholder-slate-500"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5 mt-2">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Service Area Radius (km)</label>
+            <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Service Area Radius (km)</label>
             <input 
               type="number" 
               defaultValue="50"
-              className="w-full bg-[#131B2F] text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all placeholder-slate-500"
+              className="w-full bg-card text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none transition-all placeholder-slate-500"
             />
           </div>
 
-          <h3 className="text-slate-400 text-sm font-bold mt-6 mb-2 uppercase tracking-wider">Preferences</h3>
+          <h3 className="text-textSecondary text-sm font-bold mt-6 mb-2 uppercase tracking-wider">Preferences</h3>
           
-          <div className="flex items-center justify-between p-4 bg-[#131B2F] border border-slate-700 rounded-xl mt-2">
+          <div className="flex items-center justify-between p-4 bg-card border border-border rounded-xl mt-2">
             <div>
-              <h4 className="font-semibold text-white">Auto-Accept Rentals</h4>
-              <p className="text-xs text-slate-400 mt-1">Automatically approve rentals if inventory is available</p>
+              <h4 className="font-semibold text-textPrimary">Auto-Accept Rentals</h4>
+              <p className="text-xs text-textSecondary mt-1">Automatically approve rentals if inventory is available</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+              <div className="w-11 h-6 bg-surface peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
             </label>
           </div>
 
           <button 
-            className={`w-full mt-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 ${success ? 'bg-green-600 text-white' : 'bg-cyan-600 hover:bg-cyan-500 text-white'} transition-colors`} 
+            className={`w-full mt-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 ${success ? 'bg-green-600 text-textPrimary' : 'bg-cyan-600 hover:bg-cyan-500 text-textPrimary'} transition-colors`} 
             onClick={() => {
               setLoading(true);
               setTimeout(() => {
@@ -318,14 +318,14 @@ const SettingsPage: React.FC = () => {
           </button>
 
           {/* Logout Section */}
-          <div className="mt-10 mb-8 border-t border-slate-800 pt-8">
+          <div className="mt-10 mb-8 border-t border-border pt-8">
             {showLogoutConfirm ? (
               <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl flex flex-col items-center">
                 <AlertTriangle className="text-red-500 mb-2" size={24} />
                 <p className="text-red-500 font-bold mb-4 text-center">Are you sure you want to log out?</p>
                 <div className="flex gap-3 w-full">
                   <button 
-                    className="px-4 py-2 bg-slate-800 rounded-lg flex-1 text-slate-400 font-bold hover:bg-slate-700"
+                    className="px-4 py-2 bg-surface rounded-lg flex-1 text-textSecondary font-bold hover:bg-surface"
                     onClick={() => setShowLogoutConfirm(false)}
                   >
                     Cancel
@@ -353,13 +353,13 @@ const SettingsPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full px-6 overflow-y-auto pb-36 bg-slate-950">
+    <div className="w-full px-6 overflow-y-auto pb-36 bg-background">
       {/* Header */}
-      <div className="header sticky pt-[env(safe-area-inset-top)] z-50 bg-slate-950 border-b border-slate-800 -mx-4 px-4 pb-2 mb-4">
+      <div className="header sticky pt-[env(safe-area-inset-top)] z-50 bg-background border-b border-border -mx-4 px-4 pb-2 mb-4">
         <button className="icon-btn-raw" onClick={() => navigate(-1)}>
           <ArrowLeft size={24} />
         </button>
-        <h2 className="header-title pt-[env(safe-area-inset-top)] text-white">Edit Profile</h2>
+        <h2 className="header-title pt-[env(safe-area-inset-top)] text-textPrimary">Edit Profile</h2>
         <div style={{ width: 24 }} />
       </div>
 
@@ -376,7 +376,7 @@ const SettingsPage: React.FC = () => {
             checked={user?.easyModeEnabled || false} 
             onChange={(e) => toggleEasyMode(e.target.checked)} 
           />
-          <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+          <div className="w-11 h-6 bg-surface peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
         </label>
       </div>
 
@@ -389,44 +389,44 @@ const SettingsPage: React.FC = () => {
             </div>
             <div>
               <h4 className="font-bold text-[1rem] text-[#FF4757]">Power Button SOS Setup</h4>
-              <p className="text-[11px] text-slate-400 mt-0.5">Press power button 3× to auto-trigger LifeLink SOS</p>
+              <p className="text-[11px] text-textSecondary mt-0.5">Press power button 3× to auto-trigger LifeLink SOS</p>
             </div>
           </div>
           
-          <div className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 mb-3">
-            <p className="text-xs text-slate-300 font-semibold mb-3">📱 Follow these steps on your phone:</p>
+          <div className="bg-background border border-border rounded-xl p-4 mb-3">
+            <p className="text-xs text-textSecondary font-semibold mb-3">📱 Follow these steps on your phone:</p>
             
             <div className="flex flex-col gap-3">
               <div className="flex gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#FF4757] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
                 <div>
-                  <p className="text-sm text-white font-medium">Open Phone Settings</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Go to <strong className="text-slate-200">Settings → Safety & Emergency</strong> (Android) or <strong className="text-slate-200">Settings → Emergency SOS</strong> (iPhone)</p>
+                  <p className="text-sm text-textPrimary font-medium">Open Phone Settings</p>
+                  <p className="text-[11px] text-textSecondary mt-0.5">Go to <strong className="text-textPrimary">Settings → Safety & Emergency</strong> (Android) or <strong className="text-textPrimary">Settings → Emergency SOS</strong> (iPhone)</p>
                 </div>
               </div>
               
               <div className="flex gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#FF4757] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
                 <div>
-                  <p className="text-sm text-white font-medium">Enable Emergency SOS</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Turn on <strong className="text-slate-200">"Press power button 3/5 times for Emergency SOS"</strong></p>
+                  <p className="text-sm text-textPrimary font-medium">Enable Emergency SOS</p>
+                  <p className="text-[11px] text-textSecondary mt-0.5">Turn on <strong className="text-textPrimary">"Press power button 3/5 times for Emergency SOS"</strong></p>
                 </div>
               </div>
               
               <div className="flex gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#FF4757] text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
                 <div>
-                  <p className="text-sm text-white font-medium">Set LifeLink as SOS Action</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Under <strong className="text-slate-200">"SOS actions"</strong>, add a website/URL and paste:</p>
+                  <p className="text-sm text-textPrimary font-medium">Set LifeLink as SOS Action</p>
+                  <p className="text-[11px] text-textSecondary mt-0.5">Under <strong className="text-textPrimary">"SOS actions"</strong>, add a website/URL and paste:</p>
                   <div 
-                    className="mt-2 bg-black/60 border border-slate-700 rounded-lg px-3 py-2.5 flex items-center justify-between gap-2 cursor-pointer hover:border-[#FF4757]/50 transition-colors group"
+                    className="mt-2 bg-black/60 border border-border rounded-lg px-3 py-2.5 flex items-center justify-between gap-2 cursor-pointer hover:border-[#FF4757]/50 transition-colors group"
                     onClick={() => {
                       navigator.clipboard.writeText('https://life-link-ai-psi.vercel.app/sos-trigger');
                       alert('✅ SOS URL copied to clipboard!');
                     }}
                   >
                     <code className="text-[10px] text-[#FF4757] font-mono break-all">https://life-link-ai-psi.vercel.app/sos-trigger</code>
-                    <span className="text-[9px] text-slate-500 group-hover:text-[#FF4757] flex-shrink-0 font-bold transition-colors">COPY</span>
+                    <span className="text-[9px] text-textTertiary group-hover:text-[#FF4757] flex-shrink-0 font-bold transition-colors">COPY</span>
                   </div>
                 </div>
               </div>
@@ -444,7 +444,7 @@ const SettingsPage: React.FC = () => {
               📋 Copy SOS URL
             </button>
             <button 
-              className="flex-1 py-2.5 bg-[#131B2F] border border-slate-700 text-slate-300 rounded-xl text-xs font-bold hover:bg-[#1A2542] transition-colors"
+              className="flex-1 py-2.5 bg-card border border-border text-textSecondary rounded-xl text-xs font-bold hover:bg-card transition-colors"
               onClick={() => window.open('https://life-link-ai-psi.vercel.app/sos-trigger', '_blank')}
             >
               🔗 Test SOS Link
@@ -457,38 +457,38 @@ const SettingsPage: React.FC = () => {
         <h3 className="text-secondary text-sm font-semibold mb-2 uppercase tracking-wider">Personal Information</h3>
         
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Full Name</label>
+          <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Full Name</label>
           <input 
             type="text" 
             name="fullName"
             value={formData.fullName} 
             onChange={handleNameChange}
             onBlur={() => setFormData({ ...formData, fullName: formData.fullName.trim() })}
-            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
+            className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
             placeholder="e.g. Priya Sharma"
           />
         </div>
 
         <div className="flex flex-col gap-1.5 relative mt-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Date of Birth</label>
+          <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Date of Birth</label>
           <input 
             type="date" 
             name="dateOfBirth"
             value={formData.dateOfBirth} 
             onChange={handleChange}
-            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all"
+            className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all"
           />
         </div>
 
         <div className="flex flex-col gap-1.5 relative mt-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Blood Pressure (SYS/DIA)</label>
+          <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Blood Pressure (SYS/DIA)</label>
           <input 
             type="text" 
             inputMode="numeric"
             name="bloodPressure"
             value={formData.bloodPressure} 
             onChange={handleBPChange}
-            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
+            className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
             placeholder="120/80"
           />
           {formData.bloodPressure && !formData.bloodPressure.includes('/') && formData.bloodPressure.length > 0 && (
@@ -499,41 +499,41 @@ const SettingsPage: React.FC = () => {
         <h3 className="text-secondary text-sm font-semibold mt-6 mb-2 uppercase tracking-wider">Primary Emergency Contact</h3>
 
         <div className="flex flex-col gap-1.5 mt-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Contact Name</label>
+          <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Contact Name</label>
           <input 
             type="text" 
             name="ecName"
             value={formData.ecName} 
             onChange={handleNameChange}
             onBlur={() => setFormData({ ...formData, ecName: formData.ecName.trim() })}
-            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
+            className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
             placeholder="e.g. Lavanya"
           />
         </div>
 
         <div className="flex flex-col gap-1.5 mt-2">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Relationship</label>
+          <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Relationship</label>
           <input 
             type="text" 
             name="ecRelationship"
             value={formData.ecRelationship} 
             onChange={handleChange}
-            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
+            className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
             placeholder="e.g. Daughter"
           />
         </div>
 
         <div className="flex flex-col gap-1.5 mt-2 relative">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Contact Phone</label>
-          <div className="flex items-center w-full bg-slate-800 text-white border border-slate-700 rounded-xl focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500 transition-all overflow-hidden">
-            <span className="pl-3.5 pr-2 py-3.5 text-slate-400 font-semibold border-r border-slate-700 bg-slate-800/80 text-sm">+91</span>
+          <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Contact Phone</label>
+          <div className="flex items-center w-full bg-surface text-textPrimary border border-border rounded-xl focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500 transition-all overflow-hidden">
+            <span className="pl-3.5 pr-2 py-3.5 text-textSecondary font-semibold border-r border-border bg-surface text-sm">+91</span>
             <input 
               type="tel" 
               inputMode="numeric"
               name="ecPhone"
               value={formData.ecPhone} 
               onChange={handlePhoneChange}
-              className="w-full bg-transparent text-white p-3.5 outline-none placeholder-slate-500"
+              className="w-full bg-transparent text-textPrimary p-3.5 outline-none placeholder-slate-500"
               placeholder="9900112233"
             />
           </div>
@@ -572,7 +572,7 @@ const SettingsPage: React.FC = () => {
                 toggleTheme();
               }} 
             />
-            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+            <div className="w-11 h-6 bg-surface peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
           </label>
         </div>
         
@@ -580,7 +580,7 @@ const SettingsPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <Droplets size={16} color="#FF4757" />
-              <h4 className="font-semibold text-white">Register as Blood Donor</h4>
+              <h4 className="font-semibold text-textPrimary">Register as Blood Donor</h4>
             </div>
             <p className="text-xs text-secondary mt-1">Opt-in to receive emergency blood requests nearby</p>
           </div>
@@ -600,7 +600,7 @@ const SettingsPage: React.FC = () => {
         <div className="flex flex-col gap-2 p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl">
           <div className="flex items-center gap-2 mb-2">
             <ScanFace size={18} color="var(--primary)" />
-            <h4 className="font-semibold text-white">Biometric Login</h4>
+            <h4 className="font-semibold text-textPrimary">Biometric Login</h4>
           </div>
           <p className="text-xs text-secondary mb-4">Set up Face ID or Fingerprint for instant, passwordless access to your account.</p>
           
@@ -620,7 +620,7 @@ const SettingsPage: React.FC = () => {
         </div>
 
         <button 
-          className={`btn w-full mt-8 flex items-center justify-center gap-2 ${success ? 'bg-green-600 hover:bg-green-500 text-white border-green-500' : 'btn-primary'} transition-colors`} 
+          className={`btn w-full mt-8 flex items-center justify-center gap-2 ${success ? 'bg-green-600 hover:bg-green-500 text-textPrimary border-green-500' : 'btn-primary'} transition-colors`} 
           onClick={handleSave}
           disabled={loading || success}
         >
@@ -650,7 +650,7 @@ const SettingsPage: React.FC = () => {
               <p className="text-red-500 font-bold mb-4 text-center">Are you sure you want to log out?</p>
               <div className="flex gap-3 w-full">
                 <button 
-                  className="btn btn-ghost flex-1 text-slate-400"
+                  className="btn btn-ghost flex-1 text-textSecondary"
                   onClick={() => setShowLogoutConfirm(false)}
                 >
                   Cancel

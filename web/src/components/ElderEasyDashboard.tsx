@@ -157,13 +157,13 @@ const ElderEasyDashboard: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto min-h-[100dvh] flex flex-col p-4 bg-slate-950">
+    <div className="w-full max-w-md mx-auto min-h-[100dvh] flex flex-col p-4 bg-background">
       {/* Small Header for Exit/Logout if needed */}
       <div className="flex justify-between items-center mb-4 pt-[env(safe-area-inset-top)]">
-        <h2 className="text-white font-bold text-xl ml-2">Elder Mode</h2>
+        <h2 className="text-textPrimary font-bold text-xl ml-2">Elder Mode</h2>
         <button 
           onClick={() => navigate('/settings')}
-          className="px-4 py-2 bg-slate-800 rounded-full text-slate-300 font-bold border border-slate-700"
+          className="px-4 py-2 bg-surface rounded-full text-textSecondary font-bold border border-border"
         >
           Exit
         </button>
@@ -195,24 +195,24 @@ const ElderEasyDashboard: React.FC = () => {
 
         {/* BUTTON 3: DIRECT FAMILY DIALER */}
         {loadingContact ? (
-          <div className="h-[30%] w-full bg-slate-800 rounded-3xl flex flex-col items-center justify-center text-white shadow-xl border-2 border-slate-700 animate-pulse mt-4">
-            <span className="text-xl font-bold text-slate-400">Loading Contact...</span>
+          <div className="h-[30%] w-full bg-surface rounded-3xl flex flex-col items-center justify-center text-textPrimary shadow-xl border-2 border-border animate-pulse mt-4">
+            <span className="text-xl font-bold text-textSecondary">Loading Contact...</span>
           </div>
         ) : primaryContact ? (
           <a 
             href={`tel:${primaryContact.phone}`}
-            className="h-[30%] w-full bg-slate-800 rounded-3xl flex flex-col items-center justify-center text-white shadow-xl active:scale-95 transition-transform border-2 border-slate-700 mt-4"
+            className="h-[30%] w-full bg-surface rounded-3xl flex flex-col items-center justify-center text-textPrimary shadow-xl active:scale-95 transition-transform border-2 border-border mt-4"
           >
             <span className="text-5xl mb-2">📞</span>
             <span className="text-2xl font-black text-center px-4 leading-tight">
               CALL {primaryContact.name.toUpperCase()}<br/>
-              <span className="text-lg text-slate-400">({primaryContact.relationship.toUpperCase()})</span>
+              <span className="text-lg text-textSecondary">({primaryContact.relationship.toUpperCase()})</span>
             </span>
           </a>
         ) : (
           <button 
             onClick={() => navigate('/family/add')}
-            className="h-[30%] w-full bg-slate-800 rounded-3xl flex flex-col items-center justify-center text-white shadow-xl active:scale-95 transition-transform border-2 border-slate-700 mt-4"
+            className="h-[30%] w-full bg-surface rounded-3xl flex flex-col items-center justify-center text-textPrimary shadow-xl active:scale-95 transition-transform border-2 border-border mt-4"
           >
             <span className="text-5xl mb-2">➕</span>
             <span className="text-2xl font-black text-center px-4 leading-tight">ADD EMERGENCY<br/>CONTACT</span>

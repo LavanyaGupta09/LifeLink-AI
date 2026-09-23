@@ -83,27 +83,27 @@ const ProfileHub: React.FC = () => {
     <div className="w-full flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200 pb-20">
       
       {/* HEADER IDENTITY CARD */}
-      <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl flex items-center gap-6 relative overflow-hidden">
+      <div className="bg-card border border-border rounded-3xl p-6 shadow-xl flex items-center gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#3D91FF]/10 rounded-full blur-3xl"></div>
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#3D91FF] to-[#009E83] flex items-center justify-center font-black text-3xl text-white shadow-lg relative z-10">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#3D91FF] to-[#009E83] flex items-center justify-center font-black text-3xl text-textPrimary shadow-lg relative z-10">
           {user?.fullName?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'US'}
         </div>
         <div className="relative z-10 flex-1">
           {isEditing ? (
             <div className="flex flex-col gap-2 w-full max-w-sm">
-              <input type="text" className="bg-[#0B1121] border border-slate-700 rounded-lg p-2 text-white text-sm" value={editData.fullName} onChange={e => setEditData({...editData, fullName: e.target.value})} placeholder="Full Name" />
-              <input type="text" className="bg-[#0B1121] border border-slate-700 rounded-lg p-2 text-white text-sm" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} placeholder="Phone Number" />
-              <input type="email" className="bg-[#0B1121] border border-slate-700 rounded-lg p-2 text-white text-sm" value={editData.email} onChange={e => setEditData({...editData, email: e.target.value})} placeholder="Email Address" />
+              <input type="text" className="bg-background border border-border rounded-lg p-2 text-textPrimary text-sm" value={editData.fullName} onChange={e => setEditData({...editData, fullName: e.target.value})} placeholder="Full Name" />
+              <input type="text" className="bg-background border border-border rounded-lg p-2 text-textPrimary text-sm" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} placeholder="Phone Number" />
+              <input type="email" className="bg-background border border-border rounded-lg p-2 text-textPrimary text-sm" value={editData.email} onChange={e => setEditData({...editData, email: e.target.value})} placeholder="Email Address" />
               <div className="flex gap-2 mt-2">
                 <button onClick={() => { updateUser(editData); setIsEditing(false); }} className="px-4 py-1.5 bg-[#3D91FF] hover:bg-[#3D91FF]/80 text-white rounded-lg text-xs font-bold transition-colors">Save Changes</button>
-                <button onClick={() => setIsEditing(false)} className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition-colors">Cancel</button>
+                <button onClick={() => setIsEditing(false)} className="px-4 py-1.5 bg-surface hover:bg-surface text-textSecondary rounded-lg text-xs font-bold transition-colors">Cancel</button>
               </div>
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-bold text-white mb-1">{user?.fullName || 'Demo User'}</h2>
-              <p className="text-slate-400 text-sm mb-3">{user?.phone} • {user?.email || 'user@example.com'}</p>
-              <button onClick={() => setIsEditing(true)} className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold transition-colors">
+              <h2 className="text-2xl font-bold text-textPrimary mb-1">{user?.fullName || 'Demo User'}</h2>
+              <p className="text-textSecondary text-sm mb-3">{user?.phone} • {user?.email || 'user@example.com'}</p>
+              <button onClick={() => setIsEditing(true)} className="px-4 py-1.5 bg-surface hover:bg-surface text-textSecondary rounded-lg text-xs font-bold transition-colors">
                 Edit Profile
               </button>
             </>
@@ -116,7 +116,7 @@ const ProfileHub: React.FC = () => {
         <div className="flex justify-between items-start mb-6">
           <div>
             <h3 className="text-[#00C9A7] font-bold uppercase tracking-widest text-xs mb-1">Digital Health Locker</h3>
-            <p className="text-white font-bold text-lg flex items-center gap-2">
+            <p className="text-textPrimary font-bold text-lg flex items-center gap-2">
               ABHA ID: 91-XXXX-XXXX-XXXX <CheckCircle size={16} className="text-[#00C9A7]" />
             </p>
           </div>
@@ -130,15 +130,15 @@ const ProfileHub: React.FC = () => {
       </div>
 
       {/* WIDGET 2: ACTIVITY HISTORY */}
-      <div className="bg-[#131B2F] border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-        <div className="p-6 border-b border-slate-800 bg-[#0B1121]">
-          <h3 className="text-white font-bold text-lg">My Activity</h3>
+      <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xl">
+        <div className="p-6 border-b border-border bg-background">
+          <h3 className="text-textPrimary font-bold text-lg">My Activity</h3>
         </div>
 
         {/* Online Consultations */}
-        <div className="border-b border-slate-800/50">
+        <div className="border-b border-border">
           <button 
-            className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-800/20 transition-colors"
+            className="w-full p-5 flex items-center justify-between text-left hover:bg-surface transition-colors"
             onClick={() => toggleAccordion('consultations')}
           >
             <div className="flex items-center gap-4">
@@ -146,20 +146,20 @@ const ProfileHub: React.FC = () => {
                 <FileText size={20} />
               </div>
               <div>
-                <h4 className="text-slate-200 font-bold">Online Consultations</h4>
-                <p className="text-slate-500 text-xs">Telemedicine & Prescriptions</p>
+                <h4 className="text-textPrimary font-bold">Online Consultations</h4>
+                <p className="text-textTertiary text-xs">Telemedicine & Prescriptions</p>
               </div>
             </div>
-            {activeAccordion === 'consultations' ? <ChevronUp className="text-slate-400" /> : <ChevronDown className="text-slate-400" />}
+            {activeAccordion === 'consultations' ? <ChevronUp className="text-textSecondary" /> : <ChevronDown className="text-textSecondary" />}
           </button>
           
           {activeAccordion === 'consultations' && (
-            <div className="p-5 pt-0 bg-slate-900/30">
+            <div className="p-5 pt-0 bg-background">
               {data.consultations.map((c: any) => (
-                <div key={c.id} className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 mb-3 last:mb-0 flex justify-between items-center">
+                <div key={c.id} className="bg-background border border-border rounded-xl p-4 mb-3 last:mb-0 flex justify-between items-center">
                   <div>
-                    <h5 className="text-white font-bold">{c.doctor_name}</h5>
-                    <p className="text-slate-400 text-xs mb-2">{c.specialty} • {c.date}</p>
+                    <h5 className="text-textPrimary font-bold">{c.doctor_name}</h5>
+                    <p className="text-textSecondary text-xs mb-2">{c.specialty} • {c.date}</p>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${c.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                       {c.status}
                     </span>
@@ -177,9 +177,9 @@ const ProfileHub: React.FC = () => {
         </div>
 
         {/* Medicines */}
-        <div className="border-b border-slate-800/50">
+        <div className="border-b border-border">
           <button 
-            className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-800/20 transition-colors"
+            className="w-full p-5 flex items-center justify-between text-left hover:bg-surface transition-colors"
             onClick={() => toggleAccordion('medicines')}
           >
             <div className="flex items-center gap-4">
@@ -187,24 +187,24 @@ const ProfileHub: React.FC = () => {
                 <Pill size={20} />
               </div>
               <div>
-                <h4 className="text-slate-200 font-bold">Medicine Orders</h4>
-                <p className="text-slate-500 text-xs">Pharmacy Deliveries</p>
+                <h4 className="text-textPrimary font-bold">Medicine Orders</h4>
+                <p className="text-textTertiary text-xs">Pharmacy Deliveries</p>
               </div>
             </div>
-            {activeAccordion === 'medicines' ? <ChevronUp className="text-slate-400" /> : <ChevronDown className="text-slate-400" />}
+            {activeAccordion === 'medicines' ? <ChevronUp className="text-textSecondary" /> : <ChevronDown className="text-textSecondary" />}
           </button>
           
           {activeAccordion === 'medicines' && (
-            <div className="p-5 pt-0 bg-slate-900/30">
+            <div className="p-5 pt-0 bg-background">
               {data.medicines.map((m: any) => (
-                <div key={m.id} className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 mb-3 last:mb-0">
+                <div key={m.id} className="bg-background border border-border rounded-xl p-4 mb-3 last:mb-0">
                   <div className="flex justify-between items-start mb-2">
-                    <h5 className="text-white font-bold text-sm leading-tight pr-4">{m.items}</h5>
+                    <h5 className="text-textPrimary font-bold text-sm leading-tight pr-4">{m.items}</h5>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md whitespace-nowrap ${m.status === 'Delivered' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
                       {m.status}
                     </span>
                   </div>
-                  <p className="text-slate-400 text-xs flex items-center gap-1"><Clock size={12}/> {m.date}</p>
+                  <p className="text-textSecondary text-xs flex items-center gap-1"><Clock size={12}/> {m.date}</p>
                 </div>
               ))}
             </div>
@@ -212,9 +212,9 @@ const ProfileHub: React.FC = () => {
         </div>
 
         {/* Lab Tests */}
-        <div className="border-b border-slate-800/50">
+        <div className="border-b border-border">
           <button 
-            className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-800/20 transition-colors"
+            className="w-full p-5 flex items-center justify-between text-left hover:bg-surface transition-colors"
             onClick={() => toggleAccordion('labs')}
           >
             <div className="flex items-center gap-4">
@@ -222,26 +222,26 @@ const ProfileHub: React.FC = () => {
                 <FlaskConical size={20} />
               </div>
               <div>
-                <h4 className="text-slate-200 font-bold">Lab Tests</h4>
-                <p className="text-slate-500 text-xs">Diagnostics & Reports</p>
+                <h4 className="text-textPrimary font-bold">Lab Tests</h4>
+                <p className="text-textTertiary text-xs">Diagnostics & Reports</p>
               </div>
             </div>
-            {activeAccordion === 'labs' ? <ChevronUp className="text-slate-400" /> : <ChevronDown className="text-slate-400" />}
+            {activeAccordion === 'labs' ? <ChevronUp className="text-textSecondary" /> : <ChevronDown className="text-textSecondary" />}
           </button>
           
           {activeAccordion === 'labs' && (
-            <div className="p-5 pt-0 bg-slate-900/30">
+            <div className="p-5 pt-0 bg-background">
               {data.labs.map((l: any) => (
-                <div key={l.id} className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 mb-3 last:mb-0 flex justify-between items-center">
+                <div key={l.id} className="bg-background border border-border rounded-xl p-4 mb-3 last:mb-0 flex justify-between items-center">
                   <div>
-                    <h5 className="text-white font-bold">{l.test_name}</h5>
-                    <p className="text-slate-400 text-xs mb-2">{l.lab_name} • {l.date}</p>
+                    <h5 className="text-textPrimary font-bold">{l.test_name}</h5>
+                    <p className="text-textSecondary text-xs mb-2">{l.lab_name} • {l.date}</p>
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-purple-500/10 text-purple-400">
                       {l.status}
                     </span>
                   </div>
                   {l.status === 'Report Ready' && (
-                    <button className="flex flex-col items-center justify-center gap-1 text-purple-400 hover:text-white transition-colors bg-purple-500/10 p-3 rounded-xl border border-purple-500/20">
+                    <button className="flex flex-col items-center justify-center gap-1 text-purple-400 hover:text-textPrimary transition-colors bg-purple-500/10 p-3 rounded-xl border border-purple-500/20">
                       <Download size={18} />
                       <span className="text-[9px] font-bold uppercase">PDF</span>
                     </button>
@@ -255,7 +255,7 @@ const ProfileHub: React.FC = () => {
         {/* Hospitals */}
         <div>
           <button 
-            className="w-full p-5 flex items-center justify-between text-left hover:bg-slate-800/20 transition-colors"
+            className="w-full p-5 flex items-center justify-between text-left hover:bg-surface transition-colors"
             onClick={() => toggleAccordion('hospitals')}
           >
             <div className="flex items-center gap-4">
@@ -263,21 +263,21 @@ const ProfileHub: React.FC = () => {
                 <Building2 size={20} />
               </div>
               <div>
-                <h4 className="text-slate-200 font-bold">Hospital Visits</h4>
-                <p className="text-slate-500 text-xs">Admissions & ER</p>
+                <h4 className="text-textPrimary font-bold">Hospital Visits</h4>
+                <p className="text-textTertiary text-xs">Admissions & ER</p>
               </div>
             </div>
-            {activeAccordion === 'hospitals' ? <ChevronUp className="text-slate-400" /> : <ChevronDown className="text-slate-400" />}
+            {activeAccordion === 'hospitals' ? <ChevronUp className="text-textSecondary" /> : <ChevronDown className="text-textSecondary" />}
           </button>
           
           {activeAccordion === 'hospitals' && (
-            <div className="p-5 pt-0 bg-slate-900/30">
+            <div className="p-5 pt-0 bg-background">
               {data.hospitals.map((h: any) => (
-                <div key={h.id} className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 mb-3 last:mb-0 flex justify-between items-center">
+                <div key={h.id} className="bg-background border border-border rounded-xl p-4 mb-3 last:mb-0 flex justify-between items-center">
                   <div>
-                    <h5 className="text-white font-bold">{h.hospital_name}</h5>
-                    <p className="text-slate-400 text-xs mb-2">{h.type} • {h.date}</p>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-slate-800 text-slate-300">
+                    <h5 className="text-textPrimary font-bold">{h.hospital_name}</h5>
+                    <p className="text-textSecondary text-xs mb-2">{h.type} • {h.date}</p>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-surface text-textSecondary">
                       {h.status}
                     </span>
                   </div>

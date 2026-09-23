@@ -45,14 +45,14 @@ const NavBar: React.FC = () => {
     <>
       {/* Offline Alert (Moved to top right if offline) */}
       {isOffline && (
-        <div className="fixed top-4 right-4 bg-orange-500/90 text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg whitespace-nowrap z-[60]">
+        <div className="fixed top-4 right-4 bg-orange-500/90 text-textPrimary text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg whitespace-nowrap z-[60]">
           <CloudOff size={12} />
           <span>Offline {queueSize > 0 ? `(${queueSize})` : ''}</span>
         </div>
       )}
 
       {/* Floating Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 h-[72px] bg-[#0B1121]/95 backdrop-blur-md border-t border-slate-800/60 flex items-center justify-around px-2 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+      <div className="fixed bottom-0 left-0 right-0 h-[72px] bg-background backdrop-blur-md border-t border-border flex items-center justify-around px-2 z-50 shadow-[var(--shadow-lg)]">
         {navItems.map(item => {
           const Icon = item.icon;
           const isActive = location.pathname === item.route;
@@ -71,9 +71,9 @@ const NavBar: React.FC = () => {
               <Icon 
                 size={areaType === 'rural' ? 24 : 22} 
                 strokeWidth={isActive ? 2.5 : 2} 
-                className={`mb-1 transition-all duration-300 ${isActive ? 'text-[#00C9A7] scale-110' : 'text-slate-500 group-hover:text-slate-400'}`} 
+                className={`mb-1 transition-all duration-300 ${isActive ? 'text-[#00C9A7] scale-110' : 'text-textTertiary group-hover:text-textSecondary'}`} 
               />
-              <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'text-[#00C9A7]' : 'text-slate-500 group-hover:text-slate-400'}`}>
+              <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'text-[#00C9A7]' : 'text-textTertiary group-hover:text-textSecondary'}`}>
                 {item.label}
               </span>
             </button>

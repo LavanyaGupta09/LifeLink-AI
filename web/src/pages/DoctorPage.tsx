@@ -160,18 +160,18 @@ export default function DoctorPage() {
     return (
       <div className="fixed inset-0 bg-black z-50 flex flex-col justify-between overflow-hidden">
         {callLoading ? (
-           <div className="flex-1 flex flex-col items-center justify-center text-white gap-4">
+           <div className="flex-1 flex flex-col items-center justify-center text-textPrimary gap-4">
              <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
              <p className="font-bold tracking-tight">Connecting to Secure Server...</p>
            </div>
         ) : agoraError ? (
-           <div className="flex-1 flex flex-col items-center justify-center text-white p-6 text-center max-w-md mx-auto">
+           <div className="flex-1 flex flex-col items-center justify-center text-textPrimary p-6 text-center max-w-md mx-auto">
              <div className="w-16 h-16 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mb-4 border border-rose-500/50">
                <VideoOff size={32} />
              </div>
              <h3 className="text-xl font-bold mb-2">Configuration Required</h3>
-             <p className="text-slate-400 mb-6 text-sm">{agoraError}</p>
-             <button onClick={endCall} className="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl transition-colors">Go Back</button>
+             <p className="text-textSecondary mb-6 text-sm">{agoraError}</p>
+             <button onClick={endCall} className="w-full py-3 bg-surface hover:bg-surface font-bold rounded-xl transition-colors">Go Back</button>
            </div>
         ) : agoraConfig ? (
            <AgoraVideoCall 
@@ -186,18 +186,18 @@ export default function DoctorPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-20 px-6 py-6 ">
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-20 px-6 py-6 ">
       
       {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
-        <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
+        <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
           <ArrowLeft size={20} />
         </button>
         <div className="flex-1">
           <h1 className="text-xl font-bold tracking-tight">Consult a Doctor</h1>
           <p className="text-xs text-emerald-400 font-medium">Apollo 24|7 Network</p>
         </div>
-        <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white">
+        <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary">
           <Search size={20} />
         </button>
       </header>
@@ -206,7 +206,7 @@ export default function DoctorPage() {
       <div className="flex-1 p-4 flex flex-col gap-6">
         
         {/* 1. CONSULT IN 15 MINS BANNER */}
-        <div className="w-full bg-gradient-to-br from-[#131F35] to-[#0B1121] border border-emerald-500/30 rounded-3xl p-5 shadow-[0_0_40px_rgba(16,185,129,0.05)] relative overflow-hidden group">
+        <div className="w-full bg-gradient-to-br from-[#131F35] to-background border border-emerald-500/30 rounded-3xl p-5 shadow-[0_0_40px_rgba(16,185,129,0.05)] relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all duration-700"></div>
           <div className="flex justify-between items-start relative z-10 mb-4">
             <div>
@@ -214,13 +214,13 @@ export default function DoctorPage() {
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span className="text-[10px] font-black tracking-widest text-emerald-500 uppercase">Live Queue Active</span>
               </div>
-              <h2 className="text-2xl font-black text-white leading-tight">Doctor in <br/><span className="text-emerald-400">15 mins</span></h2>
+              <h2 className="text-2xl font-black text-textPrimary leading-tight">Doctor in <br/><span className="text-emerald-400">15 mins</span></h2>
             </div>
             <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30 text-emerald-400">
               <Zap size={24} className="animate-pulse" />
             </div>
           </div>
-          <p className="text-sm text-slate-400 mb-5 max-w-[200px]">Instant video consultation for general health issues & fever.</p>
+          <p className="text-sm text-textSecondary mb-5 max-w-[200px]">Instant video consultation for general health issues & fever.</p>
           <button 
             onClick={() => doctors.length > 0 && startCall(doctors[0])}
             className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-transform active:scale-95 shadow-lg shadow-emerald-600/20 flex justify-center items-center gap-2"
@@ -230,17 +230,17 @@ export default function DoctorPage() {
         </div>
 
         {/* FAMILY DOCTOR CARD */}
-        <div className="bg-gradient-to-br from-[#131F35] to-[#0B1121] border border-[#3D91FF]/30 rounded-3xl p-5 shadow-[0_0_40px_rgba(61,145,255,0.05)] relative overflow-hidden group mb-2">
+        <div className="bg-gradient-to-br from-[#131F35] to-background border border-[#3D91FF]/30 rounded-3xl p-5 shadow-[0_0_40px_rgba(61,145,255,0.05)] relative overflow-hidden group mb-2">
           <div className="absolute top-0 right-0 bg-[#3D91FF]/10 text-[#3D91FF] text-[10px] font-black uppercase px-3 py-1.5 rounded-bl-xl border-l border-b border-[#3D91FF]/20 flex items-center gap-1">
             <Star size={10} className="fill-[#3D91FF]" /> Your Family Doctor
           </div>
           <div className="flex gap-4">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-800 relative flex-shrink-0 border border-slate-700">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-surface relative flex-shrink-0 border border-border">
                 <img src={`https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=150&auto=format&fit=crop`} alt="Dr. Meera Nair" className="w-full h-full object-cover" />
-                <div className="absolute bottom-1 right-1 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-800 rounded-full"></div>
+                <div className="absolute bottom-1 right-1 w-2.5 h-2.5 bg-emerald-500 border-2 border-border rounded-full"></div>
             </div>
             <div className="flex-1 pt-1">
-              <h4 className="font-bold text-white text-lg leading-tight">Dr. Meera Nair</h4>
+              <h4 className="font-bold text-textPrimary text-lg leading-tight">Dr. Meera Nair</h4>
               <p className="text-xs font-medium text-[#3D91FF] mb-2">General Physician · Apollo Hospitals</p>
             </div>
           </div>
@@ -258,21 +258,21 @@ export default function DoctorPage() {
           onClick={() => navigate('/physiotherapy')}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="w-12 h-12 bg-[#8B5CF6]/10 rounded-2xl flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 bg-accent-purple rounded-2xl flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
               <Activity size={24} />
             </div>
             <div className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase rounded-full flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> At Home & Online
             </div>
           </div>
-          <h3 className="font-bold text-white text-lg">Physiotherapy & Rehab</h3>
-          <p className="text-sm text-slate-400 mt-1">Book home visits, online consults, and track your recovery journey.</p>
+          <h3 className="font-bold text-textPrimary text-lg">Physiotherapy & Rehab</h3>
+          <p className="text-sm text-textSecondary mt-1">Book home visits, online consults, and track your recovery journey.</p>
         </div>
 
         {/* 2. SHOP BY SPECIALITY */}
         <section>
           <div className="flex justify-between items-end mb-4">
-            <h3 className="text-lg font-bold text-white">Specialities</h3>
+            <h3 className="text-lg font-bold text-textPrimary">Specialities</h3>
             <span className="text-xs font-bold text-emerald-400 cursor-pointer">View All</span>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -283,7 +283,7 @@ export default function DoctorPage() {
                 className={`flex flex-col items-center p-3 rounded-2xl border transition-all active:scale-95 ${selectedSpec === spec.name ? 'bg-emerald-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]' : `bg-gradient-to-b ${spec.color} ${spec.border}`}`}
               >
                 <span className="text-2xl mb-2 drop-shadow-md">{spec.icon}</span>
-                <span className={`text-[10px] font-bold text-center leading-tight ${selectedSpec === spec.name ? 'text-emerald-400' : 'text-slate-300'}`}>{spec.name}</span>
+                <span className={`text-[10px] font-bold text-center leading-tight ${selectedSpec === spec.name ? 'text-emerald-400' : 'text-textSecondary'}`}>{spec.name}</span>
               </button>
             ))}
           </div>
@@ -291,19 +291,19 @@ export default function DoctorPage() {
 
         {/* 3. PREMIUM DOCTOR CARDS */}
         <section>
-          <h3 className="text-lg font-bold text-white mb-4">Available Specialists {selectedSpec !== 'All' && `(${selectedSpec})`}</h3>
+          <h3 className="text-lg font-bold text-textPrimary mb-4">Available Specialists {selectedSpec !== 'All' && `(${selectedSpec})`}</h3>
           
           <div className="flex flex-col gap-4">
             {loading ? (
-              [1,2,3].map(i => <div key={i} className="w-full h-48 bg-[#131F35] rounded-3xl animate-pulse"></div>)
+              [1,2,3].map(i => <div key={i} className="w-full h-48 bg-card rounded-3xl animate-pulse"></div>)
             ) : filtered.length === 0 ? (
-              <div className="text-center p-10 bg-[#131F35] rounded-3xl border border-slate-800">
-                <Search size={40} className="mx-auto text-slate-600 mb-4" />
-                <p className="text-slate-400 font-medium">No doctors found for this speciality.</p>
+              <div className="text-center p-10 bg-card rounded-3xl border border-border">
+                <Search size={40} className="mx-auto text-textTertiary mb-4" />
+                <p className="text-textSecondary font-medium">No doctors found for this speciality.</p>
               </div>
             ) : (
               filtered.map((doc, idx) => (
-                <div key={doc.id} className="bg-[#131F35] border border-slate-800 rounded-3xl p-5 shadow-xl relative overflow-hidden group">
+                <div key={doc.id} className="bg-card border border-border rounded-3xl p-5 shadow-xl relative overflow-hidden group">
                   
                   {/* Next Slot Badge */}
                   <div className="absolute top-0 right-0 bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase px-3 py-1.5 rounded-bl-xl border-l border-b border-emerald-500/20 flex items-center gap-1">
@@ -312,26 +312,26 @@ export default function DoctorPage() {
 
                   <div className="flex gap-4">
                     {/* Doctor Avatar */}
-                    <div className="w-20 h-24 rounded-2xl overflow-hidden bg-slate-800 relative flex-shrink-0 border border-slate-700">
+                    <div className="w-20 h-24 rounded-2xl overflow-hidden bg-surface relative flex-shrink-0 border border-border">
                        <img src={`https://i.pravatar.cc/150?u=${doc.id}`} alt={doc.name} className="w-full h-full object-cover" />
-                       {doc.status === 'available' && <div className="absolute bottom-1 right-1 w-3 h-3 bg-emerald-500 border-2 border-slate-800 rounded-full"></div>}
+                       {doc.status === 'available' && <div className="absolute bottom-1 right-1 w-3 h-3 bg-emerald-500 border-2 border-border rounded-full"></div>}
                     </div>
 
                     {/* Doctor Details */}
                     <div className="flex-1 pt-1">
                       <div className="flex justify-between items-start mb-1">
-                        <h4 className="font-bold text-white text-lg leading-tight">{doc.name}</h4>
+                        <h4 className="font-bold text-textPrimary text-lg leading-tight">{doc.name}</h4>
                       </div>
                       <p className="text-xs font-medium text-emerald-400 mb-2">{doc.specialization}</p>
                       
                       <div className="flex flex-col gap-1.5">
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5 text-xs text-textSecondary">
                           <Award size={12} className="text-amber-400" /> {doc.experienceYears} Years Experience
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5 text-xs text-textSecondary">
                           <Languages size={12} className="text-[#3D91FF]" /> {doc.languages.join(', ')}
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5 text-xs text-textSecondary">
                           <Star size={12} className="text-amber-400 fill-amber-400" /> {doc.rating} ({Math.floor(Math.random() * 200 + 50)} ratings)
                         </div>
                       </div>
@@ -339,15 +339,15 @@ export default function DoctorPage() {
                   </div>
 
                   {/* Actions Area */}
-                  <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between">
+                  <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Consultation Fee</p>
-                      <p className="font-black text-white text-lg">₹{doc.consultationFee}</p>
+                      <p className="text-[10px] font-bold text-textTertiary uppercase tracking-widest mb-0.5">Consultation Fee</p>
+                      <p className="font-black text-textPrimary text-lg">₹{doc.consultationFee}</p>
                     </div>
                     
                     <button 
                       onClick={() => startCall(doc)}
-                      className="bg-gradient-to-r from-[#00C9A7] to-[#009E83] hover:from-[#00b596] hover:to-[#008f76] text-white font-bold py-2.5 px-6 rounded-xl text-sm transition-transform active:scale-95 shadow-lg shadow-[#00C9A7]/20 flex items-center gap-2"
+                      className="bg-gradient-to-r from-[#00C9A7] to-[#009E83] hover:from-[#00b596] hover:to-[#008f76] text-textPrimary font-bold py-2.5 px-6 rounded-xl text-sm transition-transform active:scale-95 shadow-lg shadow-[#00C9A7]/20 flex items-center gap-2"
                     >
                       <Video size={16} /> Consult Now
                     </button>

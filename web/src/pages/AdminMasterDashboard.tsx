@@ -188,10 +188,10 @@ const AdminMasterDashboard: React.FC = () => {
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm ${
         activeTab === tabId 
           ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' 
-          : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+          : 'text-textSecondary hover:text-textPrimary hover:bg-white/5 border border-transparent'
       }`}
     >
-      <Icon size={18} className={activeTab === tabId ? 'text-blue-400' : 'text-slate-500'} />
+      <Icon size={18} className={activeTab === tabId ? 'text-blue-400' : 'text-textTertiary'} />
       {label}
       {tabId === 'verifications' && verifications.length > 0 && (
         <span className="ml-auto bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-full">
@@ -202,16 +202,16 @@ const AdminMasterDashboard: React.FC = () => {
   );
 
   return (
-    <div className="w-full min-h-screen px-6 py-6 flex bg-[#0B1121] text-slate-200 font-sans">
+    <div className="w-full min-h-screen px-6 py-6 flex bg-background text-textPrimary font-sans">
       
       {/* Sidebar Navigation */}
-      <div className="w-64 bg-[#131B2F]/90 backdrop-blur-xl border-r border-slate-800 flex flex-col z-20 shrink-0">
-        <div className="p-6 border-b border-slate-800">
-          <h1 className="text-lg font-bold text-white flex items-center gap-2">
+      <div className="w-64 bg-card backdrop-blur-xl border-r border-border flex flex-col z-20 shrink-0">
+        <div className="p-6 border-b border-border">
+          <h1 className="text-lg font-bold text-textPrimary flex items-center gap-2">
             <ShieldCheck className="w-6 h-6 text-blue-500" />
             Master Control
           </h1>
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Super Admin Mode</p>
+          <p className="text-[10px] text-textSecondary uppercase tracking-widest mt-1">Super Admin Mode</p>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -221,7 +221,7 @@ const AdminMasterDashboard: React.FC = () => {
           <SidebarItem icon={Users} label="User Management" tabId="users" />
         </div>
 
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-border">
            <button 
              onClick={handleLogout}
              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-xl transition-colors text-sm font-medium border border-red-500/20"
@@ -235,12 +235,12 @@ const AdminMasterDashboard: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col relative w-full min-h-screen px-6 py-6 ">
         {/* Top Bar */}
-        <div className="h-16 border-b border-slate-800 bg-[#0B1121]/80 backdrop-blur-md flex items-center justify-between px-8 shrink-0 z-10">
-           <h2 className="text-xl font-bold text-white capitalize">
+        <div className="h-16 border-b border-border bg-background backdrop-blur-md flex items-center justify-between px-8 shrink-0 z-10">
+           <h2 className="text-xl font-bold text-textPrimary capitalize">
               {activeTab === 'sos' ? 'Emergency SOS Log' : activeTab.replace(/([A-Z])/g, ' $1').trim()}
            </h2>
            <div className="flex items-center gap-3">
-             <div className="flex items-center gap-2 px-3 py-1.5 bg-[#131B2F] border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-medium">
+             <div className="flex items-center gap-2 px-3 py-1.5 bg-card border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-medium">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
                 System Healthy
              </div>
@@ -260,40 +260,40 @@ const AdminMasterDashboard: React.FC = () => {
               {activeTab === 'overview' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Metric Card 1 */}
-                  <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 flex flex-col">
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Active SOS Alerts</p>
+                  <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 flex flex-col">
+                    <p className="text-textSecondary text-xs font-bold uppercase tracking-widest mb-1">Active SOS Alerts</p>
                     <div className="flex items-end justify-between mt-auto pt-4">
-                      <h3 className="text-4xl font-black text-white">{metrics.activeSOS}</h3>
+                      <h3 className="text-4xl font-black text-textPrimary">{metrics.activeSOS}</h3>
                       <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
                           <AlertTriangle className="w-5 h-5 text-red-500" />
                       </div>
                     </div>
                   </div>
                   {/* Metric Card 2 */}
-                  <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 flex flex-col">
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Registered Hospitals</p>
+                  <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 flex flex-col">
+                    <p className="text-textSecondary text-xs font-bold uppercase tracking-widest mb-1">Registered Hospitals</p>
                     <div className="flex items-end justify-between mt-auto pt-4">
-                      <h3 className="text-4xl font-black text-white">{metrics.registeredHospitals}</h3>
+                      <h3 className="text-4xl font-black text-textPrimary">{metrics.registeredHospitals}</h3>
                       <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
                           <Database className="w-5 h-5 text-blue-500" />
                       </div>
                     </div>
                   </div>
                   {/* Metric Card 3 */}
-                  <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 flex flex-col">
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Active Doctors</p>
+                  <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 flex flex-col">
+                    <p className="text-textSecondary text-xs font-bold uppercase tracking-widest mb-1">Active Doctors</p>
                     <div className="flex items-end justify-between mt-auto pt-4">
-                      <h3 className="text-4xl font-black text-white">{metrics.activeDoctors}</h3>
+                      <h3 className="text-4xl font-black text-textPrimary">{metrics.activeDoctors}</h3>
                       <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
                           <ActivitySquare className="w-5 h-5 text-emerald-500" />
                       </div>
                     </div>
                   </div>
                   {/* Metric Card 4 */}
-                  <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 flex flex-col">
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">API Latency</p>
+                  <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 flex flex-col">
+                    <p className="text-textSecondary text-xs font-bold uppercase tracking-widest mb-1">API Latency</p>
                     <div className="flex items-end justify-between mt-auto pt-4">
-                      <h3 className="text-4xl font-black text-white">{metrics.apiLatency}<span className="text-lg text-slate-500 ml-1">ms</span></h3>
+                      <h3 className="text-4xl font-black text-textPrimary">{metrics.apiLatency}<span className="text-lg text-textTertiary ml-1">ms</span></h3>
                       <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
                           <Server className="w-5 h-5 text-purple-500" />
                       </div>
@@ -304,15 +304,15 @@ const AdminMasterDashboard: React.FC = () => {
 
               {/* --- VERIFICATIONS TAB --- */}
               {activeTab === 'verifications' && (
-                <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
-                  <div className="p-6 border-b border-slate-800 flex justify-between items-center">
+                <div className="bg-card backdrop-blur-xl border border-border rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="p-6 border-b border-border flex justify-between items-center">
                     <div>
-                      <h3 className="text-lg font-bold text-white">Pending Credentials Queue</h3>
-                      <p className="text-xs text-slate-400 mt-1">Review new healthcare provider applications</p>
+                      <h3 className="text-lg font-bold text-textPrimary">Pending Credentials Queue</h3>
+                      <p className="text-xs text-textSecondary mt-1">Review new healthcare provider applications</p>
                     </div>
                   </div>
                   {verifications.length === 0 ? (
-                    <div className="p-12 text-center text-slate-500">
+                    <div className="p-12 text-center text-textTertiary">
                        <CheckCircle className="mx-auto mb-3 opacity-20" size={32} />
                        <p>No pending verifications</p>
                     </div>
@@ -325,12 +325,12 @@ const AdminMasterDashboard: React.FC = () => {
                                 {req.provider_type === 'Hospital' ? <Database className="w-5 h-5" /> : <Activity className="w-5 h-5" />}
                               </div>
                               <div>
-                                <h4 className="text-white font-medium text-lg">{req.name || req.facility_name || 'Unknown Provider'}</h4>
+                                <h4 className="text-textPrimary font-medium text-lg">{req.name || req.facility_name || 'Unknown Provider'}</h4>
                                 <div className="flex items-center gap-3 mt-1">
-                                  <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">{req.provider_type || 'General'}</span>
-                                  <span className="text-xs font-mono text-slate-400">Lic: {req.license_number || 'N/A'}</span>
+                                  <span className="text-xs px-2 py-0.5 rounded bg-surface text-textSecondary border border-border">{req.provider_type || 'General'}</span>
+                                  <span className="text-xs font-mono text-textSecondary">Lic: {req.license_number || 'N/A'}</span>
                                 </div>
-                                <p className="text-[10px] text-slate-500 mt-2 uppercase tracking-wider">Submitted: {new Date(req.created_at || Date.now()).toLocaleString()}</p>
+                                <p className="text-[10px] text-textTertiary mt-2 uppercase tracking-wider">Submitted: {new Date(req.created_at || Date.now()).toLocaleString()}</p>
                               </div>
                             </div>
                             
@@ -357,14 +357,14 @@ const AdminMasterDashboard: React.FC = () => {
 
               {/* --- SOS TAB --- */}
               {activeTab === 'sos' && (
-                <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
-                  <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-red-500/5">
+                <div className="bg-card backdrop-blur-xl border border-border rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="p-6 border-b border-border flex justify-between items-center bg-red-500/5">
                     <div>
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-textPrimary flex items-center gap-2">
                         <Radio className="w-5 h-5 text-red-500" />
                         Live SOS Feed
                       </h3>
-                      <p className="text-xs text-slate-400 mt-1">Real-time emergency signal monitoring</p>
+                      <p className="text-xs text-textSecondary mt-1">Real-time emergency signal monitoring</p>
                     </div>
                     <div className="flex items-center gap-2 bg-red-500/10 px-3 py-1.5 rounded-full border border-red-500/20">
                       <span className="animate-pulse w-2 h-2 rounded-full bg-red-500"></span>
@@ -372,7 +372,7 @@ const AdminMasterDashboard: React.FC = () => {
                     </div>
                   </div>
                   {sosAlerts.length === 0 ? (
-                    <div className="p-12 text-center text-slate-500">
+                    <div className="p-12 text-center text-textTertiary">
                        <CheckCircle className="mx-auto mb-3 opacity-20 text-emerald-500" size={32} />
                        <p>All clear. No active emergencies.</p>
                     </div>
@@ -385,14 +385,14 @@ const AdminMasterDashboard: React.FC = () => {
                                 <AlertCircle className="w-6 h-6" />
                              </div>
                              <div>
-                                <h4 className="text-white font-medium flex items-center gap-2 text-lg">
+                                <h4 className="text-textPrimary font-medium flex items-center gap-2 text-lg">
                                   {alert.emergency_type ? alert.emergency_type.toUpperCase() : 'GENERAL EMERGENCY'}
-                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-mono">
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface text-textSecondary border border-border font-mono">
                                     {alert.id.split('-')[0]}
                                   </span>
                                 </h4>
-                                <p className="text-sm text-slate-400 mt-1">Loc: {alert.latitude?.toFixed(4)}, {alert.longitude?.toFixed(4)}</p>
-                                <p className="text-xs text-slate-500 mt-1">Time: {new Date(alert.created_at || Date.now()).toLocaleString()}</p>
+                                <p className="text-sm text-textSecondary mt-1">Loc: {alert.latitude?.toFixed(4)}, {alert.longitude?.toFixed(4)}</p>
+                                <p className="text-xs text-textTertiary mt-1">Time: {new Date(alert.created_at || Date.now()).toLocaleString()}</p>
                              </div>
                            </div>
                            
@@ -420,19 +420,19 @@ const AdminMasterDashboard: React.FC = () => {
 
               {/* --- USERS TAB --- */}
               {activeTab === 'users' && (
-                <div className="bg-[#131B2F]/80 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
-                  <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="bg-card backdrop-blur-xl border border-border rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="p-6 border-b border-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                      <h3 className="text-lg font-bold text-white">System Accounts</h3>
-                      <p className="text-xs text-slate-400 mt-1">Manage all platform users and permissions</p>
+                      <h3 className="text-lg font-bold text-textPrimary">System Accounts</h3>
+                      <p className="text-xs text-textSecondary mt-1">Manage all platform users and permissions</p>
                     </div>
                     <div className="relative w-full sm:w-auto">
-                      <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Search className="w-4 h-4 text-textTertiary absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input 
                         type="text" 
                         placeholder="Search users..." 
                         style={{ paddingLeft: '2.5rem' }}
-                        className="w-full sm:w-64 bg-[#0B1121] border border-slate-700 text-slate-200 text-sm rounded-xl pr-4 py-2 focus:outline-none focus:border-blue-500 transition-colors"
+                        className="w-full sm:w-64 bg-background border border-border text-textPrimary text-sm rounded-xl pr-4 py-2 focus:outline-none focus:border-blue-500 transition-colors"
                       />
                     </div>
                   </div>
@@ -440,12 +440,12 @@ const AdminMasterDashboard: React.FC = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[800px]">
                       <thead>
-                        <tr className="border-b border-slate-800 bg-slate-900/50">
-                          <th className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">User</th>
-                          <th className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Type / Role</th>
-                          <th className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                          <th className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Joined</th>
-                          <th className="py-4 px-6 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                        <tr className="border-b border-border bg-background">
+                          <th className="py-4 px-6 text-xs font-bold text-textSecondary uppercase tracking-wider">User</th>
+                          <th className="py-4 px-6 text-xs font-bold text-textSecondary uppercase tracking-wider">Type / Role</th>
+                          <th className="py-4 px-6 text-xs font-bold text-textSecondary uppercase tracking-wider">Status</th>
+                          <th className="py-4 px-6 text-xs font-bold text-textSecondary uppercase tracking-wider">Joined</th>
+                          <th className="py-4 px-6 text-xs font-bold text-textSecondary uppercase tracking-wider text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800/50">
@@ -453,12 +453,12 @@ const AdminMasterDashboard: React.FC = () => {
                           <tr key={user.id} className="hover:bg-white/[0.02] transition-colors group">
                             <td className="py-4 px-6">
                               <div className="flex flex-col">
-                                <span className="text-white font-medium">{user.full_name || 'Anonymous User'}</span>
-                                <span className="text-xs text-slate-500 font-mono mt-0.5">{user.id.slice(0,8)}...</span>
+                                <span className="text-textPrimary font-medium">{user.full_name || 'Anonymous User'}</span>
+                                <span className="text-xs text-textTertiary font-mono mt-0.5">{user.id.slice(0,8)}...</span>
                               </div>
                             </td>
                             <td className="py-4 px-6">
-                              <span className="bg-slate-800 text-slate-300 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md border border-slate-700">
+                              <span className="bg-surface text-textSecondary text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md border border-border">
                                 {user.is_blood_donor ? 'Donor' : 'Patient'}
                               </span>
                             </td>
@@ -468,13 +468,13 @@ const AdminMasterDashboard: React.FC = () => {
                                 Active
                               </span>
                             </td>
-                            <td className="py-4 px-6 text-xs text-slate-400">
+                            <td className="py-4 px-6 text-xs text-textSecondary">
                               {new Date(user.created_at || Date.now()).toLocaleDateString()}
                             </td>
                             <td className="py-4 px-6 text-right">
                               <button 
                                 onClick={() => handleEditUser(user.id)}
-                                className="text-slate-500 hover:text-white text-xs font-bold uppercase tracking-wider transition-colors px-3 py-1.5 border border-transparent hover:border-slate-700 rounded-lg hover:bg-slate-800"
+                                className="text-textTertiary hover:text-textPrimary text-xs font-bold uppercase tracking-wider transition-colors px-3 py-1.5 border border-transparent hover:border-border rounded-lg hover:bg-surface"
                               >
                                 Edit
                               </button>
@@ -483,7 +483,7 @@ const AdminMasterDashboard: React.FC = () => {
                         ))}
                         {systemUsers.length === 0 && (
                            <tr>
-                              <td colSpan={5} className="py-8 text-center text-slate-500 text-sm">No users found.</td>
+                              <td colSpan={5} className="py-8 text-center text-textTertiary text-sm">No users found.</td>
                            </tr>
                         )}
                       </tbody>

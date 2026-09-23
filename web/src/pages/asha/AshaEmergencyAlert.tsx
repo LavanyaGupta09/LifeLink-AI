@@ -28,29 +28,29 @@ const AshaEmergencyAlert: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
+    <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
       {/* Header */}
-      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
         <button
           onClick={() => navigate('/asha')}
-          className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
           <h1 className="text-lg font-bold text-[#FF4757]">Emergency Alerts</h1>
-          <p className="text-[10px] text-slate-400">Saari emergency ki jaankari</p>
+          <p className="text-[10px] text-textSecondary">Saari emergency ki jaankari</p>
         </div>
       </div>
 
       <div className="px-4 py-6 max-w-lg mx-auto">
         {emergencyAlerts.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-20 h-20 mx-auto mb-4 bg-slate-800/50 rounded-full flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-4 bg-surface rounded-full flex items-center justify-center">
               <CheckCircle size={36} className="text-[#00C9A7]" />
             </div>
             <h2 className="text-lg font-bold mb-2 text-[#00C9A7]">Sab Theek Hai!</h2>
-            <p className="text-slate-500 text-sm">Koi emergency alert nahi hai abhi</p>
+            <p className="text-textTertiary text-sm">Koi emergency alert nahi hai abhi</p>
           </div>
         ) : (
           <div className="flex flex-col gap-6">
@@ -61,14 +61,14 @@ const AshaEmergencyAlert: React.FC = () => {
               return (
                 <div
                   key={alert.id}
-                  className="bg-[#0B1221] border border-[#FF4757]/20 rounded-2xl overflow-hidden"
+                  className="bg-background border border-[#FF4757]/20 rounded-2xl overflow-hidden"
                 >
                   {/* Alert Header */}
                   <div className="bg-[#FF4757]/10 px-5 py-3 flex items-center gap-3">
                     <AlertTriangle size={20} className="text-[#FF4757] shrink-0" />
                     <div className="flex-1">
                       <h3 className="text-sm font-bold text-[#FF4757]">Gambhir Sthiti!</h3>
-                      <p className="text-[10px] text-slate-400">{alert.description}</p>
+                      <p className="text-[10px] text-textSecondary">{alert.description}</p>
                     </div>
                   </div>
 
@@ -79,10 +79,10 @@ const AshaEmergencyAlert: React.FC = () => {
                         <MapPin size={18} className="text-[#3B82F6]" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500">Location</p>
-                        <p className="text-sm font-bold text-white">Gaon: {alert.village}</p>
+                        <p className="text-xs text-textTertiary">Location</p>
+                        <p className="text-sm font-bold text-textPrimary">Gaon: {alert.village}</p>
                         {alert.distance && (
-                          <p className="text-[10px] text-slate-500">Distance: {alert.distance}</p>
+                          <p className="text-[10px] text-textTertiary">Distance: {alert.distance}</p>
                         )}
                       </div>
                     </div>
@@ -93,14 +93,14 @@ const AshaEmergencyAlert: React.FC = () => {
                         <Clock size={18} className="text-[#F97316]" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500">Emergency Request Time</p>
-                        <p className="text-sm font-bold text-white">{formatTime(alert.createdAt)}</p>
+                        <p className="text-xs text-textTertiary">Emergency Request Time</p>
+                        <p className="text-sm font-bold text-textPrimary">{formatTime(alert.createdAt)}</p>
                       </div>
                     </div>
 
                     {/* Status Pipeline */}
-                    <div className="bg-[#040814] rounded-xl p-4">
-                      <h4 className="text-xs font-bold text-slate-400 mb-3">STATUS</h4>
+                    <div className="bg-background rounded-xl p-4">
+                      <h4 className="text-xs font-bold text-textSecondary mb-3">STATUS</h4>
                       {stages.map((stage, i) => {
                         const info = stageLabels[stage];
                         const isDone = i <= currentStageIndex;
@@ -111,25 +111,25 @@ const AshaEmergencyAlert: React.FC = () => {
                           <div key={stage} className="flex items-start gap-3 relative">
                             {/* Vertical line */}
                             {i < stages.length - 1 && (
-                              <div className={`absolute left-3 top-6 w-0.5 h-6 ${isDone ? 'bg-gradient-to-b' : 'bg-slate-800'}`}
+                              <div className={`absolute left-3 top-6 w-0.5 h-6 ${isDone ? 'bg-gradient-to-b' : 'bg-surface'}`}
                                 style={isDone ? { backgroundImage: `linear-gradient(${info.color}, ${stageLabels[stages[i + 1]]?.color || info.color})` } : {}}
                               />
                             )}
                             
                             <div
                               className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 z-10 ${
-                                isDone ? '' : 'bg-slate-800'
+                                isDone ? '' : 'bg-surface'
                               } ${isCurrent ? 'animate-pulse' : ''}`}
                               style={isDone ? { backgroundColor: info.color } : {}}
                             >
                               {isDone ? (
-                                <CheckCircle size={12} className="text-white" />
+                                <CheckCircle size={12} className="text-textPrimary" />
                               ) : (
                                 <div className="w-2 h-2 rounded-full bg-slate-600" />
                               )}
                             </div>
                             <span
-                              className={`text-sm py-0.5 ${isDone ? 'font-bold' : 'text-slate-600'}`}
+                              className={`text-sm py-0.5 ${isDone ? 'font-bold' : 'text-textTertiary'}`}
                               style={isDone ? { color: info.color } : {}}
                             >
                               {info.label}

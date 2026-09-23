@@ -23,7 +23,7 @@ const InsuranceApplication: React.FC = () => {
 
   if (!plan) {
     return (
-      <div className="min-h-screen bg-[#060B14] flex flex-col items-center justify-center text-white p-6">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-textPrimary p-6">
         <AlertTriangle size={48} className="text-amber-500 mb-4" />
         <h2 className="text-xl font-bold mb-4">Plan Not Found</h2>
         <button onClick={() => navigate('/insurance')} className="bg-[#3D91FF] px-6 py-2 rounded-xl font-bold">Go Back</button>
@@ -50,18 +50,18 @@ const InsuranceApplication: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#060B14] text-white">
+    <div className="w-full min-h-[100dvh] bg-background text-textPrimary">
       {/* Header */}
-      <div className="sticky top-0 z-40 w-full bg-[#0B1121] border-b border-slate-800 p-4">
+      <div className="sticky top-0 z-40 w-full bg-background border-b border-border p-4">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
           {step < 3 && (
-            <button onClick={() => step === 2 ? setStep(1) : navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-slate-800 transition-colors">
+            <button onClick={() => step === 2 ? setStep(1) : navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-surface transition-colors">
               <ArrowLeft size={20} />
             </button>
           )}
           <div>
             <h1 className="font-bold text-lg leading-tight">Apply for Insurance</h1>
-            <p className="text-[10px] text-slate-400">Step {step} of 3</p>
+            <p className="text-[10px] text-textSecondary">Step {step} of 3</p>
           </div>
         </div>
       </div>
@@ -70,17 +70,17 @@ const InsuranceApplication: React.FC = () => {
         
         {/* Selected Plan Summary */}
         {step < 3 && (
-          <div className="bg-[#131F35] border border-slate-800 rounded-2xl p-4 mb-6 flex items-center gap-4">
+          <div className="bg-card border border-border rounded-2xl p-4 mb-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0">
               <Shield size={24} className="text-[#3D91FF]" />
             </div>
             <div className="flex-1">
-              <p className="text-xs text-slate-400">{plan.provider}</p>
+              <p className="text-xs text-textSecondary">{plan.provider}</p>
               <h3 className="font-bold">{plan.planName}</h3>
             </div>
             <div className="text-right">
               <p className="text-sm font-black">₹{plan.monthlyPremium}</p>
-              <p className="text-[10px] text-slate-500">/mo</p>
+              <p className="text-[10px] text-textTertiary">/mo</p>
             </div>
           </div>
         )}
@@ -88,22 +88,22 @@ const InsuranceApplication: React.FC = () => {
         {/* Step 1: Basic Details */}
         {step === 1 && (
           <form onSubmit={handleNext} className="space-y-6 animate-fade-in">
-            <div className="bg-[#131F35] border border-slate-800 rounded-2xl p-6 space-y-4">
-              <h2 className="font-bold text-lg border-b border-slate-800 pb-2">Applicant Details</h2>
+            <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+              <h2 className="font-bold text-lg border-b border-border pb-2">Applicant Details</h2>
               
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Full Name</label>
-                <input required type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors" placeholder="As per official documents" />
+                <label className="block text-xs font-bold text-textSecondary uppercase mb-2">Full Name</label>
+                <input required type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors" placeholder="As per official documents" />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Age</label>
-                  <input required type="number" name="age" value={formData.age} onChange={handleInputChange} className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors" placeholder="Years" />
+                  <label className="block text-xs font-bold text-textSecondary uppercase mb-2">Age</label>
+                  <input required type="number" name="age" value={formData.age} onChange={handleInputChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors" placeholder="Years" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors appearance-none">
+                  <label className="block text-xs font-bold text-textSecondary uppercase mb-2">Gender</label>
+                  <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors appearance-none">
                     <option>Male</option>
                     <option>Female</option>
                     <option>Other</option>
@@ -112,20 +112,20 @@ const InsuranceApplication: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Contact Number</label>
-                <input required type="tel" name="contact" value={formData.contact} onChange={handleInputChange} className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors" placeholder="10-digit mobile number" />
+                <label className="block text-xs font-bold text-textSecondary uppercase mb-2">Contact Number</label>
+                <input required type="tel" name="contact" value={formData.contact} onChange={handleInputChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors" placeholder="10-digit mobile number" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Members to Insure</label>
-                  <select name="members" value={formData.members} onChange={handleInputChange} className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors appearance-none">
+                  <label className="block text-xs font-bold text-textSecondary uppercase mb-2">Members to Insure</label>
+                  <select name="members" value={formData.members} onChange={handleInputChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors appearance-none">
                     {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Existing Policy</label>
-                  <select name="existingPolicy" value={formData.existingPolicy} onChange={handleInputChange} className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors appearance-none">
+                  <label className="block text-xs font-bold text-textSecondary uppercase mb-2">Existing Policy</label>
+                  <select name="existingPolicy" value={formData.existingPolicy} onChange={handleInputChange} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-[#3D91FF] outline-none transition-colors appearance-none">
                     <option>No</option>
                     <option>Yes</option>
                   </select>
@@ -142,24 +142,24 @@ const InsuranceApplication: React.FC = () => {
         {/* Step 2: Review & Submit (Demo) */}
         {step === 2 && (
           <div className="space-y-6 animate-fade-in">
-            <div className="bg-[#131F35] border border-slate-800 rounded-2xl p-6 space-y-4">
-              <h2 className="font-bold text-lg border-b border-slate-800 pb-2">Review Application</h2>
+            <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+              <h2 className="font-bold text-lg border-b border-border pb-2">Review Application</h2>
               
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-slate-500 mb-1">Name</p>
-                  <p className="font-bold text-slate-200">{formData.name}</p>
+                  <p className="text-textTertiary mb-1">Name</p>
+                  <p className="font-bold text-textPrimary">{formData.name}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 mb-1">Age</p>
-                  <p className="font-bold text-slate-200">{formData.age} years</p>
+                  <p className="text-textTertiary mb-1">Age</p>
+                  <p className="font-bold text-textPrimary">{formData.age} years</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 mb-1">Members</p>
-                  <p className="font-bold text-slate-200">{formData.members}</p>
+                  <p className="text-textTertiary mb-1">Members</p>
+                  <p className="font-bold text-textPrimary">{formData.members}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 mb-1">Initial Premium</p>
+                  <p className="text-textTertiary mb-1">Initial Premium</p>
                   <p className="font-bold text-emerald-400">₹{plan.monthlyPremium}</p>
                 </div>
               </div>
@@ -180,12 +180,12 @@ const InsuranceApplication: React.FC = () => {
 
         {/* Step 3: Success */}
         {step === 3 && (
-          <div className="bg-[#131F35] border border-slate-800 rounded-3xl p-8 text-center animate-slide-up mt-10">
+          <div className="bg-card border border-border rounded-3xl p-8 text-center animate-slide-up mt-10">
             <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check size={40} className="text-emerald-400" />
             </div>
-            <h2 className="text-2xl font-black mb-2 text-white">Application Submitted!</h2>
-            <p className="text-slate-400 mb-8 max-w-sm mx-auto">
+            <h2 className="text-2xl font-black mb-2 text-textPrimary">Application Submitted!</h2>
+            <p className="text-textSecondary mb-8 max-w-sm mx-auto">
               Your mock application for <strong>{plan.planName}</strong> has been saved locally.
             </p>
             

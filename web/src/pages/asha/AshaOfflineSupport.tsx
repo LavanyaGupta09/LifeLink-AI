@@ -18,18 +18,18 @@ const AshaOfflineSupport: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
+    <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
       {/* Header */}
-      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
         <button
           onClick={() => navigate('/asha')}
-          className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
           <h1 className="text-lg font-bold">Network Nahi Hai</h1>
-          <p className="text-[10px] text-slate-400">Offline Support</p>
+          <p className="text-[10px] text-textSecondary">Offline Support</p>
         </div>
       </div>
 
@@ -44,26 +44,26 @@ const AshaOfflineSupport: React.FC = () => {
             </div>
             {/* X badge */}
             <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#FF4757] rounded-full flex items-center justify-center border-2 border-[#040814]">
-              <span className="text-white text-xs font-black">✕</span>
+              <span className="text-textPrimary text-xs font-black">✕</span>
             </div>
           </div>
 
           <h2 className="text-2xl font-bold mb-2 relative z-10">Koi chinta nahi!</h2>
-          <p className="text-slate-300 text-sm leading-relaxed relative z-10">
+          <p className="text-textSecondary text-sm leading-relaxed relative z-10">
             Aapka SOS message automatically<br />
             SMS ke through bhi bheja jayega.
           </p>
         </div>
 
         {/* SMS Fallback */}
-        <div className="bg-[#0B1221] border border-slate-800 rounded-2xl p-5 mb-4">
+        <div className="bg-background border border-border rounded-2xl p-5 mb-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-[#2ED573]/10 rounded-full flex items-center justify-center shrink-0">
               <Smartphone size={24} className="text-[#2ED573]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">SMS se SOS Bhejein</h3>
-              <p className="text-[10px] text-slate-400">Internet na ho toh SMS use karein</p>
+              <h3 className="text-sm font-bold text-textPrimary">SMS se SOS Bhejein</h3>
+              <p className="text-[10px] text-textSecondary">Internet na ho toh SMS use karein</p>
             </div>
           </div>
           <button
@@ -72,41 +72,41 @@ const AshaOfflineSupport: React.FC = () => {
           >
             📱 SMS se SOS Bhejein
           </button>
-          <p className="text-[10px] text-slate-500 mt-2 text-center">
+          <p className="text-[10px] text-textTertiary mt-2 text-center">
             * SMS bhejne ke liye aapke phone mein balance hona chahiye
           </p>
         </div>
 
         {/* Location Info */}
-        <div className="bg-[#0B1221] border border-slate-800 rounded-2xl p-5 mb-4">
+        <div className="bg-background border border-border rounded-2xl p-5 mb-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-[#3B82F6]/10 rounded-full flex items-center justify-center shrink-0">
               <MapPin size={24} className="text-[#3B82F6]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Aapki Location</h3>
-              <p className="text-[10px] text-slate-400">GPS se location bhi bhej diya jayega</p>
+              <h3 className="text-sm font-bold text-textPrimary">Aapki Location</h3>
+              <p className="text-[10px] text-textSecondary">GPS se location bhi bhej diya jayega</p>
             </div>
           </div>
-          <p className="text-sm text-slate-300">
-            📍 Gaon: <strong className="text-white">{ashaProfile.village}</strong>
+          <p className="text-sm text-textSecondary">
+            📍 Gaon: <strong className="text-textPrimary">{ashaProfile.village}</strong>
           </p>
-          <p className="text-[10px] text-slate-500 mt-1">
+          <p className="text-[10px] text-textTertiary mt-1">
             Location GPS ke through automatically capture hoti hai
           </p>
         </div>
 
         {/* Queue Status */}
-        <div className="bg-[#0B1221] border border-slate-800 rounded-2xl p-5 mb-4">
+        <div className="bg-background border border-border rounded-2xl p-5 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 bg-accent-purple rounded-full flex items-center justify-center shrink-0">
               <Send size={24} className="text-[#8B5CF6]" />
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-bold text-white">Pending Messages</h3>
-              <p className="text-[10px] text-slate-400">Network aane par automatic bhej diye jayenge</p>
+              <h3 className="text-sm font-bold text-textPrimary">Pending Messages</h3>
+              <p className="text-[10px] text-textSecondary">Network aane par automatic bhej diye jayenge</p>
             </div>
-            <div className="bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 rounded-full px-3 py-1">
+            <div className="bg-accent-purple border border-[#8B5CF6]/30 rounded-full px-3 py-1">
               <span className="text-sm font-bold text-[#8B5CF6]">{totalQueued}</span>
             </div>
           </div>
@@ -124,7 +124,7 @@ const AshaOfflineSupport: React.FC = () => {
               {isOffline ? 'Offline — Network Nahi Hai' : 'Online — Network Aa Gaya!'}
             </span>
           </div>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[10px] text-textTertiary">
             {isOffline ? 'Jaise hi network aayega, data sync ho jayega' : 'Sabhi pending data sync ho raha hai'}
           </p>
         </div>

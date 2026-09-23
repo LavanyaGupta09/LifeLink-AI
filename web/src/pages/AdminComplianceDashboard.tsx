@@ -143,11 +143,11 @@ const AdminComplianceDashboard: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="bg-slate-950 flex items-center justify-center w-full min-h-screen px-6 py-6 "><Loader2 className="text-indigo-500 animate-spin" size={48} /></div>;
+    return <div className="bg-background flex items-center justify-center w-full min-h-screen px-6 py-6 "><Loader2 className="text-indigo-500 animate-spin" size={48} /></div>;
   }
 
   return (
-    <div className="w-full min-h-screen px-6 py-6 bg-slate-950 text-slate-200 font-sans flex flex-col relative">
+    <div className="w-full min-h-screen px-6 py-6 bg-background text-textPrimary font-sans flex flex-col relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/10 via-slate-950 to-slate-950 -z-10" />
 
       {/* Toast Notification */}
@@ -163,18 +163,18 @@ const AdminComplianceDashboard: React.FC = () => {
       )}
 
       {/* Header */}
-      <header className="bg-slate-900/60 backdrop-blur-xl border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+      <header className="bg-background backdrop-blur-xl border-b border-border px-6 py-4 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-indigo-500/20 rounded-xl border border-indigo-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.2)]">
             <ShieldCheck className="text-indigo-400" size={24} />
           </div>
           <div>
-            <h1 className="text-xl font-black text-white tracking-tight">Oversight Command</h1>
+            <h1 className="text-xl font-black text-textPrimary tracking-tight">Oversight Command</h1>
             <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Super Admin Root</p>
           </div>
         </div>
 
-        <button onClick={handleLogout} className="flex items-center gap-2 bg-slate-800/80 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 transition-colors px-4 py-2 rounded-xl text-sm font-bold">
+        <button onClick={handleLogout} className="flex items-center gap-2 bg-surface hover:bg-rose-500/10 text-textSecondary hover:text-rose-400 border border-border hover:border-rose-500/30 transition-colors px-4 py-2 rounded-xl text-sm font-bold">
           <LogOut size={16} /> End Session
         </button>
       </header>
@@ -189,8 +189,8 @@ const AdminComplianceDashboard: React.FC = () => {
               { label: 'Active SOS Alerts', value: metrics.sos },
               { label: 'Pending Verifications', value: metrics.pending }
             ].map(stat => (
-              <div key={stat.label} className="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 relative z-10">{stat.label}</p>
+              <div key={stat.label} className="bg-background backdrop-blur-xl border border-border rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
+                <p className="text-xs font-bold text-textSecondary uppercase tracking-widest mb-4 relative z-10">{stat.label}</p>
                 <h3 className="text-5xl font-black text-emerald-400 relative z-10">
                   {stat.value}
                 </h3>
@@ -199,15 +199,15 @@ const AdminComplianceDashboard: React.FC = () => {
           </div>
 
           {/* WIDGET 2: Verification Pipeline */}
-          <div className="col-span-1 lg:col-span-2 bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl flex flex-col shadow-2xl overflow-hidden min-h-[400px]">
-            <div className="p-6 border-b border-slate-800 bg-slate-900/40">
-              <h3 className="text-lg font-bold text-white">Facility Verification Pipeline</h3>
-              <p className="text-xs text-slate-400 mt-1">Review and approve enterprise registrations</p>
+          <div className="col-span-1 lg:col-span-2 bg-background backdrop-blur-xl border border-border rounded-3xl flex flex-col shadow-2xl overflow-hidden min-h-[400px]">
+            <div className="p-6 border-b border-border bg-background">
+              <h3 className="text-lg font-bold text-textPrimary">Facility Verification Pipeline</h3>
+              <p className="text-xs text-textSecondary mt-1">Review and approve enterprise registrations</p>
             </div>
             
             <div className="flex-1 overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-900/80 backdrop-blur text-[10px] font-bold text-slate-500 uppercase tracking-widest sticky top-0 z-10">
+                <thead className="bg-background backdrop-blur text-[10px] font-bold text-textTertiary uppercase tracking-widest sticky top-0 z-10">
                   <tr>
                     <th className="px-6 py-4">Facility Name</th>
                     <th className="px-6 py-4">Type</th>
@@ -219,28 +219,28 @@ const AdminComplianceDashboard: React.FC = () => {
                 <tbody className="divide-y divide-slate-800/50">
                   {queue.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="p-12 text-center text-slate-500">
+                      <td colSpan={5} className="p-12 text-center text-textTertiary">
                         <CheckCircle size={32} className="mx-auto mb-3 opacity-30" />
                         <p className="font-bold">Queue Empty</p>
                         <p className="text-xs">No pending verifications at this time.</p>
                       </td>
                     </tr>
                   ) : queue.map(p => (
-                    <tr key={p.id} className="hover:bg-slate-800/40 transition-colors group">
+                    <tr key={p.id} className="hover:bg-surface transition-colors group">
                       <td className="px-6 py-4">
-                        <p className="font-bold text-white">{p.name || 'Unknown'}</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">{new Date(p.created_at).toLocaleDateString()}</p>
+                        <p className="font-bold text-textPrimary">{p.name || 'Unknown'}</p>
+                        <p className="text-[10px] text-textTertiary mt-0.5">{new Date(p.created_at).toLocaleDateString()}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2 py-1 rounded bg-slate-800 border border-slate-700 text-[10px] font-bold text-indigo-300 uppercase tracking-wider">
+                        <span className="inline-flex items-center px-2 py-1 rounded bg-surface border border-border text-[10px] font-bold text-indigo-300 uppercase tracking-wider">
                           <Building2 size={12} className="mr-1.5" /> {p.type || 'Facility'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-mono text-xs text-slate-300">{p.license_number || 'PENDING'}</p>
+                        <p className="font-mono text-xs text-textSecondary">{p.license_number || 'PENDING'}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-xs text-slate-400 flex items-center gap-1"><MapPin size={12} /> {p.lat ? `${p.lat.toFixed(4)}, ${p.lng?.toFixed(4)}` : 'Verified via API'}</p>
+                        <p className="text-xs text-textSecondary flex items-center gap-1"><MapPin size={12} /> {p.lat ? `${p.lat.toFixed(4)}, ${p.lng?.toFixed(4)}` : 'Verified via API'}</p>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
@@ -270,11 +270,11 @@ const AdminComplianceDashboard: React.FC = () => {
           </div>
 
           {/* WIDGET 3: Live System Audit Log */}
-          <div className="col-span-1 lg:col-span-1 bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+          <div className="col-span-1 lg:col-span-1 bg-background backdrop-blur-xl border border-border rounded-3xl p-6 shadow-2xl flex flex-col">
+            <h3 className="text-xs font-bold text-textTertiary uppercase tracking-widest mb-4 flex items-center gap-2">
               <Terminal size={14} /> Live Audit Log
             </h3>
-            <div className="flex-1 bg-black border border-slate-800 rounded-2xl p-4 h-96 overflow-y-auto font-mono text-xs text-emerald-500 space-y-2">
+            <div className="flex-1 bg-black border border-border rounded-2xl p-4 h-96 overflow-y-auto font-mono text-xs text-emerald-500 space-y-2">
               {auditLogs.map((log, i) => (
                 <p key={i}>{log}</p>
               ))}

@@ -18,7 +18,7 @@ export default function LocationFallback({ onSearch, errorMessage }: LocationFal
 
   return (
     <div className="flex flex-col items-center justify-center h-full p-6 text-center animate-fade-in" style={{ minHeight: '60vh' }}>
-      <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mb-6 border border-slate-700/50">
+      <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-6 border border-border">
         <MapPin size={28} className="text-brand" />
       </div>
       
@@ -33,7 +33,7 @@ export default function LocationFallback({ onSearch, errorMessage }: LocationFal
         </div>
       )}
 
-      <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div className="w-full max-w-sm bg-background border border-border rounded-2xl p-6 shadow-xl">
         <p className="text-xs font-semibold text-tertiary uppercase tracking-wider mb-4 text-left">
           Enter City Manually
         </p>
@@ -45,7 +45,7 @@ export default function LocationFallback({ onSearch, errorMessage }: LocationFal
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="e.g. Mumbai, Delhi, Bangalore"
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+            className="w-full bg-background border border-border rounded-xl py-3 pl-11 pr-4 text-sm text-textPrimary focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
             autoFocus
           />
         </form>

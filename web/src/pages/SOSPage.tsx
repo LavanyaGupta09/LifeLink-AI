@@ -157,9 +157,9 @@ const SOSPage: React.FC = () => {
     return (
       <div className="app-shell sos-page flex flex-col items-center justify-center p-6 text-center">
         <div className="w-24 h-24 rounded-full border-4 border-[#FF4757] flex items-center justify-center mb-6 animate-pulse">
-          <span className="text-4xl font-display font-bold text-white">{gatewayCountdown}</span>
+          <span className="text-4xl font-display font-bold text-textPrimary">{gatewayCountdown}</span>
         </div>
-        <h2 className="font-display text-2xl font-bold text-white mb-2">SOS Triggered</h2>
+        <h2 className="font-display text-2xl font-bold text-textPrimary mb-2">SOS Triggered</h2>
         <p className="text-secondary text-sm mb-8">Emergency services will be dispatched in {gatewayCountdown} seconds unless cancelled.</p>
         
         <button className="btn btn-primary btn-block mb-4 btn-lg" onClick={() => setGatewayPassed(true)}>
@@ -241,7 +241,7 @@ const SOSPage: React.FC = () => {
           <label className="text-xs font-semibold text-secondary mb-1 block">Update Incident Location (Optional)</label>
           <input
             type="text"
-            className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white"
+            className="w-full bg-background border border-border rounded p-2 text-sm text-textPrimary"
             placeholder="Type address..."
             value={manualAddress}
             onChange={e => setManualAddress(e.target.value)}
@@ -260,7 +260,7 @@ const SOSPage: React.FC = () => {
             <p className="text-xs text-secondary mb-3 leading-relaxed">
               No internet connection detected. The following encrypted SMS was sent to emergency dispatch and your contacts:
             </p>
-            <div className="bg-black/50 p-3 rounded text-[10px] font-mono text-white break-all mb-3 border border-[rgba(255,255,255,0.1)]">
+            <div className="bg-black/50 p-3 rounded text-[10px] font-mono text-textPrimary break-all mb-3 border border-[rgba(255,255,255,0.1)]">
               [LIFELINK SOS] {formatName(user?.fullName)} | B+ | GPS: 28.5355,77.2690 | Triage: {triage.toUpperCase()} | Medical Data: https://ll.ai/s/1x9f
             </div>
             <button className="w-full py-2 bg-[rgba(255,165,2,0.2)] text-[#FFA502] rounded text-xs font-semibold flex items-center justify-center gap-2">
@@ -306,7 +306,7 @@ const SOSPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#131F35] rounded-3xl overflow-hidden border border-slate-800 shadow-xl mb-6 relative" style={{ height: '300px' }}>
+            <div className="bg-card rounded-3xl overflow-hidden border border-border shadow-xl mb-6 relative" style={{ height: '300px' }}>
               <FreeMap 
                 center={patientLoc}
                 zoom={14}
@@ -538,17 +538,17 @@ const SOSPage: React.FC = () => {
 
       {/* Chat Overlay */}
       {chatProvider && (
-        <div className="fixed inset-0 z-50 bg-[#0B1121] flex flex-col animate-in slide-in-from-bottom-full duration-300">
-          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-slate-800/80 bg-[#131B2F]">
+        <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-bottom-full duration-300">
+          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-border bg-card">
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setChatProvider(null)}
-                className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-300 hover:text-white"
+                className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-textSecondary hover:text-textPrimary"
               >
                 <ArrowLeft size={18} />
               </button>
               <div>
-                <h2 className="font-bold text-white text-lg">{chatProvider.name}</h2>
+                <h2 className="font-bold text-textPrimary text-lg">{chatProvider.name}</h2>
                 <p className="text-emerald-400 text-xs font-semibold flex items-center gap-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> En Route
                 </p>
@@ -559,25 +559,25 @@ const SOSPage: React.FC = () => {
             </button>
           </div>
           
-          <div className="flex-1 w-full bg-[#060B14] p-4 flex flex-col gap-4 overflow-y-auto">
-            <div className="text-center text-xs text-slate-500 mb-2">Today, {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+          <div className="flex-1 w-full bg-background p-4 flex flex-col gap-4 overflow-y-auto">
+            <div className="text-center text-xs text-textTertiary mb-2">Today, {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
             
             <div className="flex gap-2 max-w-[80%]">
-              <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-full bg-surface overflow-hidden shrink-0 mt-1">
                 <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Driver" className="w-full h-full object-cover" />
               </div>
-              <div className="bg-[#131B2F] border border-slate-800 rounded-2xl rounded-tl-none p-3 text-sm text-slate-200">
+              <div className="bg-card border border-border rounded-2xl rounded-tl-none p-3 text-sm text-textPrimary">
                 Hello, this is your ambulance driver. I see your SOS alert and am on my way. Current ETA is {chatProvider.eta} minutes. Stay calm and keep your phone nearby.
               </div>
             </div>
           </div>
 
-          <div className="p-4 bg-[#131B2F] border-t border-slate-800/80 pb-[max(env(safe-area-inset-bottom,16px),16px)]">
+          <div className="p-4 bg-card border-t border-border pb-[max(env(safe-area-inset-bottom,16px),16px)]">
             <div className="relative flex items-center">
               <input 
                 type="text" 
                 placeholder="Type a message..." 
-                className="w-full bg-[#0B1121] border border-slate-700 rounded-full py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-[#3D91FF]"
+                className="w-full bg-background border border-border rounded-full py-3 pl-4 pr-12 text-sm text-textPrimary focus:outline-none focus:border-[#3D91FF]"
               />
               <button 
                 onClick={() => alert("SOS Chat message sent! (Simulated)")}

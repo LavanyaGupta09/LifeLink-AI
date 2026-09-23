@@ -98,19 +98,19 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ onComplete }) => 
   };
 
   return (
-    <div className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-opacity duration-500 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-background backdrop-blur-md p-4 transition-opacity duration-500 ease-in-out ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       {/* Mesh Gradient Background */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
         <div className="absolute top-10 -left-10 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-1/4 -right-10 w-80 h-80 bg-cyan-500/20 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="w-full max-w-md mx-auto bg-slate-900 border border-slate-700/50 shadow-2xl rounded-3xl p-6 md:p-8 relative overflow-hidden animate-slide-up">
+      <div className="w-full max-w-md mx-auto bg-background border border-border shadow-2xl rounded-3xl p-6 md:p-8 relative overflow-hidden animate-slide-up">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2 leading-tight">
             Welcome to LifeLink! Complete your profile to activate your dashboard.
           </h1>
-          <p className="text-slate-400 text-xs">
+          <p className="text-textSecondary text-xs">
             Secure, encrypted, and instantly available to first responders during emergencies.
           </p>
         </div>
@@ -126,32 +126,32 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ onComplete }) => 
           {/* Form Group 1: Personal Details */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Full Name</label>
+              <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Full Name</label>
               <input 
                 type="text" 
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
+                className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
                 placeholder="e.g. Priti Gupta"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Date of Birth</label>
+              <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Date of Birth</label>
               <input 
                 type="date" 
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
-                className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all"
+                className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Blood Group</label>
+              <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Blood Group</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Droplets size={16} className="text-rose-500" />
@@ -160,12 +160,12 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ onComplete }) => 
                   name="bloodGroup"
                   value={formData.bloodGroup}
                   onChange={handleChange}
-                  className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 pl-10 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all appearance-none"
+                  className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 pl-10 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all appearance-none"
                   required
                 >
-                  <option value="" disabled className="text-slate-500">Select Blood Group</option>
+                  <option value="" disabled className="text-textTertiary">Select Blood Group</option>
                   {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
-                    <option key={bg} value={bg} className="bg-slate-800">{bg}</option>
+                    <option key={bg} value={bg} className="bg-surface">{bg}</option>
                   ))}
                 </select>
               </div>
@@ -177,28 +177,28 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ onComplete }) => 
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-1 border-b border-emerald-900/30 pb-2">Primary Emergency Contact</h2>
             
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Contact Name</label>
+              <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Contact Name</label>
               <input 
                 type="text" 
                 name="ecName"
                 value={formData.ecName}
                 onChange={handleChange}
-                className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
+                className="w-full bg-surface text-textPrimary border border-border rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all placeholder-slate-500"
                 placeholder="e.g. Rahul Gupta"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider pl-1">Phone Number</label>
-              <div className="flex items-center w-full bg-slate-800 text-white border border-slate-700 rounded-xl focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500 transition-all overflow-hidden">
-                <span className="pl-3.5 pr-2 py-3.5 text-slate-400 font-semibold border-r border-slate-700 bg-slate-800/80 text-sm">+91</span>
+              <label className="text-xs font-semibold text-textSecondary uppercase tracking-wider pl-1">Phone Number</label>
+              <div className="flex items-center w-full bg-surface text-textPrimary border border-border rounded-xl focus-within:ring-2 focus-within:ring-emerald-500/50 focus-within:border-emerald-500 transition-all overflow-hidden">
+                <span className="pl-3.5 pr-2 py-3.5 text-textSecondary font-semibold border-r border-border bg-surface text-sm">+91</span>
                 <input 
                   type="tel" 
                   name="ecPhone"
                   value={formData.ecPhone}
                   onChange={handleChange}
-                  className="w-full bg-transparent text-white p-3.5 outline-none placeholder-slate-500"
+                  className="w-full bg-transparent text-textPrimary p-3.5 outline-none placeholder-slate-500"
                   placeholder="98765 43210"
                   required
                 />
@@ -209,7 +209,7 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ onComplete }) => 
           <button 
             type="submit" 
             disabled={loading || success}
-            className="w-full mt-6 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-lg py-4 rounded-2xl shadow-lg shadow-emerald-900/30 transition-all transform hover:-translate-y-1 active:scale-[0.98] disabled:opacity-80 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+            className="w-full mt-6 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-textPrimary font-bold text-lg py-4 rounded-2xl shadow-lg shadow-emerald-900/30 transition-all transform hover:-translate-y-1 active:scale-[0.98] disabled:opacity-80 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

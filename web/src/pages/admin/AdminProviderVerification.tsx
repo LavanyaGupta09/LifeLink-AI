@@ -19,10 +19,10 @@ const AdminProviderVerification: React.FC = () => {
   if (!provider) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-        <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center">
+        <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center">
           <XCircle size={32} className="text-red-500" />
         </div>
-        <h2 className="text-xl font-bold text-white">Provider Not Found</h2>
+        <h2 className="text-xl font-bold text-textPrimary">Provider Not Found</h2>
         <button 
           onClick={() => navigate('/admin/providers')}
           className="text-indigo-400 hover:text-indigo-300 font-medium"
@@ -73,10 +73,10 @@ const AdminProviderVerification: React.FC = () => {
       case 'suspended':
         return (
           <div className="bg-slate-500/20 border border-slate-500/30 rounded-xl p-4 flex items-start gap-3">
-            <XCircle className="text-slate-400 mt-0.5 shrink-0" size={20} />
+            <XCircle className="text-textSecondary mt-0.5 shrink-0" size={20} />
             <div>
-              <h3 className="text-sm font-bold text-slate-300">Account Suspended</h3>
-              <p className="text-xs text-slate-400 mt-1">This provider has been temporarily suspended from the network.</p>
+              <h3 className="text-sm font-bold text-textSecondary">Account Suspended</h3>
+              <p className="text-xs text-textSecondary mt-1">This provider has been temporarily suspended from the network.</p>
             </div>
           </div>
         );
@@ -107,16 +107,16 @@ const AdminProviderVerification: React.FC = () => {
       <div className="flex items-center gap-4">
         <button 
           onClick={() => navigate('/admin/providers')}
-          className="w-10 h-10 rounded-full bg-[#111827] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shrink-0"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-textPrimary tracking-tight flex items-center gap-3">
             {provider.name}
-            <span className="text-xs font-bold px-2 py-1 bg-slate-800 text-slate-300 rounded-md uppercase tracking-wider">{provider.type}</span>
+            <span className="text-xs font-bold px-2 py-1 bg-surface text-textSecondary rounded-md uppercase tracking-wider">{provider.type}</span>
           </h1>
-          <p className="text-slate-400 mt-1 text-sm">Provider Registration ID: <span className="font-mono text-slate-300">{provider.registrationId}</span></p>
+          <p className="text-textSecondary mt-1 text-sm">Provider Registration ID: <span className="font-mono text-textSecondary">{provider.registrationId}</span></p>
         </div>
       </div>
 
@@ -127,48 +127,48 @@ const AdminProviderVerification: React.FC = () => {
         
         {/* Left Column: Details */}
         <div className="lg:col-span-1 flex flex-col gap-6">
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-5">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Contact Information</h2>
+          <div className="bg-background border border-border rounded-xl p-5">
+            <h2 className="text-sm font-bold text-textPrimary uppercase tracking-wider mb-4">Contact Information</h2>
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-3">
-                <MapPin size={16} className="text-slate-500 mt-0.5" />
+                <MapPin size={16} className="text-textTertiary mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-slate-400">Location</p>
-                  <p className="text-sm text-slate-200 mt-0.5">{provider.location}</p>
+                  <p className="text-xs font-bold text-textSecondary">Location</p>
+                  <p className="text-sm text-textPrimary mt-0.5">{provider.location}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Mail size={16} className="text-slate-500 mt-0.5" />
+                <Mail size={16} className="text-textTertiary mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-slate-400">Email Address</p>
-                  <p className="text-sm text-slate-200 mt-0.5">{provider.email}</p>
+                  <p className="text-xs font-bold text-textSecondary">Email Address</p>
+                  <p className="text-sm text-textPrimary mt-0.5">{provider.email}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Phone size={16} className="text-slate-500 mt-0.5" />
+                <Phone size={16} className="text-textTertiary mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-slate-400">Phone Number</p>
-                  <p className="text-sm text-slate-200 mt-0.5">{provider.phone}</p>
+                  <p className="text-xs font-bold text-textSecondary">Phone Number</p>
+                  <p className="text-sm text-textPrimary mt-0.5">{provider.phone}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-5">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Activity Summary</h2>
+          <div className="bg-background border border-border rounded-xl p-5">
+            <h2 className="text-sm font-bold text-textPrimary uppercase tracking-wider mb-4">Activity Summary</h2>
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-3">
-                <Calendar size={16} className="text-slate-500 mt-0.5" />
+                <Calendar size={16} className="text-textTertiary mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-slate-400">Application Submitted</p>
-                  <p className="text-sm text-slate-200 mt-0.5">{new Date(provider.submittedDate).toLocaleDateString()}</p>
+                  <p className="text-xs font-bold text-textSecondary">Application Submitted</p>
+                  <p className="text-sm text-textPrimary mt-0.5">{new Date(provider.submittedDate).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Activity size={16} className="text-slate-500 mt-0.5" />
+                <Activity size={16} className="text-textTertiary mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-slate-400">Last System Activity</p>
-                  <p className="text-sm text-slate-200 mt-0.5">{new Date(provider.lastActive).toLocaleDateString()}</p>
+                  <p className="text-xs font-bold text-textSecondary">Last System Activity</p>
+                  <p className="text-sm text-textPrimary mt-0.5">{new Date(provider.lastActive).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>
@@ -177,23 +177,23 @@ const AdminProviderVerification: React.FC = () => {
 
         {/* Right Column: Documents & Actions */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl flex flex-col overflow-hidden">
-            <div className="p-5 border-b border-slate-800/50 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-background border border-border rounded-xl flex flex-col overflow-hidden">
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <h2 className="text-sm font-bold text-textPrimary uppercase tracking-wider flex items-center gap-2">
                 <FileCheck size={18} className="text-indigo-400" />
                 Submitted Documents
               </h2>
             </div>
             <div className="p-5 flex flex-col gap-3">
               {docs.map((doc, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-800 bg-[#060b14]/50">
+                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border bg-[#060b14]/50">
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${doc.status === 'verified' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-orange-500/10 text-orange-500'}`}>
                       <FileText size={16} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-white">{doc.name}</p>
-                      <p className="text-[10px] text-slate-500 mt-0.5">Uploaded: {doc.date}</p>
+                      <p className="text-sm font-medium text-textPrimary">{doc.name}</p>
+                      <p className="text-[10px] text-textTertiary mt-0.5">Uploaded: {doc.date}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -206,10 +206,10 @@ const AdminProviderVerification: React.FC = () => {
                         <AlertTriangle size={12} /> Pending Review
                       </span>
                     )}
-                    <button className="p-2 text-slate-400 hover:text-white transition-colors">
+                    <button className="p-2 text-textSecondary hover:text-textPrimary transition-colors">
                       <Download size={16} />
                     </button>
-                    <button className="p-2 text-slate-400 hover:text-white transition-colors">
+                    <button className="p-2 text-textSecondary hover:text-textPrimary transition-colors">
                       <ExternalLink size={16} />
                     </button>
                   </div>
@@ -219,7 +219,7 @@ const AdminProviderVerification: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row gap-3">
+          <div className="bg-background border border-border rounded-xl p-5 flex flex-col sm:flex-row gap-3">
             {provider.status !== 'verified' && (
               <button 
                 onClick={() => setShowConfirmModal('verified')}
@@ -254,11 +254,11 @@ const AdminProviderVerification: React.FC = () => {
       {showConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowConfirmModal(null)} />
-          <div className="bg-[#111827] border border-slate-700 rounded-2xl p-6 max-w-md w-full relative z-10 animate-scale-up shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-2">Confirm Action</h2>
-            <p className="text-slate-400 text-sm mb-6">
+          <div className="bg-background border border-border rounded-2xl p-6 max-w-md w-full relative z-10 animate-scale-up shadow-2xl">
+            <h2 className="text-xl font-bold text-textPrimary mb-2">Confirm Action</h2>
+            <p className="text-textSecondary text-sm mb-6">
               Are you sure you want to mark this provider as 
-              <span className="font-bold text-white mx-1">
+              <span className="font-bold text-textPrimary mx-1">
                 {showConfirmModal === 'verified' ? 'Approved/Verified' : showConfirmModal === 'action_required' ? 'Needs More Info' : showConfirmModal}
               </span>?
               This action will notify the provider and update their access rights immediately.
@@ -267,13 +267,13 @@ const AdminProviderVerification: React.FC = () => {
             <div className="flex gap-3">
               <button 
                 onClick={() => setShowConfirmModal(null)}
-                className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-xl transition-colors"
+                className="flex-1 py-2.5 bg-surface hover:bg-surface text-textPrimary text-sm font-bold rounded-xl transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={() => handleStatusChange(showConfirmModal)}
-                className={`flex-1 py-2.5 text-white text-sm font-bold rounded-xl transition-colors ${
+                className={`flex-1 py-2.5 text-textPrimary text-sm font-bold rounded-xl transition-colors ${
                   showConfirmModal === 'verified' ? 'bg-emerald-500 hover:bg-emerald-600' :
                   showConfirmModal === 'action_required' ? 'bg-yellow-500 hover:bg-yellow-600 text-black' :
                   'bg-red-500 hover:bg-red-600'

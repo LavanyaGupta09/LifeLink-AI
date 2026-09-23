@@ -57,17 +57,17 @@ const AshaEmergencySOS: React.FC = () => {
   // ── Ready State ──
   if (stage === 'ready') {
     return (
-      <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
-        <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+      <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
+        <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
           <button
             onClick={() => navigate('/asha')}
-            className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+            className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
             <h1 className="text-lg font-bold text-[#FF4757]">Emergency SOS</h1>
-            <p className="text-[10px] text-slate-400">Gambhir sthiti mein</p>
+            <p className="text-[10px] text-textSecondary">Gambhir sthiti mein</p>
           </div>
         </div>
 
@@ -77,7 +77,7 @@ const AshaEmergencySOS: React.FC = () => {
             <div className="absolute inset-0 bg-[#FF4757]/3 pointer-events-none" />
 
             <div className="w-24 h-24 mx-auto mb-5 bg-[#FF4757] rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(255,71,87,0.4)] relative z-10 animate-pulse">
-              <AlertTriangle size={48} className="text-white" />
+              <AlertTriangle size={48} className="text-textPrimary" />
             </div>
 
             <h2 className="text-xl font-bold mb-3 relative z-10 leading-relaxed">
@@ -85,34 +85,34 @@ const AshaEmergencySOS: React.FC = () => {
               to turant yeh button dabayein
             </h2>
 
-            <p className="text-slate-400 text-sm mb-6 relative z-10">
+            <p className="text-textSecondary text-sm mb-6 relative z-10">
               Hospital bed aur ambulance ka turant intezam hoga.
             </p>
 
             {/* Big SOS Button */}
             <button
               onClick={handleSOS}
-              className="w-full bg-gradient-to-r from-[#FF4757] to-[#D63031] hover:from-[#FF6B81] hover:to-[#FF4757] text-white text-xl font-black py-5 rounded-2xl transition-all active:scale-95 shadow-[0_0_40px_rgba(255,71,87,0.4)] relative z-10"
+              className="w-full bg-gradient-to-r from-[#FF4757] to-[#D63031] hover:from-[#FF6B81] hover:to-[#FF4757] text-textPrimary text-xl font-black py-5 rounded-2xl transition-all active:scale-95 shadow-[0_0_40px_rgba(255,71,87,0.4)] relative z-10"
             >
               🚨 State Emergency SOS
             </button>
 
-            <p className="text-slate-500 text-xs mt-3 relative z-10">(Central / State Agency)</p>
+            <p className="text-textTertiary text-xs mt-3 relative z-10">(Central / State Agency)</p>
           </div>
 
           {/* Location Info */}
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-4 flex items-center gap-3">
+          <div className="bg-background border border-border rounded-xl p-4 flex items-center gap-3">
             <div className="w-10 h-10 bg-[#3B82F6]/10 rounded-full flex items-center justify-center shrink-0">
               <MapPin size={20} className="text-[#3B82F6]" />
             </div>
             <div className="flex-1">
-              <p className="text-xs text-slate-400">Aapki Location</p>
+              <p className="text-xs text-textSecondary">Aapki Location</p>
               {location ? (
-                <p className="text-sm font-bold text-white">
+                <p className="text-sm font-bold text-textPrimary">
                   Gaon: {ashaProfile.village} ({location.lat.toFixed(4)}, {location.lng.toFixed(4)})
                 </p>
               ) : (
-                <p className="text-sm text-slate-500">Location dhundh rahe hain...</p>
+                <p className="text-sm text-textTertiary">Location dhundh rahe hain...</p>
               )}
             </div>
           </div>
@@ -124,23 +124,23 @@ const AshaEmergencySOS: React.FC = () => {
   // ── Loading State ──
   if (stage === 'loading') {
     return (
-      <div className="w-full min-h-screen bg-[#040814] text-white flex flex-col items-center justify-center px-4">
+      <div className="w-full min-h-screen bg-background text-textPrimary flex flex-col items-center justify-center px-4">
         <div className="w-20 h-20 mb-6 bg-[#FF4757] rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(255,71,87,0.4)] animate-pulse">
-          <Loader2 size={36} className="text-white animate-spin" />
+          <Loader2 size={36} className="text-textPrimary animate-spin" />
         </div>
         <h2 className="text-xl font-bold mb-2">SOS bhej rahe hain...</h2>
-        <p className="text-slate-400 text-sm">Kripya intezaar karein</p>
+        <p className="text-textSecondary text-sm">Kripya intezaar karein</p>
       </div>
     );
   }
 
   // ── Sent State ──
   return (
-    <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
-      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+    <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
+      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
         <button
           onClick={() => navigate('/asha')}
-          className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
@@ -155,28 +155,28 @@ const AshaEmergencySOS: React.FC = () => {
           </div>
 
           <h2 className="text-xl font-bold text-[#FF4757] mb-2">Gambhir Sthiti!</h2>
-          <p className="text-slate-300 text-sm mb-4 leading-relaxed">
+          <p className="text-textSecondary text-sm mb-4 leading-relaxed">
             Aapke gaon mein ek patient ko<br />turant madad ki zarurat hai.
           </p>
 
           {/* Location */}
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-4 mb-4 text-left">
+          <div className="bg-background border border-border rounded-xl p-4 mb-4 text-left">
             <div className="flex items-center gap-2 mb-2">
               <MapPin size={16} className="text-[#3B82F6]" />
-              <span className="text-xs text-slate-400">Location</span>
+              <span className="text-xs text-textSecondary">Location</span>
             </div>
-            <p className="text-sm font-bold text-white">Gaon: {ashaProfile.village}</p>
-            <p className="text-xs text-slate-500">
+            <p className="text-sm font-bold text-textPrimary">Gaon: {ashaProfile.village}</p>
+            <p className="text-xs text-textTertiary">
               Distance: ~2 km • {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : ''}
             </p>
           </div>
 
           {/* Map placeholder */}
-          <div className="bg-[#131F35] border border-slate-700 rounded-xl h-32 mb-4 flex items-center justify-center overflow-hidden relative">
-            <div className="absolute inset-0 bg-[#0B1525]" />
+          <div className="bg-card border border-border rounded-xl h-32 mb-4 flex items-center justify-center overflow-hidden relative">
+            <div className="absolute inset-0 bg-background" />
             <div className="relative z-10 text-center">
               <MapPin size={24} className="text-[#FF4757] mx-auto mb-1" />
-              <p className="text-[10px] text-slate-400">{ashaProfile.village}</p>
+              <p className="text-[10px] text-textSecondary">{ashaProfile.village}</p>
             </div>
           </div>
         </div>
@@ -187,12 +187,12 @@ const AshaEmergencySOS: React.FC = () => {
             <CheckCircle size={24} className="text-[#00C9A7]" />
             <span className="text-lg font-bold text-[#00C9A7]">SOS bheja ja chuka hai</span>
           </div>
-          <p className="text-slate-400 text-xs">Emergency team ko soochna bhej di gayi hai</p>
+          <p className="text-textSecondary text-xs">Emergency team ko soochna bhej di gayi hai</p>
         </div>
 
         {/* Status Pipeline */}
-        <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-4 mb-6">
-          <h3 className="text-sm font-bold mb-3 text-slate-300">Status</h3>
+        <div className="bg-background border border-border rounded-xl p-4 mb-6">
+          <h3 className="text-sm font-bold mb-3 text-textSecondary">Status</h3>
           {[
             { label: 'SOS Bheja Gaya', done: true },
             { label: 'Emergency Team ko Bataya', done: true },
@@ -202,15 +202,15 @@ const AshaEmergencySOS: React.FC = () => {
           ].map((s, i) => (
             <div key={i} className="flex items-center gap-3 py-2">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                s.done ? 'bg-[#00C9A7]' : s.active ? 'bg-[#F97316] animate-pulse' : 'bg-slate-700'
+                s.done ? 'bg-[#00C9A7]' : s.active ? 'bg-[#F97316] animate-pulse' : 'bg-surface'
               }`}>
                 {s.done ? (
-                  <CheckCircle size={14} className="text-white" />
+                  <CheckCircle size={14} className="text-textPrimary" />
                 ) : (
                   <div className={`w-2 h-2 rounded-full ${s.active ? 'bg-white' : 'bg-slate-500'}`} />
                 )}
               </div>
-              <span className={`text-sm ${s.done ? 'text-[#00C9A7] font-bold' : s.active ? 'text-[#F97316] font-bold' : 'text-slate-500'}`}>
+              <span className={`text-sm ${s.done ? 'text-[#00C9A7] font-bold' : s.active ? 'text-[#F97316] font-bold' : 'text-textTertiary'}`}>
                 {s.label}
               </span>
               {i < 4 && <div className="flex-1" />}
@@ -222,13 +222,13 @@ const AshaEmergencySOS: React.FC = () => {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => navigate('/asha/alert')}
-            className="w-full bg-[#131F35] border border-slate-700 hover:border-slate-500 text-white font-bold py-3 rounded-xl transition-colors"
+            className="w-full bg-card border border-border hover:border-slate-500 text-textPrimary font-bold py-3 rounded-xl transition-colors"
           >
             📋 Alert History Dekhein
           </button>
           <button
             onClick={() => navigate('/asha')}
-            className="w-full bg-[#0B1221] border border-slate-800 hover:border-slate-600 text-slate-300 font-medium py-3 rounded-xl transition-colors"
+            className="w-full bg-background border border-border hover:border-border text-textSecondary font-medium py-3 rounded-xl transition-colors"
           >
             ← ASHA Portal par Jaayein
           </button>

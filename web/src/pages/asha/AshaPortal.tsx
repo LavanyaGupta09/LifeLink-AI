@@ -41,18 +41,18 @@ const AshaPortal: React.FC = () => {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
+    <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
       {/* Header */}
-      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
         <button
           onClick={() => navigate('/dashboard')}
-          className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
           <h1 className="text-lg font-bold">आशा दीदी</h1>
-          <p className="text-[10px] text-slate-400">गाँव में सेहत की सेवा</p>
+          <p className="text-[10px] text-textSecondary">गाँव में सेहत की सेवा</p>
         </div>
       </div>
 
@@ -62,11 +62,11 @@ const AshaPortal: React.FC = () => {
           <div className="absolute top-0 right-0 w-40 h-40 bg-[#F97316]/5 rounded-full blur-[60px] pointer-events-none" />
           
           <div className="w-20 h-20 mx-auto mb-4 bg-[#F97316] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(249,115,22,0.3)]">
-            <Users size={36} className="text-white" />
+            <Users size={36} className="text-textPrimary" />
           </div>
 
           <h2 className="text-2xl font-bold mb-2">आशा दीदी पोर्टल</h2>
-          <p className="text-slate-400 text-sm leading-relaxed">
+          <p className="text-textSecondary text-sm leading-relaxed">
             आप लोगों की सेहत के लिए हमेशा साथ हैं।
           </p>
 
@@ -74,19 +74,19 @@ const AshaPortal: React.FC = () => {
           <div className="flex gap-2 mt-4 justify-center flex-wrap">
             <button
               onClick={() => navigate('/asha/videos')}
-              className="flex items-center gap-1.5 bg-[#131F35] border border-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
+              className="flex items-center gap-1.5 bg-card border border-border text-textSecondary text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
             >
               <Heart size={12} className="text-[#FF4757]" /> वीडियो
             </button>
             <button
               onClick={() => navigate('/asha/offline')}
-              className="flex items-center gap-1.5 bg-[#131F35] border border-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
+              className="flex items-center gap-1.5 bg-card border border-border text-textSecondary text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
             >
               📡 ऑफलाइन
             </button>
             <button
               onClick={() => navigate('/asha/profile')}
-              className="flex items-center gap-1.5 bg-[#131F35] border border-slate-700 text-slate-300 text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
+              className="flex items-center gap-1.5 bg-card border border-border text-textSecondary text-xs font-medium px-3 py-2 rounded-full hover:border-slate-500 transition-colors"
             >
               👩 मेरी जानकारी
             </button>
@@ -101,7 +101,7 @@ const AshaPortal: React.FC = () => {
               <button
                 key={item.route}
                 onClick={() => navigate(item.route)}
-                className="w-full bg-[#0B1221] rounded-2xl p-5 flex items-center gap-4 group border border-slate-800 hover:border-opacity-60 transition-all duration-300 text-left active:scale-[0.98]"
+                className="w-full bg-background rounded-2xl p-5 flex items-center gap-4 group border border-border hover:border-opacity-60 transition-all duration-300 text-left active:scale-[0.98]"
                 style={{
                   borderColor: `${item.color}20`,
                 }}
@@ -118,15 +118,15 @@ const AshaPortal: React.FC = () => {
                   className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: item.bgColor, boxShadow: `0 0 20px ${item.color}30` }}
                 >
-                  <Icon size={28} className="text-white" />
+                  <Icon size={28} className="text-textPrimary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold mb-0.5" style={{ color: item.color }}>
                     {item.title}
                   </h3>
-                  <p className="text-slate-400 text-sm">{item.subtitle}</p>
+                  <p className="text-textSecondary text-sm">{item.subtitle}</p>
                 </div>
-                <ChevronRight size={22} className="text-slate-600 group-hover:text-slate-300 transition-colors shrink-0" />
+                <ChevronRight size={22} className="text-textTertiary group-hover:text-textSecondary transition-colors shrink-0" />
               </button>
             );
           })}

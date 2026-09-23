@@ -48,7 +48,7 @@ const CompactMentalWellnessCard: React.FC = () => {
   const currentMood = healthProfile?.dailyMood;
 
   return (
-    <div className="bg-[#131B2F] rounded-3xl p-6 border border-slate-800 shadow-xl relative overflow-hidden group z-20 pointer-events-auto">
+    <div className="bg-card rounded-3xl p-6 border border-border shadow-xl relative overflow-hidden group z-20 pointer-events-auto">
       {/* Decorative gradient */}
       <div className="absolute top-0 right-0 w-48 h-48 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
       
@@ -59,8 +59,8 @@ const CompactMentalWellnessCard: React.FC = () => {
             <Brain size={20} />
           </div>
           <div>
-            <h2 className="font-bold text-slate-200 text-sm tracking-wide">Wellness Check-in</h2>
-            <p className="text-xs text-slate-500">Take a moment for yourself</p>
+            <h2 className="font-bold text-textPrimary text-sm tracking-wide">Wellness Check-in</h2>
+            <p className="text-xs text-textTertiary">Take a moment for yourself</p>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ const CompactMentalWellnessCard: React.FC = () => {
           <div className="space-y-6">
             {/* Mood Tracker */}
             <div>
-              <p className="text-xs font-medium text-slate-400 mb-3 text-center">How are you feeling today?</p>
+              <p className="text-xs font-medium text-textSecondary mb-3 text-center">How are you feeling today?</p>
               <div className="flex justify-between px-2">
                 {MOODS.map((m) => (
                   <button
@@ -92,19 +92,19 @@ const CompactMentalWellnessCard: React.FC = () => {
                 tabIndex={0}
                 aria-label="Start 2-Minute Breathing Exercise"
                 onClick={() => setActiveActivity('breathing')}
-                className="bg-[#0B1121] border border-slate-700/50 hover:border-teal-500/50 hover:bg-teal-500/10 transition-colors rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer relative z-30"
+                className="bg-background border border-border hover:border-teal-500/50 hover:bg-teal-500/10 transition-colors rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer relative z-30"
               >
                 <Wind size={20} className="text-teal-400" />
-                <span className="text-xs font-bold text-slate-300">2-Min Breathe</span>
+                <span className="text-xs font-bold text-textSecondary">2-Min Breathe</span>
               </button>
               <button 
                 tabIndex={0}
                 aria-label="Start Relax and Focus Session"
                 onClick={() => setActiveActivity('relax')}
-                className="bg-[#0B1121] border border-slate-700/50 hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-colors rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer relative z-30"
+                className="bg-background border border-border hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-colors rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer relative z-30"
               >
                 <HeartPulse size={20} className="text-indigo-400" />
-                <span className="text-xs font-bold text-slate-300">Relax & Focus</span>
+                <span className="text-xs font-bold text-textSecondary">Relax & Focus</span>
               </button>
             </div>
           </div>
@@ -117,7 +117,7 @@ const CompactMentalWellnessCard: React.FC = () => {
               <div className={`absolute inset-0 rounded-full border border-teal-500/30 transition-all duration-[4000ms] ease-in-out ${breathPhase === 'in' ? 'scale-150 bg-teal-500/20' : breathPhase === 'out' ? 'scale-75 bg-transparent' : 'scale-100'}`} />
               <Wind size={32} className="text-teal-500 relative z-10" />
             </div>
-            <button onClick={() => setActiveActivity('none')} className="text-xs text-slate-500 hover:text-white underline cursor-pointer relative z-30">End Session</button>
+            <button onClick={() => setActiveActivity('none')} className="text-xs text-textTertiary hover:text-textPrimary underline cursor-pointer relative z-30">End Session</button>
           </div>
         ) : (
           <div className="flex flex-col items-center py-4">
@@ -125,13 +125,13 @@ const CompactMentalWellnessCard: React.FC = () => {
             <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 animate-pulse flex items-center justify-center border border-indigo-500/30 mb-6">
               <Brain size={32} className="text-indigo-400 opacity-80" />
             </div>
-            <button onClick={() => setActiveActivity('none')} className="text-xs text-slate-500 hover:text-white underline cursor-pointer relative z-30">End Session</button>
+            <button onClick={() => setActiveActivity('none')} className="text-xs text-textTertiary hover:text-textPrimary underline cursor-pointer relative z-30">End Session</button>
           </div>
         )}
 
         {/* Routing Footer */}
-        <div className="mt-5 pt-4 border-t border-slate-800 flex justify-center">
-          <button tabIndex={0} aria-label="Find Professional Help" onClick={() => navigate('/doctor')} className="text-xs font-medium text-slate-500 hover:text-slate-300 flex items-center gap-1 group transition-colors cursor-pointer relative z-30">
+        <div className="mt-5 pt-4 border-t border-border flex justify-center">
+          <button tabIndex={0} aria-label="Find Professional Help" onClick={() => navigate('/doctor')} className="text-xs font-medium text-textTertiary hover:text-textSecondary flex items-center gap-1 group transition-colors cursor-pointer relative z-30">
             Need more support? <span className="text-[#3D91FF] group-hover:underline flex items-center">Find Professional Help <ArrowRight size={12} className="ml-1" /></span>
           </button>
         </div>

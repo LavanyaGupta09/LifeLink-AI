@@ -4,23 +4,23 @@ const PlaceholderPage: React.FC<{ title: string; mockData: any[] }> = ({ title, 
   <div className="flex flex-col gap-6 max-w-[1400px] mx-auto w-full h-full">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h2 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-textPrimary tracking-tight flex items-center gap-2">
           {title}
         </h2>
-        <p className="text-sm text-slate-400 mt-1">Manage and view {title.toLowerCase()}</p>
+        <p className="text-sm text-textSecondary mt-1">Manage and view {title.toLowerCase()}</p>
       </div>
-      <button className="bg-[#131b2f] border border-slate-700 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all w-full md:w-auto">
+      <button className="bg-[#131b2f] border border-border hover:bg-surface text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all w-full md:w-auto">
         + Add New
       </button>
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto custom-scrollbar">
       {mockData.map((item, i) => (
-        <div key={i} className="bg-[#0B1221] border border-slate-800 rounded-2xl p-5 flex flex-col gap-2 hover:border-slate-700 transition-colors">
-          <div className="font-bold text-white text-base">{item.title}</div>
-          <div className="text-sm text-slate-400">{item.desc}</div>
+        <div key={i} className="bg-background border border-border rounded-2xl p-5 flex flex-col gap-2 hover:border-border transition-colors">
+          <div className="font-bold text-textPrimary text-base">{item.title}</div>
+          <div className="text-sm text-textSecondary">{item.desc}</div>
           {item.status && (
-            <div className="mt-2 inline-flex px-2 py-1 rounded bg-[#131b2f] text-xs font-bold text-slate-300 w-max border border-slate-700">
+            <div className="mt-2 inline-flex px-2 py-1 rounded bg-[#131b2f] text-xs font-bold text-textSecondary w-max border border-border">
               {item.status}
             </div>
           )}

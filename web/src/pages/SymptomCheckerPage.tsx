@@ -163,8 +163,8 @@ const SymptomCheckerPage: React.FC = () => {
         {/* Permanent Legal Disclaimer */}
         <div className="bg-black/90 p-3 mx-4 mt-4 rounded-lg flex items-start gap-3 border-l-4 border-[#FFA502] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
           <AlertTriangle size={16} className="text-[#FFA502] shrink-0 mt-0.5" />
-          <p className="text-[10px] text-gray-300 leading-tight uppercase font-semibold tracking-wide">
-            <strong className="text-white">Legal Disclaimer:</strong> This AI provides emergency triage recommendations, not medical diagnoses. Always consult a certified physician.
+          <p className="text-[10px] text-textSecondary leading-tight uppercase font-semibold tracking-wide">
+            <strong className="text-textPrimary">Legal Disclaimer:</strong> This AI provides emergency triage recommendations, not medical diagnoses. Always consult a certified physician.
           </p>
         </div>
 
@@ -172,7 +172,7 @@ const SymptomCheckerPage: React.FC = () => {
         <div className="input-section animate-fade-in mx-4 mt-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
           
           <div className="mb-3">
-            <h3 className="text-sm font-semibold text-white mb-1">Select Symptoms</h3>
+            <h3 className="text-sm font-semibold text-textPrimary mb-1">Select Symptoms</h3>
             <p className="text-xs text-secondary">Type symptoms and press Enter or Comma</p>
           </div>
 
@@ -333,19 +333,19 @@ const SymptomCheckerPage: React.FC = () => {
 
               <div className="mb-6">
                 <p className="text-xs text-secondary uppercase font-bold mb-2">Recommended Action</p>
-                <p className="text-base font-medium text-white">{currentSession.recommendation}</p>
+                <p className="text-base font-medium text-textPrimary">{currentSession.recommendation}</p>
               </div>
 
               {/* Verified Sources */}
               {currentSession.sources && currentSession.sources.length > 0 && (
-                <div className="mb-6 pt-4 border-t border-slate-800/50">
+                <div className="mb-6 pt-4 border-t border-border">
                   <p className="text-xs text-emerald-500 uppercase font-bold mb-3 flex items-center gap-1">
                     <Shield size={12} className="text-emerald-500"/> Verified Medical Sources
                   </p>
                   <div className="flex flex-col gap-2">
                     {currentSession.sources.map((src, i) => (
                       <div key={i} className="flex justify-between items-center bg-emerald-950/20 border border-emerald-900/30 px-3 py-2 rounded-lg text-xs">
-                        <span className="text-slate-300 font-medium">{src.name}</span>
+                        <span className="text-textSecondary font-medium">{src.name}</span>
                         <span className="text-emerald-400 font-bold">{Math.round(src.confidence * 100)}% match</span>
                       </div>
                     ))}
@@ -373,7 +373,7 @@ const SymptomCheckerPage: React.FC = () => {
                 </button>
                 
                 <button 
-                  className="btn btn-block bg-[#131B2F] border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 mt-2" 
+                  className="btn btn-block bg-card border border-border text-textSecondary hover:bg-surface transition-colors flex items-center justify-center gap-2 mt-2" 
                   onClick={() => window.dispatchEvent(new Event('openUberRideFlow'))}
                 >
                   <CarFront size={18} />

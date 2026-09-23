@@ -66,18 +66,18 @@ const AshaVideoLibrary: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
+    <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
       {/* Header */}
-      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
         <button
           onClick={() => navigate('/asha')}
-          className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
           <h1 className="text-lg font-bold">Emergency Videos</h1>
-          <p className="text-[10px] text-slate-400">Zaruri videos — Offline bhi chalega</p>
+          <p className="text-[10px] text-textSecondary">Zaruri videos — Offline bhi chalega</p>
         </div>
       </div>
 
@@ -89,8 +89,8 @@ const AshaVideoLibrary: React.FC = () => {
             <span className="text-xs font-bold text-[#00C9A7]">Video offline bhi chalega</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Download size={12} className="text-slate-400" />
-            <span className="text-[10px] text-slate-400">2-5 MB total</span>
+            <Download size={12} className="text-textSecondary" />
+            <span className="text-[10px] text-textSecondary">2-5 MB total</span>
           </div>
         </div>
 
@@ -100,7 +100,7 @@ const AshaVideoLibrary: React.FC = () => {
             <button
               key={video.id}
               onClick={() => handlePlay(video.id)}
-              className="w-full bg-[#0B1221] border border-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:border-slate-600 transition-all text-left active:scale-[0.98] group"
+              className="w-full bg-background border border-border rounded-2xl p-4 flex items-center gap-4 hover:border-border transition-all text-left active:scale-[0.98] group"
             >
               {/* Thumbnail */}
               <div
@@ -127,9 +127,9 @@ const AshaVideoLibrary: React.FC = () => {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold text-white mb-1 leading-snug">{video.title}</h3>
+                <h3 className="text-sm font-bold text-textPrimary mb-1 leading-snug">{video.title}</h3>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-slate-500 bg-slate-800/50 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] text-textTertiary bg-surface px-2 py-0.5 rounded-full">
                     ⏱ {video.duration}
                   </span>
                 </div>
@@ -143,7 +143,7 @@ const AshaVideoLibrary: React.FC = () => {
                 {playingId === video.id ? (
                   <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <Play size={18} className="text-white ml-0.5" fill="white" />
+                  <Play size={18} className="text-textPrimary ml-0.5" fill="white" />
                 )}
               </div>
             </button>
@@ -151,10 +151,10 @@ const AshaVideoLibrary: React.FC = () => {
         </div>
 
         {/* Disclaimer */}
-        <div className="bg-[#131F35] border border-slate-800 rounded-xl p-4 mt-6 text-center">
-          <p className="text-[10px] text-slate-500 leading-relaxed">
+        <div className="bg-card border border-border rounded-xl p-4 mt-6 text-center">
+          <p className="text-[10px] text-textTertiary leading-relaxed">
             ⚠️ Yeh videos sirf pehli madad ke liye hain.<br />
-            Gambhir sthiti mein hamesha <strong className="text-white">doctor se milein</strong>.
+            Gambhir sthiti mein hamesha <strong className="text-textPrimary">doctor se milein</strong>.
           </p>
         </div>
       </div>

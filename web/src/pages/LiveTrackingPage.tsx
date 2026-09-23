@@ -154,10 +154,10 @@ const LiveTrackingPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-24 px-6 py-6 ">
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-24 px-6 py-6 ">
       {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
-        <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform" onClick={() => navigate(-1)}>
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
+        <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform" onClick={() => navigate(-1)}>
           <ArrowLeft size={20} />
         </button>
         <div className="flex-1">
@@ -171,7 +171,7 @@ const LiveTrackingPage: React.FC = () => {
       <div className="flex-1 p-4 flex flex-col gap-6 w-full">
         
         {/* WIDGET 1: DYNAMIC MAP & RADAR */}
-        <section className="w-full h-[280px] bg-[#131B2F] border border-slate-800 rounded-3xl relative overflow-hidden shadow-2xl flex flex-col items-center justify-center">
+        <section className="w-full h-[280px] bg-card border border-border rounded-3xl relative overflow-hidden shadow-2xl flex flex-col items-center justify-center">
           {/* Radar Background */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
             <div className="w-full h-full border border-emerald-500/20 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
@@ -187,7 +187,7 @@ const LiveTrackingPage: React.FC = () => {
           <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
             {/* The Provider Icon (Moving closer to center) */}
             <div 
-              className="absolute bg-slate-900 border-2 border-slate-700 p-3 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-all duration-[3000ms] ease-linear z-20"
+              className="absolute bg-background border-2 border-border p-3 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-all duration-[3000ms] ease-linear z-20"
               style={{
                 // Mock coordinate logic: moving from top-left to center
                 top: isArrived ? '50%' : `${10 + (1 - distance / config.initialDistance) * 40}%`,
@@ -207,18 +207,18 @@ const LiveTrackingPage: React.FC = () => {
           </div>
 
           {/* ETA Readout Overlay */}
-          <div className="absolute bottom-4 left-4 right-4 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-2xl p-4 flex items-center justify-between shadow-xl">
+          <div className="absolute bottom-4 left-4 right-4 bg-background backdrop-blur-md border border-border rounded-2xl p-4 flex items-center justify-between shadow-xl">
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Status</p>
+              <p className="text-xs text-textSecondary font-bold uppercase tracking-wider mb-1">Status</p>
               <div className="flex items-center gap-2">
                 <div className={`w-2.5 h-2.5 rounded-full ${isArrived ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`}></div>
-                <span className="font-black text-lg text-white">
+                <span className="font-black text-lg text-textPrimary">
                   {isArrived ? 'Arrived' : `${distance} km away`}
                 </span>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">ETA</p>
+              <p className="text-xs text-textSecondary font-bold uppercase tracking-wider mb-1">ETA</p>
               <span className={`font-black text-xl ${isArrived ? 'text-emerald-400' : 'text-[#3D91FF]'}`}>
                 {isArrived ? 'Now' : `${eta} min`}
               </span>
@@ -227,15 +227,15 @@ const LiveTrackingPage: React.FC = () => {
         </section>
 
         {/* WIDGET 2: DRIVER / TECHNICIAN CONTACT CARD */}
-        <section className="bg-[#131B2F] border border-slate-800 rounded-3xl p-5 shadow-xl">
+        <section className="bg-card border border-border rounded-3xl p-5 shadow-xl">
           <div className="flex items-center gap-4 mb-5">
-            <div className="w-14 h-14 bg-slate-800 rounded-full overflow-hidden border border-slate-700 flex items-center justify-center shrink-0">
+            <div className="w-14 h-14 bg-surface rounded-full overflow-hidden border border-border flex items-center justify-center shrink-0">
               <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Provider Avatar" className="w-full h-full object-cover" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-white text-lg leading-tight">{config.providerName}</h3>
-              <p className="text-xs text-slate-400 font-medium mb-1">{config.providerRole}</p>
-              <div className="inline-block bg-slate-800 px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-300">
+              <h3 className="font-bold text-textPrimary text-lg leading-tight">{config.providerName}</h3>
+              <p className="text-xs text-textSecondary font-medium mb-1">{config.providerRole}</p>
+              <div className="inline-block bg-surface px-2 py-0.5 rounded-md text-[10px] font-bold text-textSecondary">
                 {config.providerRating}
               </div>
             </div>
@@ -258,13 +258,13 @@ const LiveTrackingPage: React.FC = () => {
         </section>
 
         {/* WIDGET 3: SERVICE-SPECIFIC STEPPER TIMELINE */}
-        <section className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        <section className="bg-card border border-border rounded-3xl p-6 shadow-xl relative overflow-hidden">
           {type === 'ambulance' && <div className="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>}
-          <h3 className="text-lg font-bold text-white mb-6">Live Status Tracker</h3>
+          <h3 className="text-lg font-bold text-textPrimary mb-6">Live Status Tracker</h3>
           
           <div className="flex flex-col gap-0 relative">
             {/* Connecting Line */}
-            <div className="absolute left-[15px] top-[20px] bottom-[20px] w-0.5 bg-slate-800 z-0"></div>
+            <div className="absolute left-[15px] top-[20px] bottom-[20px] w-0.5 bg-surface z-0"></div>
             
             {config.steps.map((step, idx) => {
               const isCompleted = idx < currentStep;
@@ -276,15 +276,15 @@ const LiveTrackingPage: React.FC = () => {
                     isCompleted 
                       ? 'bg-emerald-500 border-emerald-500 text-black' 
                       : isActive
-                        ? 'bg-[#131B2F] border-[#3D91FF] text-[#3D91FF]'
-                        : 'bg-[#131B2F] border-slate-700 text-slate-600'
+                        ? 'bg-card border-[#3D91FF] text-[#3D91FF]'
+                        : 'bg-card border-border text-textTertiary'
                   }`}>
-                    {isCompleted ? <CheckCircle2 size={16} /> : <div className={`w-2.5 h-2.5 rounded-full ${isActive ? 'bg-[#3D91FF] animate-pulse' : 'bg-slate-700'}`}></div>}
+                    {isCompleted ? <CheckCircle2 size={16} /> : <div className={`w-2.5 h-2.5 rounded-full ${isActive ? 'bg-[#3D91FF] animate-pulse' : 'bg-surface'}`}></div>}
                   </div>
                   <div className="pt-1.5">
-                    <p className={`font-bold ${isCompleted ? 'text-emerald-400' : isActive ? 'text-white' : 'text-slate-500'}`}>{step}</p>
+                    <p className={`font-bold ${isCompleted ? 'text-emerald-400' : isActive ? 'text-textPrimary' : 'text-textTertiary'}`}>{step}</p>
                     {isActive && (
-                      <p className="text-xs text-slate-400 mt-1">{isArrived ? 'Service action is being completed.' : 'We are currently on this step.'}</p>
+                      <p className="text-xs text-textSecondary mt-1">{isArrived ? 'Service action is being completed.' : 'We are currently on this step.'}</p>
                     )}
                   </div>
                 </div>
@@ -306,17 +306,17 @@ const LiveTrackingPage: React.FC = () => {
       </div>
       {/* Active Call Overlay */}
       {activeCall && (
-        <div className="fixed inset-0 z-50 bg-[#0B1121] flex flex-col animate-in fade-in zoom-in-95 duration-300">
-          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-slate-800/80">
+        <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in fade-in zoom-in-95 duration-300">
+          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-border">
             <div>
-              <h2 className="font-bold text-white text-lg">Live Call</h2>
+              <h2 className="font-bold text-textPrimary text-lg">Live Call</h2>
               <p className="text-emerald-400 text-xs font-semibold animate-pulse flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> End-to-End Encrypted
               </p>
             </div>
             <button 
               onClick={() => setActiveCall(null)}
-              className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-300 hover:text-white"
+              className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-textSecondary hover:text-textPrimary"
             >
               <ArrowLeft size={18} />
             </button>
@@ -333,17 +333,17 @@ const LiveTrackingPage: React.FC = () => {
 
       {/* Active Chat Overlay */}
       {activeChat && (
-        <div className="fixed inset-0 z-50 bg-[#0B1121] flex flex-col animate-in slide-in-from-bottom-full duration-300">
-          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-slate-800/80 bg-[#131B2F]">
+        <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-bottom-full duration-300">
+          <div className="p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between border-b border-border bg-card">
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setActiveChat(false)}
-                className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-300 hover:text-white"
+                className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-textSecondary hover:text-textPrimary"
               >
                 <ArrowLeft size={18} />
               </button>
               <div>
-                <h2 className="font-bold text-white text-lg">{config.providerName}</h2>
+                <h2 className="font-bold text-textPrimary text-lg">{config.providerName}</h2>
                 <p className="text-emerald-400 text-xs font-semibold flex items-center gap-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> Online
                 </p>
@@ -354,25 +354,25 @@ const LiveTrackingPage: React.FC = () => {
             </button>
           </div>
           
-          <div className="flex-1 w-full bg-[#060B14] p-4 flex flex-col gap-4 overflow-y-auto">
-            <div className="text-center text-xs text-slate-500 mb-2">Today, {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+          <div className="flex-1 w-full bg-background p-4 flex flex-col gap-4 overflow-y-auto">
+            <div className="text-center text-xs text-textTertiary mb-2">Today, {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
             
             <div className="flex gap-2 max-w-[80%]">
-              <div className="w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-full bg-surface overflow-hidden shrink-0 mt-1">
                 <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Provider" className="w-full h-full object-cover" />
               </div>
-              <div className="bg-[#131B2F] border border-slate-800 rounded-2xl rounded-tl-none p-3 text-sm text-slate-200">
+              <div className="bg-card border border-border rounded-2xl rounded-tl-none p-3 text-sm text-textPrimary">
                 Hello! I am on my way to your location. My ETA is {eta} minutes.
               </div>
             </div>
           </div>
 
-          <div className="p-4 bg-[#131B2F] border-t border-slate-800/80 pb-[max(env(safe-area-inset-bottom,16px),16px)]">
+          <div className="p-4 bg-card border-t border-border pb-[max(env(safe-area-inset-bottom,16px),16px)]">
             <div className="relative flex items-center">
               <input 
                 type="text" 
                 placeholder="Type a message..." 
-                className="w-full bg-[#0B1121] border border-slate-700 rounded-full py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-[#3D91FF]"
+                className="w-full bg-background border border-border rounded-full py-3 pl-4 pr-12 text-sm text-textPrimary focus:outline-none focus:border-[#3D91FF]"
               />
               <button 
                 onClick={() => alert("Message sent! (Simulated)")}

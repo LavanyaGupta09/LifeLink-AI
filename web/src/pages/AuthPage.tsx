@@ -365,7 +365,7 @@ const AuthPage: React.FC = () => {
                   <button 
                     type="button"
                     onClick={() => { setOtp(''); setErrorMessage(''); if (otpInputRef.current) otpInputRef.current.focus(); }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-textSecondary hover:text-textPrimary"
                   >
                     <span className="text-xs font-semibold px-2 py-1 bg-gray-800 rounded-md">Clear</span>
                   </button>

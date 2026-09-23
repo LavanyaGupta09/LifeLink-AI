@@ -77,13 +77,13 @@ const VendorPortalPage: React.FC = () => {
 
       <div className="flex px-4 pt-4 gap-2">
         <button
-          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${activeTab === 'hospital' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${activeTab === 'hospital' ? 'bg-[var(--primary)] text-textPrimary' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
           onClick={() => setActiveTab('hospital')}
         >
           <Building2 size={16} /> Hospital ER
         </button>
         <button
-          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${activeTab === 'pharmacy' ? 'bg-[#2ED573] text-white' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${activeTab === 'pharmacy' ? 'bg-[#2ED573] text-textPrimary' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
           onClick={() => setActiveTab('pharmacy')}
         >
           <Pill size={16} /> Pharmacy

@@ -63,7 +63,7 @@ const PartnerLayout: React.FC = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[#040814] text-slate-200 font-sans overflow-hidden">
+    <div className="flex h-screen bg-background text-textPrimary font-sans overflow-hidden">
       
       {/* DESKTOP SIDEBAR */}
       {!isSidebarCollapsed && (
@@ -77,8 +77,8 @@ const PartnerLayout: React.FC = () => {
                </svg>
              </div>
              <div>
-               <h1 className="text-xl font-bold text-white tracking-tight leading-none">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
-               <p className="text-[10px] text-slate-400 font-medium tracking-wide mt-1">Facility Partner</p>
+               <h1 className="text-xl font-bold text-textPrimary tracking-tight leading-none">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
+               <p className="text-[10px] text-textSecondary font-medium tracking-wide mt-1">Facility Partner</p>
              </div>
           </div>
         </div>
@@ -88,11 +88,11 @@ const PartnerLayout: React.FC = () => {
           {navGroups.map((group, idx) => (
             <div key={idx}>
               <div className="flex items-center justify-between px-3 mb-2">
-                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{group.title}</h3>
+                <h3 className="text-[10px] font-bold text-textTertiary uppercase tracking-wider">{group.title}</h3>
                 {group.title === 'OPERATIONS' && (
                   <button 
                     onClick={() => setIsSidebarCollapsed(true)} 
-                    className="flex items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md"
+                    className="flex items-center gap-1 text-[10px] font-bold text-textSecondary hover:text-textPrimary transition-colors bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md"
                     title="Hide Sidebar"
                   >
                     <ChevronLeft size={12} /> Collapse
@@ -110,10 +110,10 @@ const PartnerLayout: React.FC = () => {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                         isActive 
                           ? 'bg-gradient-to-r from-[#00C9A7]/20 to-transparent text-[#00C9A7] border-l-2 border-[#00C9A7]' 
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border-l-2 border-transparent'
+                          : 'text-textSecondary hover:text-textPrimary hover:bg-white/5 border-l-2 border-transparent'
                       }`}
                     >
-                      <Icon size={18} className={isActive ? 'text-[#00C9A7]' : 'text-slate-500'} />
+                      <Icon size={18} className={isActive ? 'text-[#00C9A7]' : 'text-textTertiary'} />
                       {item.label}
                     </NavLink>
                   );
@@ -125,12 +125,12 @@ const PartnerLayout: React.FC = () => {
 
         {/* Sidebar Footer / Support */}
         <div className="p-4 mt-auto sticky bottom-0 bg-[#060b14]">
-          <div className="bg-[#0B1221] border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-slate-300">
+          <div className="bg-background border border-border rounded-xl p-4 flex flex-col gap-3">
+            <div className="flex items-center gap-2 text-textSecondary">
               <Phone size={16} className="text-[#3D91FF]" />
               <div className="text-xs">
                 <p className="font-bold">Need Help?</p>
-                <p className="text-[10px] text-slate-400">24/7 Partner Support</p>
+                <p className="text-[10px] text-textSecondary">24/7 Partner Support</p>
               </div>
             </div>
             <button className="w-full bg-[#3D91FF]/10 hover:bg-[#3D91FF]/20 text-[#3D91FF] py-2 rounded-lg text-xs font-bold transition-colors">
@@ -150,14 +150,14 @@ const PartnerLayout: React.FC = () => {
           {/* Unified Left Section (Logo, Menu, Back) */}
           <div className="flex items-center gap-3 shrink-0">
             {/* Mobile Drawer Toggle (visible < md) */}
-            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-textSecondary hover:text-textPrimary">
               <Menu size={24} />
             </button>
 
             {/* Desktop Sidebar Toggle (visible >= md, only when collapsed) */}
             <button 
               onClick={() => setIsSidebarCollapsed(false)} 
-              className={`hidden ${isSidebarCollapsed ? 'md:flex' : 'md:hidden'} p-2 -ml-2 text-slate-400 hover:text-white`}
+              className={`hidden ${isSidebarCollapsed ? 'md:flex' : 'md:hidden'} p-2 -ml-2 text-textSecondary hover:text-textPrimary`}
               title="Expand Sidebar"
             >
               <Menu size={24} />
@@ -166,14 +166,14 @@ const PartnerLayout: React.FC = () => {
             {/* Logo (visible < md OR when sidebar collapsed >= md) */}
             <div className={`flex items-center gap-2 cursor-pointer ${!isSidebarCollapsed ? 'md:hidden' : ''}`} onClick={() => navigate('/partner/dashboard')}>
               <HeartPulse size={20} className="text-[#00C9A7]" />
-              <h1 className="text-lg font-bold text-white tracking-tight leading-none hidden sm:block">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
+              <h1 className="text-lg font-bold text-textPrimary tracking-tight leading-none hidden sm:block">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
             </div>
 
             {/* Back Button */}
             {location.pathname !== '/partner/dashboard' && (
               <button 
                 onClick={() => navigate('/partner/dashboard')} 
-                className="hidden md:flex items-center justify-center w-9 h-9 rounded-full bg-[#131b2f] border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0 ml-2"
+                className="hidden md:flex items-center justify-center w-9 h-9 rounded-full bg-[#131b2f] border border-border text-textSecondary hover:text-white hover:bg-surface transition-colors shrink-0 ml-2"
                 title="Back to Dashboard"
               >
                 <ArrowLeft size={18} />
@@ -184,65 +184,65 @@ const PartnerLayout: React.FC = () => {
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-xl relative mx-auto">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="text-slate-500" size={18} />
+              <Search className="text-textTertiary" size={18} />
             </div>
             <input 
               type="text" 
               style={{ paddingLeft: '44px' }}
               placeholder="Search patients, appointments, orders..." 
-              className="w-full bg-[#0B1221] border border-slate-800 focus:border-[#3D91FF] focus:outline-none rounded-full py-2.5 pr-4 text-sm text-white placeholder-slate-500 transition-colors"
+              className="w-full bg-background border border-border focus:border-[#3D91FF] focus:outline-none rounded-full py-2.5 pr-4 text-sm text-textPrimary placeholder-slate-500 transition-colors"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
-              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-slate-500 bg-[#131b2f] border border-slate-700 rounded-md">⌘</kbd>
-              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-slate-500 bg-[#131b2f] border border-slate-700 rounded-md">K</kbd>
+              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-textTertiary bg-[#131b2f] border border-border rounded-md">⌘</kbd>
+              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-textTertiary bg-[#131b2f] border border-border rounded-md">K</kbd>
             </div>
           </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-3 md:gap-5">
-            <button className="relative p-2 text-slate-400 hover:text-white transition-colors hidden md:block">
+            <button className="relative p-2 text-textSecondary hover:text-textPrimary transition-colors hidden md:block">
               <MessageSquare size={20} />
             </button>
-            <button className="relative p-2 text-slate-400 hover:text-white transition-colors">
+            <button className="relative p-2 text-textSecondary hover:text-textPrimary transition-colors">
               <Bell size={20} />
               {unreadCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#060b14]"></span>
               )}
             </button>
             
-            <div className="h-6 w-[1px] bg-slate-800 hidden md:block"></div>
+            <div className="h-6 w-[1px] bg-surface hidden md:block"></div>
 
             <div className="relative">
               <button 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-3 hover:bg-white/5 p-1 pr-3 rounded-full transition-colors"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#6366F1] flex items-center justify-center text-white font-bold text-sm shadow-md overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#6366F1] flex items-center justify-center text-textPrimary font-bold text-sm shadow-md overflow-hidden">
                   <Building2 size={16} />
                 </div>
                 <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-bold text-white leading-tight">{facility.name}</span>
+                  <span className="text-sm font-bold text-textPrimary leading-tight">{facility.name}</span>
                   <div className="flex items-center gap-1">
                     <div className={`w-1.5 h-1.5 rounded-full ${facility.verified ? 'bg-emerald-500' : 'bg-orange-500'}`}></div>
-                    <span className="text-[10px] font-medium text-slate-400">{facility.verified ? 'Verified' : 'Pending'}</span>
+                    <span className="text-[10px] font-medium text-textSecondary">{facility.verified ? 'Verified' : 'Pending'}</span>
                   </div>
                 </div>
               </button>
 
               {/* Profile Dropdown */}
               {isProfileOpen && (
-                <div className="absolute right-0 top-full mt-2 w-56 bg-[#0B1221] border border-slate-800 rounded-xl shadow-xl shadow-black/50 py-2 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-4 py-2 border-b border-slate-800 md:hidden">
-                    <p className="text-sm font-bold text-white">{facility.name}</p>
-                    <p className="text-xs text-slate-400">{facility.type}</p>
+                <div className="absolute right-0 top-full mt-2 w-56 bg-background border border-border rounded-xl shadow-xl shadow-black/50 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-2 border-b border-border md:hidden">
+                    <p className="text-sm font-bold text-textPrimary">{facility.name}</p>
+                    <p className="text-xs text-textSecondary">{facility.type}</p>
                   </div>
-                  <NavLink to="/partner/profile" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+                  <NavLink to="/partner/profile" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-textSecondary hover:bg-white/5 hover:text-textPrimary">
                     <UserCircle size={16} /> View Profile
                   </NavLink>
-                  <NavLink to="/partner/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">
+                  <NavLink to="/partner/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-textSecondary hover:bg-white/5 hover:text-textPrimary">
                     <Settings size={16} /> Settings
                   </NavLink>
-                  <div className="h-[1px] bg-slate-800 my-1"></div>
+                  <div className="h-[1px] bg-surface my-1"></div>
                   <button onClick={handleLogout} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300">
                     <LogOut size={16} /> Log Out
                   </button>
@@ -253,7 +253,7 @@ const PartnerLayout: React.FC = () => {
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 bg-[#040814] pb-24 md:pb-8">
+        <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 bg-background pb-24 md:pb-8">
           <Outlet />
         </main>
 
@@ -263,13 +263,13 @@ const PartnerLayout: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
-          <div className="absolute top-0 left-0 bottom-0 w-[280px] bg-[#060B14] border-r border-slate-800 flex flex-col animate-in slide-in-from-left duration-300">
-            <div className="p-4 flex items-center justify-between border-b border-slate-800">
+          <div className="absolute top-0 left-0 bottom-0 w-[280px] bg-background border-r border-border flex flex-col animate-in slide-in-from-left duration-300">
+            <div className="p-4 flex items-center justify-between border-b border-border">
               <div className="flex items-center gap-2">
                 <HeartPulse size={24} className="text-[#00C9A7]" />
-                <span className="font-bold text-white text-lg">LifeLink <span className="text-[#00C9A7]">AI</span></span>
+                <span className="font-bold text-textPrimary text-lg">LifeLink <span className="text-[#00C9A7]">AI</span></span>
               </div>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-white">
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-textSecondary hover:text-textPrimary">
                 <X size={20} />
               </button>
             </div>
@@ -277,11 +277,11 @@ const PartnerLayout: React.FC = () => {
               {navGroups.map((group, idx) => (
                 <div key={idx}>
                   <div className="flex items-center justify-between px-3 mb-2">
-                    <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{group.title}</h3>
+                    <h3 className="text-[10px] font-bold text-textTertiary uppercase tracking-wider">{group.title}</h3>
                     {group.title === 'OPERATIONS' && (
                       <button 
                         onClick={() => setIsMobileMenuOpen(false)} 
-                        className="flex items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md"
+                        className="flex items-center gap-1 text-[10px] font-bold text-textSecondary hover:text-textPrimary transition-colors bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-md"
                         title="Close Sidebar"
                       >
                         <ChevronLeft size={12} /> Collapse
@@ -295,7 +295,7 @@ const PartnerLayout: React.FC = () => {
                         to={item.path}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                          isActive ? 'bg-[#00C9A7]/10 text-[#00C9A7]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                          isActive ? 'bg-[#00C9A7]/10 text-[#00C9A7]' : 'text-textSecondary hover:text-textPrimary hover:bg-white/5'
                         }`}
                       >
                         <item.icon size={18} />
@@ -311,25 +311,25 @@ const PartnerLayout: React.FC = () => {
       )}
 
       {/* MOBILE BOTTOM NAV */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#060b14]/90 backdrop-blur-xl border-t border-slate-800 z-40 flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
-        <NavLink to="/partner/dashboard" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-slate-500'}`}>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#060b14]/90 backdrop-blur-xl border-t border-border z-40 flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
+        <NavLink to="/partner/dashboard" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-textTertiary'}`}>
           <Home size={20} />
           <span className="text-[10px] font-medium">Home</span>
         </NavLink>
-        <NavLink to="/partner/appointments" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-slate-500'}`}>
+        <NavLink to="/partner/appointments" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-textTertiary'}`}>
           <Calendar size={20} />
           <span className="text-[10px] font-medium">Bookings</span>
         </NavLink>
         <div className="relative -top-5">
-          <button className="w-12 h-12 bg-gradient-to-br from-[#8B5CF6] to-[#6366F1] rounded-full flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 border-4 border-[#040814]">
+          <button className="w-12 h-12 bg-gradient-to-br from-[#8B5CF6] to-[#6366F1] rounded-full flex items-center justify-center text-textPrimary shadow-lg shadow-indigo-500/30 border-4 border-[#040814]">
             <Plus size={24} />
           </button>
         </div>
-        <NavLink to="/partner/inventory/pharmacy" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-slate-500'}`}>
+        <NavLink to="/partner/inventory/pharmacy" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-textTertiary'}`}>
           <Package size={20} />
           <span className="text-[10px] font-medium">Inventory</span>
         </NavLink>
-        <NavLink to="/partner/patients" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-slate-500'}`}>
+        <NavLink to="/partner/patients" className={({isActive}) => `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-[#00C9A7]' : 'text-textTertiary'}`}>
           <Users size={20} />
           <span className="text-[10px] font-medium">Patients</span>
         </NavLink>

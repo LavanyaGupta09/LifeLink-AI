@@ -83,13 +83,13 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, onScanSuccess 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-[#131F35] border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-slate-700/50 flex justify-between items-center bg-[#0B1121]">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+      <div className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
+        <div className="p-4 border-b border-border flex justify-between items-center bg-background">
+          <h2 className="text-lg font-bold text-textPrimary flex items-center gap-2">
             <ScanFace size={20} className="text-[#3D91FF]" />
             Scan Patient QR
           </h2>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/50 hover:bg-slate-800 transition-colors">
+          <button onClick={onClose} className="p-2 text-textSecondary hover:text-textPrimary rounded-full bg-surface hover:bg-surface transition-colors">
             <X size={18} />
           </button>
         </div>
@@ -98,8 +98,8 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, onScanSuccess 
           {isScanning ? (
             <div className="flex flex-col items-center text-center">
               <Loader2 size={48} className="text-[#3D91FF] animate-spin mb-4" />
-              <p className="text-white font-semibold text-lg">Analyzing Image...</p>
-              <p className="text-slate-400 text-sm mt-2">Please hold on, sending to goQR API.</p>
+              <p className="text-textPrimary font-semibold text-lg">Analyzing Image...</p>
+              <p className="text-textSecondary text-sm mt-2">Please hold on, sending to goQR API.</p>
             </div>
           ) : (
             <div className="flex flex-col items-center w-full">
@@ -109,8 +109,8 @@ const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose, onScanSuccess 
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-[#3D91FF]/0 via-[#3D91FF]/10 to-[#3D91FF]/0 group-hover:translate-y-full transition-transform duration-1000"></div>
                 <ScanFace size={48} className="text-[#3D91FF] mb-3" />
-                <span className="text-white font-semibold text-sm">Tap to Scan</span>
-                <span className="text-slate-400 text-xs mt-1">Camera or Gallery</span>
+                <span className="text-textPrimary font-semibold text-sm">Tap to Scan</span>
+                <span className="text-textSecondary text-xs mt-1">Camera or Gallery</span>
               </div>
               
               {error && (

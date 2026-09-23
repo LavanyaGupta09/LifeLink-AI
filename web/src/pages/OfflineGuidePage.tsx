@@ -47,7 +47,7 @@ const OfflineGuidePage: React.FC = () => {
           <ArrowLeft size={16} /> Back to guides
         </button>
         
-        <h3 className="font-display font-bold text-2xl text-white mb-1">{guide.title}</h3>
+        <h3 className="font-display font-bold text-2xl text-textPrimary mb-1">{guide.title}</h3>
         <p className="text-secondary text-sm mb-6">{guide.desc}</p>
 
         <div className="space-y-4">
@@ -56,7 +56,7 @@ const OfflineGuidePage: React.FC = () => {
               <div className="w-6 h-6 rounded-full bg-[rgba(0,201,167,0.1)] text-[var(--primary)] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                 {i + 1}
               </div>
-              <p className="text-sm text-white leading-relaxed">{step}</p>
+              <p className="text-sm text-textPrimary leading-relaxed">{step}</p>
             </div>
           ))}
         </div>
@@ -89,7 +89,7 @@ const OfflineGuidePage: React.FC = () => {
               </p>
             </div>
 
-            <h3 className="text-sm font-semibold text-white mb-3 px-1 uppercase tracking-wider text-tertiary">Select Emergency</h3>
+            <h3 className="text-sm font-semibold text-textPrimary mb-3 px-1 uppercase tracking-wider text-tertiary">Select Emergency</h3>
             
             <div className="grid grid-cols-2 gap-3">
               {offlineGuides.map(guide => (
@@ -104,7 +104,7 @@ const OfflineGuidePage: React.FC = () => {
                     {guide.id === 'bleeding' && <Search size={20} className="text-[#FF4757]" />}
                     {guide.id === 'burns' && <Shield size={20} className="text-[#FFA502]" />}
                   </div>
-                  <h4 className="font-bold text-sm text-white mb-1">{guide.title}</h4>
+                  <h4 className="font-bold text-sm text-textPrimary mb-1">{guide.title}</h4>
                   <p className="text-[10px] text-secondary leading-tight">{guide.desc}</p>
                 </button>
               ))}

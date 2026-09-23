@@ -6,9 +6,9 @@ export default function HomeCareHub() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-[120px] px-6 py-6">
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 flex items-center gap-4 -mx-6 px-6 mb-6">
-        <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-[120px] px-6 py-6">
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 flex items-center gap-4 -mx-6 px-6 mb-6">
+        <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform" onClick={() => navigate('/dashboard')}>
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -29,8 +29,8 @@ export default function HomeCareHub() {
               <HeartPulse size={28} />
             </div>
           </div>
-          <h2 className="text-2xl font-black text-white leading-tight mb-2">Professional<br/>Nursing at <span className="text-amber-500">Home</span></h2>
-          <p className="text-sm text-slate-300 mb-6 max-w-[250px]">Book trained nurses and attendants for 12/24 hour shifts.</p>
+          <h2 className="text-2xl font-black text-textPrimary leading-tight mb-2">Professional<br/>Nursing at <span className="text-amber-500">Home</span></h2>
+          <p className="text-sm text-textSecondary mb-6 max-w-[250px]">Book trained nurses and attendants for 12/24 hour shifts.</p>
           <button className="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3.5 rounded-xl transition-transform active:scale-95 shadow-lg shadow-amber-600/20 flex justify-center items-center gap-2">
             Book Nursing Care <ChevronRight size={18} />
           </button>
@@ -38,7 +38,7 @@ export default function HomeCareHub() {
 
         {/* Elderly Care Card */}
         <div 
-          className="bg-[#131F35] border border-slate-800 rounded-3xl p-6 shadow-xl cursor-pointer hover:border-slate-700 transition-colors"
+          className="bg-card border border-border rounded-3xl p-6 shadow-xl cursor-pointer hover:border-border transition-colors"
           onClick={() => alert('Elderly Care details (Mock)')}
         >
           <div className="flex items-center gap-4">
@@ -46,15 +46,15 @@ export default function HomeCareHub() {
               <UserCheck size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-white text-lg">Elderly Care</h3>
-              <p className="text-xs text-slate-400">Companionship & daily assistance</p>
+              <h3 className="font-bold text-textPrimary text-lg">Elderly Care</h3>
+              <p className="text-xs text-textSecondary">Companionship & daily assistance</p>
             </div>
           </div>
         </div>
 
         {/* Post Surgical Card */}
         <div 
-          className="bg-[#131F35] border border-slate-800 rounded-3xl p-6 shadow-xl cursor-pointer hover:border-slate-700 transition-colors"
+          className="bg-card border border-border rounded-3xl p-6 shadow-xl cursor-pointer hover:border-border transition-colors"
           onClick={() => alert('Post-Surgical details (Mock)')}
         >
           <div className="flex items-center gap-4">
@@ -62,15 +62,15 @@ export default function HomeCareHub() {
               <Activity size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-white text-lg">Post-Surgical Care</h3>
-              <p className="text-xs text-slate-400">Wound dressing & pain management</p>
+              <h3 className="font-bold text-textPrimary text-lg">Post-Surgical Care</h3>
+              <p className="text-xs text-textSecondary">Wound dressing & pain management</p>
             </div>
           </div>
         </div>
 
         {/* Baby Care Card */}
         <div 
-          className="bg-[#131F35] border border-slate-800 rounded-3xl p-6 shadow-xl cursor-pointer hover:border-slate-700 transition-colors"
+          className="bg-card border border-border rounded-3xl p-6 shadow-xl cursor-pointer hover:border-border transition-colors"
           onClick={() => alert('Mother & Baby care details (Mock)')}
         >
           <div className="flex items-center gap-4">
@@ -78,8 +78,8 @@ export default function HomeCareHub() {
               <Baby size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-white text-lg">Mother & Baby Care</h3>
-              <p className="text-xs text-slate-400">Newborn care & lactation support</p>
+              <h3 className="font-bold text-textPrimary text-lg">Mother & Baby Care</h3>
+              <p className="text-xs text-textSecondary">Newborn care & lactation support</p>
             </div>
           </div>
         </div>

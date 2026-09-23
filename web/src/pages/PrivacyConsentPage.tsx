@@ -53,13 +53,13 @@ const PrivacyConsentPage: React.FC = () => {
 
       <div className="flex px-4 pt-4 gap-2">
         <button
-          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${tab === 'qr' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${tab === 'qr' ? 'bg-[var(--primary)] text-textPrimary' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
           onClick={() => setTab('qr')}
         >
           <Shield size={16} /> QR Visibility
         </button>
         <button
-          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${tab === 'links' ? 'bg-[#3D91FF] text-white' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 ${tab === 'links' ? 'bg-[#3D91FF] text-textPrimary' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'}`}
           onClick={() => setTab('links')}
         >
           <LinkIcon size={16} /> Shared Links
@@ -72,7 +72,7 @@ const PrivacyConsentPage: React.FC = () => {
             {/* Live Preview */}
             <div className="card mb-6 bg-[var(--bg-surface)] flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-white mb-1">Live QR Preview</p>
+                <p className="text-sm font-semibold text-textPrimary mb-1">Live QR Preview</p>
                 <p className="text-xs text-secondary mb-3">Payload size: <span className={qrByteSize > 250 ? 'text-warning' : 'text-success'}>{qrByteSize} bytes</span></p>
                 <button className="btn btn-primary btn-sm" onClick={() => navigate('/passport')}>View Passport</button>
               </div>
@@ -94,7 +94,7 @@ const PrivacyConsentPage: React.FC = () => {
                         {isEnabled ? <Eye size={18} /> : <EyeOff size={18} />}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-white">{info.label}</p>
+                        <p className="text-sm font-semibold text-textPrimary">{info.label}</p>
                         <p className="text-xs text-secondary">{info.desc}</p>
                       </div>
                     </div>
@@ -140,7 +140,7 @@ const PrivacyConsentPage: React.FC = () => {
                     <div key={link.id} className="card bg-[var(--bg-elevated)]">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="text-sm font-semibold text-white">{link.sharedWith}</p>
+                          <p className="text-sm font-semibold text-textPrimary">{link.sharedWith}</p>
                           <p className="text-xs text-secondary">{link.purpose}</p>
                         </div>
                         <button className="text-danger p-1" onClick={() => revokeLink(link.id)} title="Revoke Link">

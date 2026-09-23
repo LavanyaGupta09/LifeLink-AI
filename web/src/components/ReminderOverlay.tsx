@@ -30,7 +30,7 @@ const ReminderOverlay: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#060B14] flex flex-col items-center justify-center p-6 text-center animate-fade-in">
+    <div className="fixed inset-0 z-[9999] bg-background flex flex-col items-center justify-center p-6 text-center animate-fade-in">
       <div className="absolute inset-0 bg-[#FF4757]/10 animate-pulse pointer-events-none" />
       
       <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
@@ -38,12 +38,12 @@ const ReminderOverlay: React.FC = () => {
           <Bell size={48} color="#FF4757" />
         </div>
 
-        <h1 className="text-[2rem] font-bold text-white mb-2 leading-tight">Time for your Medicine</h1>
+        <h1 className="text-[2rem] font-bold text-textPrimary mb-2 leading-tight">Time for your Medicine</h1>
         <p className="text-xl text-[#3D91FF] font-semibold mb-6">{time}</p>
 
-        <div className="bg-[#172236] border-2 border-[#3D91FF] rounded-2xl p-6 w-full mb-10 shadow-[0_0_40px_rgba(61,145,255,0.2)]">
+        <div className="bg-card border-2 border-[#3D91FF] rounded-2xl p-6 w-full mb-10 shadow-[0_0_40px_rgba(61,145,255,0.2)]">
           <Pill size={40} color="#3D91FF" className="mx-auto mb-4" />
-          <h2 className="text-3xl font-extrabold text-white mb-2">{reminder.medicineName}</h2>
+          <h2 className="text-3xl font-extrabold text-textPrimary mb-2">{reminder.medicineName}</h2>
           <p className="text-2xl text-[#E4E9F2] font-medium">{reminder.dosage}</p>
         </div>
 

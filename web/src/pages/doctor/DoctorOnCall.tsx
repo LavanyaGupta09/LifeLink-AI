@@ -106,30 +106,30 @@ export default function DoctorOnCall() {
       {/* LOGOUT BUTTON */}
       <button 
         onClick={handleLogout}
-        className="absolute top-8 right-8 px-4 py-2 bg-slate-800/80 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30 transition-colors rounded-xl text-sm font-bold flex items-center gap-2 z-40"
+        className="absolute top-8 right-8 px-4 py-2 bg-surface hover:bg-rose-500/10 text-textSecondary hover:text-rose-400 border border-border hover:border-rose-500/30 transition-colors rounded-xl text-sm font-bold flex items-center gap-2 z-40"
       >
         <LogOut size={16} /> Logout
       </button>
       
       {/* INCOMING CALL OVERLAY */}
       {ringingPatient && (
-        <div className="absolute inset-0 bg-[#060B14]/90 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-[#131F35] border border-emerald-500/50 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(16,185,129,0.2)] flex flex-col items-center text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-background backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-card border border-emerald-500/50 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(16,185,129,0.2)] flex flex-col items-center text-center relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-400 animate-pulse"></div>
             
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-emerald-500/20 rounded-full animate-ping"></div>
               <div className="w-24 h-24 bg-gradient-to-br from-[#00C9A7] to-[#009E83] rounded-full flex items-center justify-center shadow-lg relative z-10 border-4 border-[#131F35]">
-                <PhoneIncoming size={40} className="text-white animate-bounce" />
+                <PhoneIncoming size={40} className="text-textPrimary animate-bounce" />
               </div>
             </div>
             
-            <h2 className="text-2xl font-black text-white mb-1">Incoming Consult...</h2>
+            <h2 className="text-2xl font-black text-textPrimary mb-1">Incoming Consult...</h2>
             <p className="text-emerald-400 font-bold tracking-widest text-sm uppercase mb-6 animate-pulse">Apollo On-Call</p>
             
-            <div className="bg-[#0B1121] border border-slate-800 rounded-xl p-4 w-full mb-8 text-left">
-              <p className="font-bold text-lg text-white mb-1">{ringingPatient.patient_name}</p>
-              <p className="text-sm text-slate-400 mb-3">{ringingPatient.age}y • {ringingPatient.gender}</p>
+            <div className="bg-background border border-border rounded-xl p-4 w-full mb-8 text-left">
+              <p className="font-bold text-lg text-textPrimary mb-1">{ringingPatient.patient_name}</p>
+              <p className="text-sm text-textSecondary mb-3">{ringingPatient.age}y • {ringingPatient.gender}</p>
               <div className="bg-rose-500/10 border border-rose-500/20 p-3 rounded-lg">
                 <span className="text-[10px] font-black uppercase text-rose-500 tracking-wider block mb-1">Chief Complaint</span>
                 <p className="text-sm text-rose-100">{ringingPatient.symptoms}</p>
@@ -139,7 +139,7 @@ export default function DoctorOnCall() {
             <div className="flex gap-4 w-full">
               <button 
                 onClick={() => declinePatient(ringingPatient)}
-                className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold transition-all flex justify-center items-center gap-2"
+                className="flex-1 py-4 bg-surface hover:bg-surface text-textSecondary rounded-xl font-bold transition-all flex justify-center items-center gap-2"
               >
                 <X size={20} /> Decline
               </button>
@@ -162,12 +162,12 @@ export default function DoctorOnCall() {
               <div className="relative mb-12">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-emerald-500/10 rounded-full animate-ping opacity-20 pointer-events-none"></div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] border border-emerald-500/20 rounded-full animate-pulse opacity-40 pointer-events-none"></div>
-                <div className="w-32 h-32 bg-[#131F35] border border-emerald-500/30 rounded-full flex items-center justify-center relative z-10 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+                <div className="w-32 h-32 bg-card border border-emerald-500/30 rounded-full flex items-center justify-center relative z-10 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
                   <Video size={48} className="text-emerald-400" />
                 </div>
               </div>
-              <h2 className="text-3xl font-black text-white mb-4 tracking-tight">You are Online</h2>
-              <p className="text-slate-400 text-lg mb-8">Waiting for patients to request a Doctor On-Call...</p>
+              <h2 className="text-3xl font-black text-textPrimary mb-4 tracking-tight">You are Online</h2>
+              <p className="text-textSecondary text-lg mb-8">Waiting for patients to request a Doctor On-Call...</p>
               <button 
                 onClick={() => setIsOnline(false)}
                 className="px-6 py-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl font-bold transition-colors flex items-center gap-2"
@@ -177,11 +177,11 @@ export default function DoctorOnCall() {
             </>
           ) : (
             <>
-              <div className="w-32 h-32 bg-[#131F35] border border-slate-800 rounded-full flex items-center justify-center mb-8 relative z-10">
-                <VideoOff size={48} className="text-slate-600" />
+              <div className="w-32 h-32 bg-card border border-border rounded-full flex items-center justify-center mb-8 relative z-10">
+                <VideoOff size={48} className="text-textTertiary" />
               </div>
-              <h2 className="text-3xl font-black text-white mb-4 tracking-tight opacity-50">Offline</h2>
-              <p className="text-slate-500 text-lg mb-8">Go online to start receiving instant patient consultations from the LifeLink platform.</p>
+              <h2 className="text-3xl font-black text-textPrimary mb-4 tracking-tight opacity-50">Offline</h2>
+              <p className="text-textTertiary text-lg mb-8">Go online to start receiving instant patient consultations from the LifeLink platform.</p>
               <button 
                 onClick={() => setIsOnline(true)}
                 className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2 text-lg"

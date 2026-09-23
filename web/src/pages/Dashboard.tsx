@@ -116,7 +116,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center pb-32">
-      <div className="flex flex-col gap-4 p-4 w-full max-w-[1400px] text-white">
+      <div className="flex flex-col gap-4 p-4 w-full max-w-[1400px] text-textPrimary">
       
         {/* 1. TOP HEADER */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-2">
@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
             <h2 className="font-bold text-lg leading-tight flex items-center gap-1">
               {formatName(user?.fullName)} <BadgeCheck size={16} className="text-[#3D91FF]" />
             </h2>
-            <p className="text-xs text-slate-400">LifeLink Member</p>
+            <p className="text-xs text-textSecondary">LifeLink Member</p>
           </div>
         </div>
         
@@ -136,26 +136,26 @@ const Dashboard: React.FC = () => {
           <HeartPulse size={32} className="text-[#00C9A7]" />
           <div>
             <h1 className="text-2xl font-black tracking-tight leading-tight">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
-            <p className="text-[10px] text-slate-400 tracking-wider">Your Health. Our Priority.</p>
+            <p className="text-[10px] text-textSecondary tracking-wider">Your Health. Our Priority.</p>
           </div>
         </div>
         
         <div className="flex items-center gap-4 self-end md:self-auto">
           <button 
-            className="relative text-slate-300 hover:text-white transition-colors p-2 bg-[#131F35] rounded-full border border-slate-800"
+            className="relative text-textSecondary hover:text-textPrimary transition-colors p-2 bg-card rounded-full border border-border"
             onClick={() => alert("You have 1 new system alert: Routine system maintenance scheduled for tonight.")}
           >
             <Bell size={20} />
             <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#FF4757] rounded-full border-2 border-[#131F35]"></span>
           </button>
           <button 
-            className="text-slate-300 hover:text-white transition-colors p-2 bg-[#131F35] rounded-full border border-slate-800"
+            className="text-textSecondary hover:text-textPrimary transition-colors p-2 bg-card rounded-full border border-border"
             onClick={() => navigate('/community')}
           >
             <MessageCircle size={20} />
           </button>
           <button 
-            className="text-slate-300 hover:text-white transition-colors p-2 bg-[#131F35] rounded-full border border-slate-800"
+            className="text-textSecondary hover:text-textPrimary transition-colors p-2 bg-card rounded-full border border-border"
             onClick={() => navigate('/settings')}
           >
             <Settings size={20} />
@@ -164,9 +164,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* 2. AI ASSISTANT HERO CARD */}
-      <div className="bg-gradient-to-br from-[#0D152D] to-[#1B0F2A] border border-[#2D1B4E] rounded-[24px] p-4 relative overflow-hidden flex flex-col lg:flex-row items-center gap-4 shadow-xl">
+      <div className="bg-gradient-to-br from-surface to-background border border-border rounded-[24px] p-4 relative overflow-hidden flex flex-col lg:flex-row items-center gap-4 shadow-md">
         {/* Background glow */}
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#8B5CF6]/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent-purple rounded-full blur-[80px] pointer-events-none opacity-50 dark:opacity-100" />
         
         <div className="flex items-center gap-4 flex-1 relative z-10 w-full">
           <div className="w-24 h-24 md:w-32 md:h-32 shrink-0">
@@ -179,12 +179,12 @@ const Dashboard: React.FC = () => {
           
           <div className="flex-1 flex flex-col justify-center">
             <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, {formatName(user?.fullName).split(' ')[0]}! 👋</h2>
-            <p className="text-xs text-slate-300 mb-3">I'm your AI Health Assistant. How can I help you today?</p>
+            <p className="text-xs text-textSecondary mb-3">I'm your AI Health Assistant. How can I help you today?</p>
             
             <div className="relative w-full max-w-md">
               <button 
                 onClick={handleVoice}
-                className={`absolute inset-y-0 left-0 pl-3 flex items-center ${isListening ? 'text-[#8B5CF6] animate-pulse' : 'text-slate-400 hover:text-white'} transition-colors`}
+                className={`absolute inset-y-0 left-0 pl-3 flex items-center ${isListening ? 'text-[#8B5CF6] animate-pulse' : 'text-textSecondary hover:text-textPrimary'} transition-colors`}
               >
                 <Mic size={16} />
               </button>
@@ -194,31 +194,31 @@ const Dashboard: React.FC = () => {
                 onChange={(e) => setAiQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAiSubmit(); }}
                 disabled={isAiLoading} 
-                className="w-full bg-[#131B31] border border-slate-700/50 rounded-full py-2 pl-9 pr-10 text-xs text-white focus:outline-none focus:border-[#8B5CF6] transition-colors shadow-inner disabled:opacity-50"
+                className="w-full bg-card border border-border rounded-full py-2 pl-9 pr-10 text-xs text-textPrimary focus:outline-none focus:border-[#8B5CF6] transition-colors shadow-inner disabled:opacity-50"
                 placeholder="Ask anything..."
               />
               <button 
                 onClick={handleAiSubmit}
                 disabled={isAiLoading || !aiQuery.trim()}
-                className="absolute inset-y-1 right-1 w-7 h-7 rounded-full bg-[#8B5CF6] flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-[#8B5CF6]/30 disabled:opacity-50 disabled:hover:scale-100">
+                className="absolute inset-y-1 right-1 w-7 h-7 rounded-full bg-accent-purple flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-[#8B5CF6]/30 disabled:opacity-50 disabled:hover:scale-100">
                 {isAiLoading ? (
                   <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
-                  <Send size={12} className="text-white ml-0.5" />
+                  <Send size={12} className="text-textPrimary ml-0.5" />
                 )}
               </button>
             </div>
             
             {aiResponse && (
-              <div className="mt-3 w-full max-w-md bg-[#131B31] border border-[#8B5CF6]/30 rounded-xl p-3 relative animate-fade-in">
-                <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-slate-400 hover:text-white">
+              <div className="mt-3 w-full max-w-md bg-card border border-[#8B5CF6]/30 rounded-xl p-3 relative animate-fade-in">
+                <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-textSecondary hover:text-textPrimary">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
                 <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-full bg-accent-purple flex items-center justify-center shrink-0 mt-0.5">
                     <HeartPulse size={12} className="text-[#8B5CF6]"/>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed pr-4">{aiResponse}</p>
+                  <p className="text-xs text-textPrimary leading-relaxed pr-4">{aiResponse}</p>
                 </div>
               </div>
             )}
@@ -227,18 +227,18 @@ const Dashboard: React.FC = () => {
         
         <div className="flex items-center gap-4 relative z-10 w-full lg:w-auto">
           <div className="flex flex-col gap-2 min-w-[180px]">
-            <button onClick={() => navigate('/hospitals')} className="bg-[#131B31]/80 border border-slate-700/50 rounded-full py-2 px-3 text-[10px] font-medium text-slate-300 hover:text-white hover:bg-[#1A2542] transition-colors flex items-center gap-2">
-              <MapPin size={12} className="text-slate-400" /> Find nearest hospital
+            <button onClick={() => navigate('/hospitals')} className="bg-card border border-border rounded-full py-2 px-3 text-[10px] font-medium text-textSecondary hover:text-textPrimary hover:bg-card transition-colors flex items-center gap-2">
+              <MapPin size={12} className="text-textSecondary" /> Find nearest hospital
             </button>
-            <button onClick={() => navigate('/doctor')} className="bg-[#131B31]/80 border border-slate-700/50 rounded-full py-2 px-3 text-[10px] font-medium text-slate-300 hover:text-white hover:bg-[#1A2542] transition-colors flex items-center gap-2">
-              <Calendar size={12} className="text-slate-400" /> Book a doctor
+            <button onClick={() => navigate('/doctor')} className="bg-card border border-border rounded-full py-2 px-3 text-[10px] font-medium text-textSecondary hover:text-textPrimary hover:bg-card transition-colors flex items-center gap-2">
+              <Calendar size={12} className="text-textSecondary" /> Book a doctor
             </button>
-            <button onClick={() => navigate('/symptoms')} className="bg-[#131B31]/80 border border-slate-700/50 rounded-full py-2 px-3 text-[10px] font-medium text-slate-300 hover:text-white hover:bg-[#1A2542] transition-colors flex items-center gap-2">
-              <Activity size={12} className="text-slate-400" /> Check my symptoms
+            <button onClick={() => navigate('/symptoms')} className="bg-card border border-border rounded-full py-2 px-3 text-[10px] font-medium text-textSecondary hover:text-textPrimary hover:bg-card transition-colors flex items-center gap-2">
+              <Activity size={12} className="text-textSecondary" /> Check my symptoms
             </button>
           </div>
           
-          <div className="bg-[#190F24]/50 border border-[#FF4757]/20 rounded-[20px] p-3 flex flex-col items-center justify-center h-[120px] w-[140px] backdrop-blur-sm relative overflow-hidden">
+          <div className="bg-background border border-[#FF4757]/20 rounded-[20px] p-3 flex flex-col items-center justify-center h-[120px] w-[140px] backdrop-blur-sm relative overflow-hidden">
             <div className="text-center mb-2 relative z-10">
               <p className="text-[#FF4757] text-[10px] font-bold">Emergency?</p>
             </div>
@@ -259,18 +259,18 @@ const Dashboard: React.FC = () => {
                 onMouseLeave={handleSOSUp}
                 onTouchStart={handleSOSDown}
                 onTouchEnd={handleSOSUp}
-                className={`w-14 h-14 rounded-full bg-gradient-to-br from-[#FF4757] to-[#D63031] shadow-lg border-2 border-[#FF4757]/30 flex flex-col items-center justify-center relative z-10 transition-all duration-300 ${isCounting ? 'scale-90 animate-pulse' : 'hover:scale-105'} active:scale-95`}
+                className={`w-14 h-14 rounded-full bg-gradient-to-br from-[#FF4757] to-[#D63031] shadow-md border-2 border-[#FF4757]/30 flex flex-col items-center justify-center relative z-10 transition-all duration-300 ${isCounting ? 'scale-90 animate-pulse' : 'hover:scale-105'} active:scale-95`}
               >
                 {isSOSActive ? (
                   <div className="flex flex-col items-center animate-fade-in">
-                    <span className="text-xs font-black text-white">SOS</span>
+                    <span className="text-xs font-black text-textPrimary">SOS</span>
                   </div>
                 ) : isCounting ? (
-                  <span className="text-xl font-black text-white leading-none">{countdown}</span>
+                  <span className="text-xl font-black text-textPrimary leading-none">{countdown}</span>
                 ) : (
                   <>
-                    <AlertTriangle size={16} className="text-white mb-0.5" />
-                    <span className="text-white font-black text-[9px] tracking-widest leading-none">SOS</span>
+                    <AlertTriangle size={16} className="text-textPrimary mb-0.5" />
+                    <span className="text-textPrimary font-black text-[9px] tracking-widest leading-none">SOS</span>
                   </>
                 )}
               </button>
@@ -280,9 +280,9 @@ const Dashboard: React.FC = () => {
               {isSOSActive ? (
                 <span className="text-[#FF4757] font-bold text-[8px] animate-pulse">ACTIVATED</span>
               ) : isCounting ? (
-                <span className="text-white font-bold text-[8px]">Release to cancel...</span>
+                <span className="text-textPrimary font-bold text-[8px]">Release to cancel...</span>
               ) : (
-                <span className="text-slate-400 text-[8px]">Hold <strong className="text-white">3s</strong></span>
+                <span className="text-textSecondary text-[8px]">Hold <strong className="text-textPrimary">3s</strong></span>
               )}
             </div>
           </div>
@@ -292,65 +292,65 @@ const Dashboard: React.FC = () => {
       {/* 3. QUICK ACTIONS */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="font-bold text-xs flex items-center gap-1.5 text-slate-200">
+          <h2 className="font-bold text-xs flex items-center gap-1.5 text-textPrimary">
             <span className="text-yellow-500">⚡</span> Quick Actions
           </h2>
           <button className="text-[10px] text-[#3D91FF] hover:underline">Edit</button>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar snap-x">
           
-          <button onClick={() => navigate('/ambulance')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 relative hover:border-slate-600 transition-colors group">
+          <button onClick={() => navigate('/ambulance')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 relative hover:border-border transition-colors group">
             <div className="absolute top-1 left-1 bg-[#FF4757] text-white text-[7px] font-bold px-1 py-0.5 rounded-full">24/7</div>
             <div className="w-8 h-8 rounded-full bg-[#FF4757]/10 flex items-center justify-center text-[#FF4757] group-hover:scale-110 transition-transform">
               <Ambulance size={16} />
             </div>
-            <span className="text-[10px] font-semibold text-slate-300">Ambulance</span>
+            <span className="text-[10px] font-semibold text-textSecondary">Ambulance</span>
           </button>
 
-          <button onClick={() => navigate('/hospitals')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+          <button onClick={() => navigate('/hospitals')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
             <div className="w-8 h-8 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7] group-hover:scale-110 transition-transform">
               <Building2 size={16} />
             </div>
-            <span className="text-[10px] font-semibold text-slate-300">Hospitals</span>
+            <span className="text-[10px] font-semibold text-textSecondary">Hospitals</span>
           </button>
 
-          <button onClick={() => navigate('/doctor')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+          <button onClick={() => navigate('/doctor')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
             <div className="w-8 h-8 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF] group-hover:scale-110 transition-transform">
               <UserRound size={16} />
             </div>
-            <span className="text-[10px] font-semibold text-slate-300">Doctors</span>
+            <span className="text-[10px] font-semibold text-textSecondary">Doctors</span>
           </button>
 
           {areaType !== 'rural' && (
             <>
-              <button onClick={() => navigate('/pharmacy')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+              <button onClick={() => navigate('/pharmacy')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
                 <div className="w-8 h-8 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573] group-hover:scale-110 transition-transform">
                   <Pill size={16} />
                 </div>
-                <span className="text-[10px] font-semibold text-slate-300">Pharmacy</span>
+                <span className="text-[10px] font-semibold text-textSecondary">Pharmacy</span>
               </button>
 
-              <button onClick={() => navigate('/lab')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
-                <div className="w-8 h-8 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
+              <button onClick={() => navigate('/lab')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
+                <div className="w-8 h-8 rounded-full bg-accent-purple flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
                   <FlaskConical size={16} />
                 </div>
-                <span className="text-[10px] font-semibold text-slate-300">Lab Tests</span>
+                <span className="text-[10px] font-semibold text-textSecondary">Lab Tests</span>
               </button>
 
-              <button onClick={() => navigate('/blood')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+              <button onClick={() => navigate('/blood')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
                 <div className="w-8 h-8 rounded-full bg-[#FF6B81]/10 flex items-center justify-center text-[#FF6B81] group-hover:scale-110 transition-transform">
                   <Droplets size={16} />
                 </div>
-                <span className="text-[10px] font-semibold text-slate-300">Blood Bank</span>
+                <span className="text-[10px] font-semibold text-textSecondary">Blood Bank</span>
               </button>
             </>
           )}
 
-          <button onClick={() => navigate('/symptoms')} className="snap-start shrink-0 w-20 h-20 bg-[#131F35] border border-slate-800 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-slate-600 transition-colors group">
+          <button onClick={() => navigate('/symptoms')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
             <div className="w-8 h-8 rounded-full bg-[#38ADA9]/10 flex items-center justify-center text-[#38ADA9] group-hover:scale-110 transition-transform">
               <HeartPulse size={16} />
             </div>
-            <span className="text-[10px] font-semibold text-slate-300">Symptoms</span>
+            <span className="text-[10px] font-semibold text-textSecondary">Symptoms</span>
           </button>
           
         </div>
@@ -361,47 +361,47 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           
           {/* Appointments */}
-          <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex flex-col">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-xs flex items-center gap-1.5"><Calendar size={14} className="text-[#3D91FF]"/> Appointments</h3>
               <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/doctor')}>View all</button>
             </div>
             
             <div className="flex flex-col gap-2 mb-3">
-              <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
-                <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
+              <div className="bg-card rounded-xl p-2.5 flex items-center gap-2 border border-border">
+                <div className="w-8 h-8 rounded-full bg-surface overflow-hidden shrink-0">
                   <img src="https://i.pravatar.cc/150?u=dr_ananya" alt="Dr. Ananya" className="w-full h-full object-cover"/>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-200">Dr. Ananya Sharma</h4>
+                  <h4 className="text-[10px] font-bold text-textPrimary">Dr. Ananya Sharma</h4>
                   <div className="flex items-center justify-between mt-1">
-                    <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 18 May • 11:00 AM</p>
+                    <p className="text-[8px] text-textSecondary flex items-center gap-1"><Calendar size={8}/> 18 May • 11:00 AM</p>
                     <span className="text-[8px] font-bold bg-[#3D91FF]/10 text-[#3D91FF] px-1.5 py-0.5 rounded">Confirmed</span>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-[#131F35] rounded-xl p-2.5 flex items-center gap-2 border border-slate-800">
-                <div className="w-8 h-8 rounded-full bg-slate-700 overflow-hidden shrink-0">
+              <div className="bg-card rounded-xl p-2.5 flex items-center gap-2 border border-border">
+                <div className="w-8 h-8 rounded-full bg-surface overflow-hidden shrink-0">
                   <img src="https://i.pravatar.cc/150?u=dr_rahul" alt="Dr. Rahul" className="w-full h-full object-cover"/>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-200">Dr. Rahul Verma</h4>
+                  <h4 className="text-[10px] font-bold text-textPrimary">Dr. Rahul Verma</h4>
                   <div className="flex items-center justify-between mt-1">
-                    <p className="text-[8px] text-slate-300 flex items-center gap-1"><Calendar size={8}/> 21 May • 04:30 PM</p>
-                    <span className="text-[8px] font-bold bg-[#8B5CF6]/10 text-[#8B5CF6] px-1.5 py-0.5 rounded">Scheduled</span>
+                    <p className="text-[8px] text-textSecondary flex items-center gap-1"><Calendar size={8}/> 21 May • 04:30 PM</p>
+                    <span className="text-[8px] font-bold bg-accent-purple text-[#8B5CF6] px-1.5 py-0.5 rounded">Scheduled</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <button className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5" onClick={() => navigate('/doctor')}>
+            <button className="mt-auto w-full py-2 bg-card border border-border hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5" onClick={() => navigate('/doctor')}>
               <Calendar size={12} /> Book New <ChevronRight size={12}/>
             </button>
           </div>
 
           {/* Health Overview */}
-          <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-xs flex items-center gap-1.5"><Heart size={14} className="text-[#FF4757]"/> Health Overview</h3>
               <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/audit')}>View all</button>
@@ -412,11 +412,11 @@ const Dashboard: React.FC = () => {
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-6 h-6 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7]"><Activity size={10}/></div>
                   <div>
-                    <p className="text-[8px] text-slate-400">Steps</p>
-                    <p className="text-xs font-bold">7,245 <span className="text-[8px] font-normal text-slate-500">/10k</span></p>
+                    <p className="text-[8px] text-textSecondary">Steps</p>
+                    <p className="text-xs font-bold">7,245 <span className="text-[8px] font-normal text-textTertiary">/10k</span></p>
                   </div>
                 </div>
-                <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                <div className="w-full bg-card rounded-full h-1 overflow-hidden">
                   <div className="bg-[#00C9A7] h-full rounded-full" style={{ width: '72%' }}></div>
                 </div>
               </div>
@@ -425,24 +425,24 @@ const Dashboard: React.FC = () => {
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Droplets size={10}/></div>
                   <div>
-                    <p className="text-[8px] text-slate-400">Water</p>
-                    <p className="text-xs font-bold">6 <span className="text-[8px] font-normal text-slate-500">/ 8</span></p>
+                    <p className="text-[8px] text-textSecondary">Water</p>
+                    <p className="text-xs font-bold">6 <span className="text-[8px] font-normal text-textTertiary">/ 8</span></p>
                   </div>
                 </div>
-                <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                <div className="w-full bg-card rounded-full h-1 overflow-hidden">
                   <div className="bg-[#3D91FF] h-full rounded-full" style={{ width: '75%' }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]"><Moon size={10}/></div>
+                  <div className="w-6 h-6 rounded-full bg-accent-purple flex items-center justify-center text-[#8B5CF6]"><Moon size={10}/></div>
                   <div>
-                    <p className="text-[8px] text-slate-400">Sleep</p>
+                    <p className="text-[8px] text-textSecondary">Sleep</p>
                     <p className="text-xs font-bold">7h 15m</p>
                   </div>
                 </div>
-                <div className="w-full bg-[#131F35] rounded-full h-1 overflow-hidden">
+                <div className="w-full bg-card rounded-full h-1 overflow-hidden">
                   <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] h-full rounded-full" style={{ width: '85%' }}></div>
                 </div>
               </div>
@@ -450,7 +450,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Reminders */}
-          <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 shadow-md flex flex-col">
+          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex flex-col">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-xs flex items-center gap-1.5"><Bell size={14} className="text-[#A78BFA]"/> Reminders</h3>
               <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/reminders')}>View all</button>
@@ -461,30 +461,30 @@ const Dashboard: React.FC = () => {
                 <div className="flex gap-2 items-start">
                   <div className="w-6 h-6 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573]"><Pill size={10}/></div>
                   <div>
-                    <h4 className="text-[10px] font-bold text-slate-200">Vitamin D3</h4>
-                    <p className="text-[8px] text-slate-400">1 Tab • Breakfast (08:00 AM)</p>
+                    <h4 className="text-[10px] font-bold text-textPrimary">Vitamin D3</h4>
+                    <p className="text-[8px] text-textSecondary">1 Tab • Breakfast (08:00 AM)</p>
                   </div>
                 </div>
                 <div className="w-4 h-4 rounded-full bg-[#00C9A7] flex items-center justify-center shadow-[0_0_10px_rgba(0,201,167,0.3)]">
-                  <Check size={8} className="text-white" />
+                  <Check size={8} className="text-textPrimary" />
                 </div>
               </div>
               
-              <div className="h-[1px] w-full bg-slate-800"></div>
+              <div className="h-[1px] w-full bg-surface"></div>
               
               <div className="flex items-center justify-between">
                 <div className="flex gap-2 items-start">
                   <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Pill size={10}/></div>
                   <div>
-                    <h4 className="text-[10px] font-bold text-slate-200">Calcium</h4>
-                    <p className="text-[8px] text-slate-400">1 Tab • Dinner (08:00 PM)</p>
+                    <h4 className="text-[10px] font-bold text-textPrimary">Calcium</h4>
+                    <p className="text-[8px] text-textSecondary">1 Tab • Dinner (08:00 PM)</p>
                   </div>
                 </div>
                 <div className="w-4 h-4 rounded-full border border-slate-500"></div>
               </div>
             </div>
             
-            <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-2 bg-[#131F35] border border-slate-700 hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5">
+            <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-2 bg-card border border-border hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5">
               <Bell size={12} /> All Reminders <ChevronRight size={12}/>
             </button>
           </div>
@@ -497,10 +497,10 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
           {/* Insurance Banner */}
-          <div className="bg-[#120F26] border border-[#312E81] rounded-2xl relative overflow-hidden shadow-md flex items-center min-h-[120px] group cursor-pointer" onClick={() => navigate('/insurance')}>
+          <div className="bg-card border border-border rounded-2xl relative overflow-hidden shadow-md flex items-center min-h-[120px] group cursor-pointer" onClick={() => navigate('/insurance')}>
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-50 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#120F26] via-[#120F26]/80 to-transparent" />
+              <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-30 dark:opacity-50 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-r from-card via-card/80 to-transparent" />
             </div>
             
             <div className="relative z-10 p-5 w-full md:w-3/4 flex flex-col justify-center text-left">
@@ -508,16 +508,16 @@ const Dashboard: React.FC = () => {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
                 <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Active Coverage</p>
               </div>
-              <h3 className="text-base font-black text-white mb-1 leading-tight">Health Insurance</h3>
-              <p className="text-xs text-slate-300 mb-3 max-w-[200px] leading-snug">Protect your family with comprehensive health plans.</p>
-              <button className="bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-all flex items-center gap-1.5 backdrop-blur-sm">
+              <h3 className="text-base font-black text-textPrimary mb-1 leading-tight">Health Insurance</h3>
+              <p className="text-xs text-textSecondary mb-3 max-w-[200px] leading-snug">Protect your family with comprehensive health plans.</p>
+              <button className="bg-surface hover:bg-background border border-border text-textPrimary text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-all flex items-center gap-1.5 backdrop-blur-sm">
                 Explore Plans <ChevronRight size={12} />
               </button>
             </div>
           </div>
 
           {/* Health ID Locker */}
-          <div className="bg-[#0B141F] border border-[#162B3A] rounded-2xl p-4 shadow-md flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/passport')}>
+          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/passport')}>
             <div className="w-16 h-16 shrink-0 bg-[#00C9A7]/10 rounded-xl border border-[#00C9A7]/30 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/20 transition-colors">
               <QrCode size={32} className="text-[#00C9A7]" />
               <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
@@ -529,9 +529,9 @@ const Dashboard: React.FC = () => {
                 <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">B+</span>
               </div>
               <p className="text-[10px] text-[#00C9A7] font-bold mb-1">ID Verified</p>
-              <p className="text-[9px] text-slate-400 mb-2">Keep your records safe.</p>
+              <p className="text-[9px] text-textSecondary mb-2">Keep your records safe.</p>
               
-              <button className="bg-[#122A3B] hover:bg-[#1A3A52] border border-[#1E435E] text-[#3D91FF] text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-colors flex items-center gap-1.5">
+              <button className="bg-surface hover:bg-background border border-border text-[#3D91FF] text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-colors flex items-center gap-1.5">
                 View ID <ChevronRight size={12} />
               </button>
             </div>
@@ -542,7 +542,7 @@ const Dashboard: React.FC = () => {
       {/* 6. HEALTHCARE SERVICES GRID */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="font-bold text-xs flex items-center gap-1.5 text-slate-200">
+          <h2 className="font-bold text-xs flex items-center gap-1.5 text-textPrimary">
             <Heart size={14} className="text-[#3D91FF]" /> Services
           </h2>
         </div>
@@ -550,39 +550,39 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {areaType !== 'rural' && (
             <>
-              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/physiotherapy')}>
-                <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/physiotherapy')}>
+                <div className="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <UserRound size={14} className="text-indigo-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Physiotherapy</h4>
+                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Physiotherapy</h4>
                 </div>
               </div>
               
-              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/homecare')}>
+              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/homecare')}>
                 <div className="w-8 h-8 bg-amber-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <HeartPulse size={14} className="text-amber-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Home Care</h4>
+                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Home Care</h4>
                 </div>
               </div>
               
-              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/equipment')}>
-                <div className="w-8 h-8 bg-blue-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/equipment')}>
+                <div className="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <Stethoscope size={14} className="text-blue-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Equipment</h4>
+                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Equipment</h4>
                 </div>
               </div>
               
-              <div className="bg-[#131F35] border border-slate-800 rounded-xl p-3 flex gap-2 items-center hover:border-slate-600 cursor-pointer transition-colors group" onClick={() => navigate('/insurance')}>
-                <div className="w-8 h-8 bg-indigo-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/insurance')}>
+                <div className="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <Shield size={14} className="text-indigo-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-slate-200 mb-0.5">Insurance</h4>
+                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Insurance</h4>
                 </div>
               </div>
             </>
@@ -590,13 +590,13 @@ const Dashboard: React.FC = () => {
 
           {/* ASHA Worker - Only for Rural Users */}
           {areaType === 'rural' && (
-            <div className="bg-[#131F35] border border-[#F97316]/30 rounded-xl p-3 flex gap-2 items-center hover:border-[#F97316]/60 cursor-pointer transition-colors group" onClick={() => navigate('/asha')}>
+            <div className="bg-card border border-[#F97316]/30 rounded-xl p-3 flex gap-2 items-center hover:border-[#F97316]/60 cursor-pointer transition-colors group" onClick={() => navigate('/asha')}>
               <div className="w-8 h-8 bg-[#F97316]/15 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                 <HeartPulse size={14} className="text-[#F97316]" />
               </div>
               <div className="flex-1">
                 <h4 className="text-[10px] font-bold text-[#F97316] mb-0.5">ASHA Seva</h4>
-                <p className="text-[8px] text-slate-500">Gaon mein madad</p>
+                <p className="text-[8px] text-textTertiary">Gaon mein madad</p>
               </div>
             </div>
           )}
@@ -604,26 +604,26 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* 7. COMMUNITY BANNER */}
-      <div className="bg-gradient-to-r from-[#21163A] to-[#120B20] border border-[#3D256B] rounded-xl p-3 flex flex-row items-center justify-between gap-2 cursor-pointer hover:border-[#4B2C8B] transition-colors" onClick={() => navigate('/community')}>
+      <div className="bg-gradient-to-r from-surface to-background border border-border rounded-xl p-3 flex flex-row items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition-colors" onClick={() => navigate('/community')}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#8B5CF6]/20 rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 bg-accent-purple rounded-lg flex items-center justify-center shrink-0">
             <HeartPulse size={16} className="text-[#8B5CF6]" />
           </div>
           <div>
-            <h3 className="font-bold text-xs text-slate-200 mb-0.5">LifeLink Community</h3>
+            <h3 className="font-bold text-xs text-textPrimary mb-0.5">LifeLink Community</h3>
           </div>
         </div>
         
         <div className="flex items-center gap-3">
           <div className="flex -space-x-1.5 hidden sm:flex">
-            <img src="https://i.pravatar.cc/100?u=1" className="w-6 h-6 rounded-full border border-[#1B0F2A]" alt="User"/>
-            <img src="https://i.pravatar.cc/100?u=2" className="w-6 h-6 rounded-full border border-[#1B0F2A]" alt="User"/>
-            <div className="w-6 h-6 rounded-full border border-[#1B0F2A] bg-[#8B5CF6] text-white flex items-center justify-center text-[7px] font-bold z-10">
+            <img src="https://i.pravatar.cc/100?u=1" className="w-6 h-6 rounded-full border border-background" alt="User"/>
+            <img src="https://i.pravatar.cc/100?u=2" className="w-6 h-6 rounded-full border border-background" alt="User"/>
+            <div className="w-6 h-6 rounded-full border border-background bg-accent-purple text-textPrimary flex items-center justify-center text-[7px] font-bold z-10">
               +1k
             </div>
           </div>
           
-          <button className="bg-[#3D256B] hover:bg-[#4B2C8B] px-3 py-1.5 rounded-md text-[10px] font-bold transition-colors flex items-center gap-1">
+          <button className="bg-accent-purple hover:bg-accent-purple px-3 py-1.5 rounded-md text-[10px] font-bold transition-colors flex items-center gap-1">
             Explore <ChevronRight size={12} />
           </button>
         </div>

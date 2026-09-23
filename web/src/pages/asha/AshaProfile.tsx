@@ -37,18 +37,18 @@ const AshaProfile: React.FC = () => {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#040814] text-white pb-32">
+    <div className="w-full min-h-screen bg-background text-textPrimary pb-32">
       {/* Header */}
-      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-[#040814]/95 backdrop-blur-sm z-30 border-b border-slate-800/50">
+      <div className="w-full px-4 py-4 flex items-center gap-3 sticky top-0 bg-background backdrop-blur-sm z-30 border-b border-border">
         <button
           onClick={() => navigate('/asha')}
-          className="w-10 h-10 rounded-full bg-[#0B1221] border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:border-slate-600 transition-colors"
+          className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:border-border transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
         <div>
           <h1 className="text-lg font-bold">Mera Profile</h1>
-          <p className="text-[10px] text-slate-400">ASHA Worker Profile</p>
+          <p className="text-[10px] text-textSecondary">ASHA Worker Profile</p>
         </div>
       </div>
 
@@ -59,28 +59,28 @@ const AshaProfile: React.FC = () => {
           
           {/* Avatar */}
           <div className="w-24 h-24 mx-auto mb-4 bg-[#F97316] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(249,115,22,0.3)] relative z-10">
-            <User size={44} className="text-white" />
+            <User size={44} className="text-textPrimary" />
           </div>
 
           <h2 className="text-2xl font-bold mb-1 relative z-10">{ashaProfile.name}</h2>
           <p className="text-sm text-[#F97316] font-bold mb-1 relative z-10">ASHA Worker</p>
-          <p className="text-xs text-slate-400 relative z-10">
+          <p className="text-xs text-textSecondary relative z-10">
             {ashaProfile.village}, {ashaProfile.district}
           </p>
 
           {/* Quick stats */}
           <div className="flex gap-3 mt-5 justify-center relative z-10">
-            <div className="bg-[#131F35] border border-slate-700 rounded-xl px-4 py-2 text-center">
+            <div className="bg-card border border-border rounded-xl px-4 py-2 text-center">
               <p className="text-lg font-black text-[#00C9A7]">12</p>
-              <p className="text-[9px] text-slate-400">Patients</p>
+              <p className="text-[9px] text-textSecondary">Patients</p>
             </div>
-            <div className="bg-[#131F35] border border-slate-700 rounded-xl px-4 py-2 text-center">
+            <div className="bg-card border border-border rounded-xl px-4 py-2 text-center">
               <p className="text-lg font-black text-[#3B82F6]">8</p>
-              <p className="text-[9px] text-slate-400">Visits</p>
+              <p className="text-[9px] text-textSecondary">Visits</p>
             </div>
-            <div className="bg-[#131F35] border border-slate-700 rounded-xl px-4 py-2 text-center">
+            <div className="bg-card border border-border rounded-xl px-4 py-2 text-center">
               <p className="text-lg font-black text-[#FF4757]">1</p>
-              <p className="text-[9px] text-slate-400">SOS</p>
+              <p className="text-[9px] text-textSecondary">SOS</p>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ const AshaProfile: React.FC = () => {
               <button
                 key={i}
                 onClick={item.action}
-                className="w-full bg-[#0B1221] border border-slate-800 rounded-xl p-4 flex items-center gap-4 hover:border-slate-600 transition-colors text-left group"
+                className="w-full bg-background border border-border rounded-xl p-4 flex items-center gap-4 hover:border-border transition-colors text-left group"
               >
                 <div
                   className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
@@ -102,10 +102,10 @@ const AshaProfile: React.FC = () => {
                   <Icon size={22} style={{ color: item.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-white">{item.label}</h3>
-                  <p className="text-xs text-slate-400">{item.value}</p>
+                  <h3 className="text-sm font-bold text-textPrimary">{item.label}</h3>
+                  <p className="text-xs text-textSecondary">{item.value}</p>
                 </div>
-                <ChevronRight size={18} className="text-slate-600 group-hover:text-slate-300 transition-colors shrink-0" />
+                <ChevronRight size={18} className="text-textTertiary group-hover:text-textSecondary transition-colors shrink-0" />
               </button>
             );
           })}
@@ -113,7 +113,7 @@ const AshaProfile: React.FC = () => {
 
         {/* App Info */}
         <div className="mt-8 text-center">
-          <p className="text-[10px] text-slate-600">
+          <p className="text-[10px] text-textTertiary">
             LifeLink AI — ASHA Worker Module<br />
             Version 1.0
           </p>

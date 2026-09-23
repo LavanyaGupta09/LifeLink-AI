@@ -45,7 +45,7 @@ const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 
 const MAINTENANCE_PIPELINE: MaintenanceStage[] = ['returned', 'inspection', 'sanitization', 'maintenance', 'cleared'];
 const MAINTENANCE_LABELS: Record<MaintenanceStage, { emoji: string; label: string; color: string }> = {
-  returned: { emoji: '📥', label: 'Returned', color: 'text-slate-400' },
+  returned: { emoji: '📥', label: 'Returned', color: 'text-textSecondary' },
   inspection: { emoji: '🔍', label: 'Inspection', color: 'text-amber-400' },
   sanitization: { emoji: '🧹', label: 'Sanitization', color: 'text-cyan-400' },
   maintenance: { emoji: '🔧', label: 'Maintenance', color: 'text-purple-400' },
@@ -124,17 +124,17 @@ export default function B2BEquipmentDashboard() {
   const revenueMax = Math.max(...MOCK_REVENUE.monthlyBreakdown.map(m => m.rental + m.sales));
 
   return (
-    <div className={`w-full min-h-screen bg-[#0B1121] text-white font-sans flex flex-col relative pb-[120px] md:pb-0 px-0 py-0 transition-all duration-300 ${isSidebarExpanded ? 'md:pl-64' : ''}`}>
+    <div className={`w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col relative pb-[120px] md:pb-0 px-0 py-0 transition-all duration-300 ${isSidebarExpanded ? 'md:pl-64' : ''}`}>
 
       {/* ═══════════════════════════════════════════
           HEADER
           ═══════════════════════════════════════════ */}
-      <header className="w-full flex justify-between items-center p-6 lg:px-10 lg:py-8 border-b border-slate-800/50">
+      <header className="w-full flex justify-between items-center p-6 lg:px-10 lg:py-8 border-b border-border">
         <div className="flex items-center gap-4">
           {!isSidebarExpanded && (
             <button 
               onClick={() => setIsSidebarExpanded(true)}
-              className="hidden md:flex w-10 h-10 rounded-lg hover:bg-slate-800 items-center justify-center text-slate-400 transition-colors mr-2"
+              className="hidden md:flex w-10 h-10 rounded-lg hover:bg-surface items-center justify-center text-textSecondary transition-colors mr-2"
             >
               <Menu size={24} />
             </button>
@@ -151,11 +151,11 @@ export default function B2BEquipmentDashboard() {
                 </span>
               )}
             </h1>
-            <p className="text-slate-400 text-sm md:text-base mt-1">Equipment Provider • {MOCK_PROVIDER.serviceAreas.slice(0, 2).join(', ')} +{MOCK_PROVIDER.serviceAreas.length - 2}</p>
+            <p className="text-textSecondary text-sm md:text-base mt-1">Equipment Provider • {MOCK_PROVIDER.serviceAreas.slice(0, 2).join(', ')} +{MOCK_PROVIDER.serviceAreas.length - 2}</p>
           </div>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => navigate('/settings')} className="px-5 py-3 bg-[#131B2F] border border-slate-800 rounded-xl hover:bg-slate-800 font-bold transition text-sm">
+          <button onClick={() => navigate('/settings')} className="px-5 py-3 bg-card border border-border rounded-xl hover:bg-surface font-bold transition text-sm">
             <Settings size={16} className="inline mr-2" />Settings
           </button>
           <button onClick={handleLogout} className="px-5 py-3 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white font-bold transition text-sm flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function B2BEquipmentDashboard() {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
                 activeTab === item.id
                   ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                  : 'bg-[#131B2F] text-slate-500 border-slate-800'
+                  : 'bg-card text-textTertiary border-border'
               }`}
             >
               {item.icon}
@@ -200,13 +200,13 @@ export default function B2BEquipmentDashboard() {
                 { label: 'Pending Requests', value: pendingOrders, icon: <AlertTriangle size={20} />, color: 'amber', glow: 'shadow-amber-500/10' },
                 { label: "Today's Revenue", value: `₹${(MOCK_REVENUE.todayRevenue / 1000).toFixed(1)}K`, icon: <TrendingUp size={20} />, color: 'purple', glow: 'shadow-purple-500/10' },
               ].map((metric, i) => (
-                <div key={i} className={`bg-[#131B2F] border border-slate-800 rounded-3xl p-5 lg:p-6 shadow-xl ${metric.glow} relative overflow-hidden`}>
+                <div key={i} className={`bg-card border border-border rounded-3xl p-5 lg:p-6 shadow-xl ${metric.glow} relative overflow-hidden`}>
                   <div className={`absolute top-0 right-0 w-20 h-20 bg-${metric.color}-500/5 rounded-full blur-2xl`} />
                   <div className={`w-10 h-10 bg-${metric.color}-500/10 rounded-xl flex items-center justify-center mb-3 text-${metric.color}-400`}>
                     {metric.icon}
                   </div>
-                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">{metric.label}</p>
-                  <p className="text-2xl lg:text-3xl font-black text-white">{metric.value}</p>
+                  <p className="text-xs text-textTertiary font-bold uppercase tracking-wider mb-1">{metric.label}</p>
+                  <p className="text-2xl lg:text-3xl font-black text-textPrimary">{metric.value}</p>
                 </div>
               ))}
             </div>
@@ -217,7 +217,7 @@ export default function B2BEquipmentDashboard() {
                 <AlertTriangle size={20} className="text-rose-400 shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm font-bold text-rose-300">{overdueRentals} Overdue Rental{overdueRentals > 1 ? 's' : ''}</p>
-                  <p className="text-xs text-slate-400">Equipment not returned past rental end date</p>
+                  <p className="text-xs text-textSecondary">Equipment not returned past rental end date</p>
                 </div>
                 <button
                   onClick={() => { setActiveTab('orders'); setOrdersSubTab('rentals'); }}
@@ -229,17 +229,17 @@ export default function B2BEquipmentDashboard() {
             )}
 
             {/* Delivery Schedule Timeline */}
-            <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-              <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+              <h3 className="text-lg font-bold text-textPrimary mb-5 flex items-center gap-2">
                 <Truck size={18} className="text-cyan-400" /> Upcoming Deliveries & Pickups
               </h3>
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
                 {orders.filter(o => o.status !== 'delivered').slice(0, 6).map((order, i) => (
-                  <div key={order.id} className="min-w-[200px] bg-[#0B1121] border border-slate-800/50 rounded-2xl p-4 flex-shrink-0 relative">
+                  <div key={order.id} className="min-w-[200px] bg-background border border-border rounded-2xl p-4 flex-shrink-0 relative">
                     <div className={`absolute top-0 left-0 w-full h-0.5 ${ORDER_STATUS_COLORS[order.status]}`} />
-                    <p className="text-xs font-bold text-slate-500 mb-1">{order.deliveryDate}</p>
-                    <h4 className="text-sm font-bold text-white mb-1">{order.equipmentName}</h4>
-                    <p className="text-xs text-slate-400 mb-2">{order.customerName}</p>
+                    <p className="text-xs font-bold text-textTertiary mb-1">{order.deliveryDate}</p>
+                    <h4 className="text-sm font-bold text-textPrimary mb-1">{order.equipmentName}</h4>
+                    <p className="text-xs text-textSecondary mb-2">{order.customerName}</p>
                     <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${ORDER_STATUS_COLORS[order.status]}/20 ${
                       order.status === 'new' ? 'text-rose-400 bg-rose-500/10' :
                       order.status === 'confirmed' ? 'text-amber-400 bg-amber-500/10' :
@@ -254,8 +254,8 @@ export default function B2BEquipmentDashboard() {
             </div>
 
             {/* Revenue Bar Chart */}
-            <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-              <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+              <h3 className="text-lg font-bold text-textPrimary mb-5 flex items-center gap-2">
                 <BarChart3 size={18} className="text-cyan-400" /> Monthly Revenue
               </h3>
               <div className="flex items-end gap-4 h-40">
@@ -271,14 +271,14 @@ export default function B2BEquipmentDashboard() {
                           <div className="bg-purple-500/60 transition-all duration-500" style={{ height: `${salesHeight}px` }} />
                         </div>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-bold">{m.month}</span>
+                      <span className="text-[10px] text-textTertiary font-bold">{m.month}</span>
                     </div>
                   );
                 })}
               </div>
               <div className="flex gap-6 mt-4 justify-center">
-                <span className="text-xs text-slate-400 flex items-center gap-1.5"><span className="w-3 h-3 bg-cyan-500/80 rounded" /> Rentals</span>
-                <span className="text-xs text-slate-400 flex items-center gap-1.5"><span className="w-3 h-3 bg-purple-500/60 rounded" /> Sales</span>
+                <span className="text-xs text-textSecondary flex items-center gap-1.5"><span className="w-3 h-3 bg-cyan-500/80 rounded" /> Rentals</span>
+                <span className="text-xs text-textSecondary flex items-center gap-1.5"><span className="w-3 h-3 bg-purple-500/60 rounded" /> Sales</span>
               </div>
             </div>
           </div>
@@ -290,15 +290,15 @@ export default function B2BEquipmentDashboard() {
         {activeTab === 'inventory' && (
           <div className="space-y-6">
             <div className="flex flex-col lg:flex-row gap-4 lg:items-center justify-between">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <h2 className="text-xl font-bold text-textPrimary flex items-center gap-2">
                 <Package size={20} className="text-cyan-400" /> Equipment Inventory
-                <span className="text-sm bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-lg font-bold ml-2">{EQUIPMENT_CATALOG.length} items</span>
+                <span className="text-sm bg-surface text-textSecondary px-2.5 py-0.5 rounded-lg font-bold ml-2">{EQUIPMENT_CATALOG.length} items</span>
               </h2>
               <div className="flex gap-3">
                 <div className="relative flex-1 lg:w-64">
-                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-textTertiary" />
                   <input
-                    className="w-full bg-[#131B2F] border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
+                    className="w-full bg-card border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-textPrimary placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
                     placeholder="Search equipment..."
                     value={inventorySearch}
                     onChange={e => setInventorySearch(e.target.value)}
@@ -306,7 +306,7 @@ export default function B2BEquipmentDashboard() {
                 </div>
                 <button
                   onClick={() => setShowAddEquipment(!showAddEquipment)}
-                  className="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-lg shadow-cyan-600/20"
+                  className="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-textPrimary rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-lg shadow-cyan-600/20"
                 >
                   <Plus size={16} /> Add Equipment
                 </button>
@@ -315,39 +315,39 @@ export default function B2BEquipmentDashboard() {
 
             {/* Add Equipment Form (toggle) */}
             {showAddEquipment && (
-              <div className="bg-[#131B2F] border border-cyan-500/30 rounded-3xl p-6 shadow-xl animate-fade-in">
-                <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+              <div className="bg-card border border-cyan-500/30 rounded-3xl p-6 shadow-xl animate-fade-in">
+                <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                   <Plus size={16} className="text-cyan-400" /> Add New Equipment
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {['Equipment Name', 'Brand', 'Serial Number', 'Category', 'Condition', 'Rent Price/mo'].map(field => (
                     <div key={field}>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">{field}</label>
-                      <input className="w-full bg-[#0B1121] border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500/50" placeholder={field} />
+                      <label className="text-[10px] font-bold text-textTertiary uppercase tracking-wider mb-1 block">{field}</label>
+                      <input className="w-full bg-background border border-border rounded-xl py-2.5 px-3 text-sm text-textPrimary placeholder-slate-600 focus:outline-none focus:border-cyan-500/50" placeholder={field} />
                     </div>
                   ))}
                   {['Buy Price', 'Security Deposit'].map(field => (
                     <div key={field}>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">{field}</label>
-                      <input className="w-full bg-[#0B1121] border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500/50" placeholder={`₹ ${field}`} />
+                      <label className="text-[10px] font-bold text-textTertiary uppercase tracking-wider mb-1 block">{field}</label>
+                      <input className="w-full bg-background border border-border rounded-xl py-2.5 px-3 text-sm text-textPrimary placeholder-slate-600 focus:outline-none focus:border-cyan-500/50" placeholder={`₹ ${field}`} />
                     </div>
                   ))}
                 </div>
                 <div className="flex gap-3 mt-5">
-                  <button className="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold text-sm transition-colors">Save Equipment</button>
-                  <button onClick={() => setShowAddEquipment(false)} className="px-6 py-3 bg-slate-800 text-slate-400 rounded-xl font-bold text-sm hover:bg-slate-700 transition-colors">Cancel</button>
+                  <button className="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-textPrimary rounded-xl font-bold text-sm transition-colors">Save Equipment</button>
+                  <button onClick={() => setShowAddEquipment(false)} className="px-6 py-3 bg-surface text-textSecondary rounded-xl font-bold text-sm hover:bg-surface transition-colors">Cancel</button>
                 </div>
               </div>
             )}
 
             {/* Inventory Table */}
-            <div className="bg-[#131B2F] border border-slate-800 rounded-3xl shadow-xl overflow-hidden">
+            <div className="bg-card border border-border rounded-3xl shadow-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-800">
+                    <tr className="border-b border-border">
                       {['Equipment', 'Category', 'Brand', 'Serial #', 'Condition', 'Rent/mo', 'Buy', 'Deposit', 'Status', 'Actions'].map(h => (
-                        <th key={h} className="text-left px-4 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                        <th key={h} className="text-left px-4 py-4 text-[10px] font-bold text-textTertiary uppercase tracking-wider whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -355,29 +355,29 @@ export default function B2BEquipmentDashboard() {
                     {filteredInventory.map(eq => {
                       const statusCfg = EQUIP_STATUS_CONFIG[eq.status];
                       return (
-                        <tr key={eq.id} className="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors">
+                        <tr key={eq.id} className="border-b border-border hover:bg-surface transition-colors">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <span className="text-xl">{eq.emoji}</span>
-                              <span className="font-bold text-white text-sm whitespace-nowrap">{eq.name}</span>
+                              <span className="font-bold text-textPrimary text-sm whitespace-nowrap">{eq.name}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-slate-400 whitespace-nowrap">{eq.category}</td>
-                          <td className="px-4 py-3 text-slate-400">{eq.brand}</td>
-                          <td className="px-4 py-3 text-slate-500 font-mono text-xs">{eq.serialNumber}</td>
-                          <td className="px-4 py-3 text-slate-400">{eq.condition}</td>
-                          <td className="px-4 py-3 text-white font-bold">₹{eq.rentPrice.toLocaleString()}</td>
-                          <td className="px-4 py-3 text-white font-bold">₹{eq.buyPrice.toLocaleString()}</td>
+                          <td className="px-4 py-3 text-textSecondary whitespace-nowrap">{eq.category}</td>
+                          <td className="px-4 py-3 text-textSecondary">{eq.brand}</td>
+                          <td className="px-4 py-3 text-textTertiary font-mono text-xs">{eq.serialNumber}</td>
+                          <td className="px-4 py-3 text-textSecondary">{eq.condition}</td>
+                          <td className="px-4 py-3 text-textPrimary font-bold">₹{eq.rentPrice.toLocaleString()}</td>
+                          <td className="px-4 py-3 text-textPrimary font-bold">₹{eq.buyPrice.toLocaleString()}</td>
                           <td className="px-4 py-3 text-amber-400 font-bold">₹{eq.securityDeposit.toLocaleString()}</td>
                           <td className="px-4 py-3">
                             <span className={`text-xs font-bold ${statusCfg.textColor}`}>{statusCfg.label}</span>
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex gap-2">
-                              <button className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 transition-colors">
+                              <button className="w-8 h-8 bg-surface hover:bg-surface rounded-lg flex items-center justify-center text-textSecondary transition-colors">
                                 <Edit3 size={14} />
                               </button>
-                              <button className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center text-slate-400 transition-colors">
+                              <button className="w-8 h-8 bg-surface hover:bg-surface rounded-lg flex items-center justify-center text-textSecondary transition-colors">
                                 <Eye size={14} />
                               </button>
                             </div>
@@ -404,7 +404,7 @@ export default function B2BEquipmentDashboard() {
                 className={`px-5 py-2.5 rounded-xl text-sm font-bold border transition-all ${
                   ordersSubTab === 'pipeline'
                     ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                    : 'bg-[#131B2F] text-slate-500 border-slate-800'
+                    : 'bg-card text-textTertiary border-border'
                 }`}
               >
                 📦 Order Pipeline
@@ -414,7 +414,7 @@ export default function B2BEquipmentDashboard() {
                 className={`px-5 py-2.5 rounded-xl text-sm font-bold border transition-all ${
                   ordersSubTab === 'rentals'
                     ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                    : 'bg-[#131B2F] text-slate-500 border-slate-800'
+                    : 'bg-card text-textTertiary border-border'
                 }`}
               >
                 🔄 Active Rentals
@@ -427,26 +427,26 @@ export default function B2BEquipmentDashboard() {
                 {ORDER_PIPELINE.map(stage => {
                   const stageOrders = orders.filter(o => o.status === stage);
                   return (
-                    <div key={stage} className="bg-[#131B2F] border border-slate-800 rounded-3xl p-4 shadow-xl">
-                      <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/50">
-                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    <div key={stage} className="bg-card border border-border rounded-3xl p-4 shadow-xl">
+                      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
+                        <h4 className="text-sm font-bold text-textPrimary flex items-center gap-2">
                           <span className={`w-2 h-2 rounded-full ${ORDER_STATUS_COLORS[stage]}`} />
                           {ORDER_STATUS_LABELS[stage]}
                         </h4>
-                        <span className="text-xs font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded">{stageOrders.length}</span>
+                        <span className="text-xs font-bold text-textTertiary bg-surface px-2 py-0.5 rounded">{stageOrders.length}</span>
                       </div>
                       <div className="space-y-3">
                         {stageOrders.map(order => (
-                          <div key={order.id} className="bg-[#0B1121] rounded-2xl p-4 border border-slate-800/50 relative">
+                          <div key={order.id} className="bg-background rounded-2xl p-4 border border-border relative">
                             <div className={`absolute top-0 left-0 w-1 h-full rounded-l-2xl ${ORDER_STATUS_COLORS[stage]}`} />
                             <p className="text-xs font-bold text-cyan-400 mb-1">{order.id}</p>
-                            <h5 className="text-sm font-bold text-white mb-1">{order.equipmentName}</h5>
-                            <p className="text-xs text-slate-400 mb-1">{order.customerName}</p>
+                            <h5 className="text-sm font-bold text-textPrimary mb-1">{order.equipmentName}</h5>
+                            <p className="text-xs text-textSecondary mb-1">{order.customerName}</p>
                             <div className="flex items-center justify-between mt-3">
-                              <span className="text-xs font-bold text-slate-500">
+                              <span className="text-xs font-bold text-textTertiary">
                                 {order.orderType === 'rent' ? `🔄 ${order.rentalDuration}` : '🛒 Purchase'}
                               </span>
-                              <span className="text-xs font-bold text-white">₹{order.amount.toLocaleString()}</span>
+                              <span className="text-xs font-bold text-textPrimary">₹{order.amount.toLocaleString()}</span>
                             </div>
                             {stage !== 'delivered' && (
                               <button
@@ -459,7 +459,7 @@ export default function B2BEquipmentDashboard() {
                           </div>
                         ))}
                         {stageOrders.length === 0 && (
-                          <p className="text-xs text-slate-600 text-center py-4 font-bold">No orders</p>
+                          <p className="text-xs text-textTertiary text-center py-4 font-bold">No orders</p>
                         )}
                       </div>
                     </div>
@@ -470,33 +470,33 @@ export default function B2BEquipmentDashboard() {
 
             {/* ACTIVE RENTALS */}
             {ordersSubTab === 'rentals' && (
-              <div className="bg-[#131B2F] border border-slate-800 rounded-3xl shadow-xl overflow-hidden">
-                <div className="p-5 border-b border-slate-800/50">
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <div className="bg-card border border-border rounded-3xl shadow-xl overflow-hidden">
+                <div className="p-5 border-b border-border">
+                  <h3 className="text-base font-bold text-textPrimary flex items-center gap-2">
                     <Clock size={16} className="text-cyan-400" /> Active Rental Tracker
                   </h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-800">
+                      <tr className="border-b border-border">
                         {['Equipment', 'Customer', 'Start Date', 'End Date', 'Days Left', 'Rate/mo', 'Deposit', 'Status', 'Actions'].map(h => (
-                          <th key={h} className="text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                          <th key={h} className="text-left px-4 py-3 text-[10px] font-bold text-textTertiary uppercase tracking-wider whitespace-nowrap">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {rentals.map(r => (
-                        <tr key={r.id} className={`border-b border-slate-800/50 transition-colors ${r.status === 'overdue' ? 'bg-rose-500/5' : 'hover:bg-slate-800/20'}`}>
+                        <tr key={r.id} className={`border-b border-border transition-colors ${r.status === 'overdue' ? 'bg-rose-500/5' : 'hover:bg-surface'}`}>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <span className="text-lg">{r.equipmentEmoji}</span>
-                              <span className="font-bold text-white text-sm whitespace-nowrap">{r.equipmentName}</span>
+                              <span className="font-bold text-textPrimary text-sm whitespace-nowrap">{r.equipmentName}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{r.customerName}</td>
-                          <td className="px-4 py-3 text-slate-400">{r.startDate}</td>
-                          <td className="px-4 py-3 text-slate-400">{r.endDate}</td>
+                          <td className="px-4 py-3 text-textSecondary whitespace-nowrap">{r.customerName}</td>
+                          <td className="px-4 py-3 text-textSecondary">{r.startDate}</td>
+                          <td className="px-4 py-3 text-textSecondary">{r.endDate}</td>
                           <td className="px-4 py-3">
                             {r.daysRemaining < 0 ? (
                               <span className="text-xs font-bold text-rose-400 bg-rose-500/10 px-2 py-1 rounded-lg">{Math.abs(r.daysRemaining)}d overdue</span>
@@ -506,12 +506,12 @@ export default function B2BEquipmentDashboard() {
                               <span className="text-xs font-bold text-emerald-400">{r.daysRemaining}d left</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-white font-bold">₹{r.monthlyRate.toLocaleString()}</td>
+                          <td className="px-4 py-3 text-textPrimary font-bold">₹{r.monthlyRate.toLocaleString()}</td>
                           <td className="px-4 py-3 text-amber-400 font-bold">₹{r.deposit.toLocaleString()}</td>
                           <td className="px-4 py-3">
                             <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
                               r.status === 'overdue' ? 'text-rose-400 bg-rose-500/10' :
-                              r.status === 'returned' ? 'text-slate-400 bg-slate-800' :
+                              r.status === 'returned' ? 'text-textSecondary bg-surface' :
                               'text-emerald-400 bg-emerald-500/10'
                             }`}>
                               {r.status === 'overdue' ? '⚠️ Overdue' : r.status === 'returned' ? '✓ Returned' : '🟢 Active'}
@@ -551,7 +551,7 @@ export default function B2BEquipmentDashboard() {
         {activeTab === 'maintenance' && (
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <h2 className="text-xl font-bold text-textPrimary flex items-center gap-2">
                 <Wrench size={20} className="text-cyan-400" /> Post-Rental Maintenance Pipeline
               </h2>
               <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-1 rounded-lg uppercase tracking-wider">
@@ -560,7 +560,7 @@ export default function B2BEquipmentDashboard() {
             </div>
 
             {/* Pipeline visualization */}
-            <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-6 overflow-x-auto pb-2 scrollbar-hide">
                 {MAINTENANCE_PIPELINE.map((stage, i) => {
                   const cfg = MAINTENANCE_LABELS[stage];
@@ -568,11 +568,11 @@ export default function B2BEquipmentDashboard() {
                   return (
                     <React.Fragment key={stage}>
                       <div className="flex flex-col items-center min-w-[80px]">
-                        <div className={`w-12 h-12 bg-[#0B1121] border border-slate-800 rounded-xl flex items-center justify-center text-xl mb-2`}>
+                        <div className={`w-12 h-12 bg-background border border-border rounded-xl flex items-center justify-center text-xl mb-2`}>
                           {cfg.emoji}
                         </div>
                         <span className={`text-[10px] font-bold ${cfg.color} uppercase tracking-wider`}>{cfg.label}</span>
-                        <span className="text-[10px] text-slate-600 font-bold mt-0.5">{count} item{count !== 1 ? 's' : ''}</span>
+                        <span className="text-[10px] text-textTertiary font-bold mt-0.5">{count} item{count !== 1 ? 's' : ''}</span>
                       </div>
                       {i < MAINTENANCE_PIPELINE.length - 1 && (
                         <ArrowRight size={16} className="text-slate-700 shrink-0 mx-2" />
@@ -589,19 +589,19 @@ export default function B2BEquipmentDashboard() {
                 const items = maintenanceItems.filter(m => m.stage === stage);
                 const cfg = MAINTENANCE_LABELS[stage];
                 return (
-                  <div key={stage} className="bg-[#131B2F] border border-slate-800 rounded-3xl p-4 shadow-xl">
-                    <h4 className={`text-sm font-bold mb-4 pb-3 border-b border-slate-800/50 flex items-center gap-2 ${cfg.color}`}>
+                  <div key={stage} className="bg-card border border-border rounded-3xl p-4 shadow-xl">
+                    <h4 className={`text-sm font-bold mb-4 pb-3 border-b border-border flex items-center gap-2 ${cfg.color}`}>
                       {cfg.emoji} {cfg.label}
                     </h4>
                     <div className="space-y-3">
                       {items.map(item => (
-                        <div key={item.id} className="bg-[#0B1121] rounded-2xl p-4 border border-slate-800/50">
+                        <div key={item.id} className="bg-background rounded-2xl p-4 border border-border">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-lg">{item.equipmentEmoji}</span>
-                            <h5 className="text-sm font-bold text-white">{item.equipmentName}</h5>
+                            <h5 className="text-sm font-bold text-textPrimary">{item.equipmentName}</h5>
                           </div>
-                          <p className="text-xs text-slate-400 mb-1">Returned: {item.returnedDate}</p>
-                          <p className="text-xs text-slate-500 mb-1">Assigned: {item.assignedTo}</p>
+                          <p className="text-xs text-textSecondary mb-1">Returned: {item.returnedDate}</p>
+                          <p className="text-xs text-textTertiary mb-1">Assigned: {item.assignedTo}</p>
                           {item.damageReport && item.damageReport !== 'None' && (
                             <p className="text-xs text-amber-400/80 bg-amber-500/5 px-2 py-1 rounded-lg mt-2 mb-2">
                               ⚠️ {item.damageReport}
@@ -628,7 +628,7 @@ export default function B2BEquipmentDashboard() {
                         </div>
                       ))}
                       {items.length === 0 && (
-                        <p className="text-xs text-slate-600 text-center py-6 font-bold">Empty</p>
+                        <p className="text-xs text-textTertiary text-center py-6 font-bold">Empty</p>
                       )}
                     </div>
                   </div>
@@ -643,37 +643,37 @@ export default function B2BEquipmentDashboard() {
             ═══════════════════════════════════════════ */}
         {activeTab === 'logistics' && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-textPrimary flex items-center gap-2">
               <Truck size={20} className="text-cyan-400" /> Delivery & Logistics
             </h2>
 
             {/* Delivery Personnel */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {MOCK_DELIVERY_PERSONNEL.map(person => (
-                <div key={person.id} className="bg-[#131B2F] border border-slate-800 rounded-3xl p-5 shadow-xl relative overflow-hidden">
+                <div key={person.id} className="bg-card border border-border rounded-3xl p-5 shadow-xl relative overflow-hidden">
                   {person.status === 'on_delivery' && (
                     <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-500" />
                   )}
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                    <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center text-lg font-bold text-textPrimary">
                       {person.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-sm font-bold text-white">{person.name}</h4>
-                      <p className="text-xs text-slate-400">{person.vehicleType} • {person.vehicleNumber}</p>
+                      <h4 className="text-sm font-bold text-textPrimary">{person.name}</h4>
+                      <p className="text-xs text-textSecondary">{person.vehicleType} • {person.vehicleNumber}</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between mb-3">
                     <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
                       person.status === 'available' ? 'text-emerald-400 bg-emerald-500/10' :
                       person.status === 'on_delivery' ? 'text-cyan-400 bg-cyan-500/10' :
-                      'text-slate-400 bg-slate-800'
+                      'text-textSecondary bg-surface'
                     }`}>
                       {person.status === 'available' ? '🟢 Available' : person.status === 'on_delivery' ? '🚚 On Delivery' : '⚫ Off Duty'}
                     </span>
                     <div className="flex items-center gap-1">
                       <Star size={12} fill="#FFA502" color="#FFA502" />
-                      <span className="text-xs font-bold text-white">{person.rating}</span>
+                      <span className="text-xs font-bold text-textPrimary">{person.rating}</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -687,9 +687,9 @@ export default function B2BEquipmentDashboard() {
                     )}
                   </div>
                   {person.currentDeliveryId && (
-                    <div className="mt-3 bg-[#0B1121] rounded-xl p-3 border border-slate-800/50">
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Current Assignment</p>
-                      <p className="text-xs text-white font-bold">{person.currentDeliveryId}</p>
+                    <div className="mt-3 bg-background rounded-xl p-3 border border-border">
+                      <p className="text-[10px] text-textTertiary font-bold uppercase tracking-wider mb-1">Current Assignment</p>
+                      <p className="text-xs text-textPrimary font-bold">{person.currentDeliveryId}</p>
                     </div>
                   )}
                 </div>
@@ -697,19 +697,19 @@ export default function B2BEquipmentDashboard() {
             </div>
 
             {/* Active Deliveries */}
-            <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-              <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+              <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                 <MapPin size={16} className="text-cyan-400" /> Active Deliveries
               </h3>
               <div className="space-y-3">
                 {orders.filter(o => o.status === 'dispatched').map(order => (
-                  <div key={order.id} className="bg-[#0B1121] rounded-2xl p-4 border border-slate-800/50 flex items-center gap-4">
+                  <div key={order.id} className="bg-background rounded-2xl p-4 border border-border flex items-center gap-4">
                     <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
                       <Truck size={18} className="text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <h5 className="text-sm font-bold text-white">{order.equipmentName}</h5>
-                      <p className="text-xs text-slate-400">{order.customerName} • {order.address}</p>
+                      <h5 className="text-sm font-bold text-textPrimary">{order.equipmentName}</h5>
+                      <p className="text-xs text-textSecondary">{order.customerName} • {order.address}</p>
                     </div>
                     <button className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-xl text-xs font-bold text-blue-300 hover:bg-blue-500/20 transition-colors flex items-center gap-1">
                       <MapPin size={12} /> Update Location
@@ -717,7 +717,7 @@ export default function B2BEquipmentDashboard() {
                   </div>
                 ))}
                 {orders.filter(o => o.status === 'dispatched').length === 0 && (
-                  <p className="text-xs text-slate-600 text-center py-6 font-bold">No active deliveries</p>
+                  <p className="text-xs text-textTertiary text-center py-6 font-bold">No active deliveries</p>
                 )}
               </div>
             </div>
@@ -729,7 +729,7 @@ export default function B2BEquipmentDashboard() {
             ═══════════════════════════════════════════ */}
         {activeTab === 'revenue' && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-textPrimary flex items-center gap-2">
               <TrendingUp size={20} className="text-cyan-400" /> Revenue & Analytics
             </h2>
 
@@ -741,12 +741,12 @@ export default function B2BEquipmentDashboard() {
                 { label: 'Active Deposits', value: `₹${(MOCK_REVENUE.activeDeposits / 1000).toFixed(0)}K`, color: 'amber', icon: <DollarSign size={18} /> },
                 { label: 'Pending Refunds', value: `₹${(MOCK_REVENUE.pendingRefunds / 1000).toFixed(1)}K`, color: 'rose', icon: <AlertTriangle size={18} /> },
               ].map((card, i) => (
-                <div key={i} className="bg-[#131B2F] border border-slate-800 rounded-3xl p-5 shadow-xl">
+                <div key={i} className="bg-card border border-border rounded-3xl p-5 shadow-xl">
                   <div className={`w-10 h-10 bg-${card.color}-500/10 rounded-xl flex items-center justify-center mb-3 text-${card.color}-400`}>
                     {card.icon}
                   </div>
-                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">{card.label}</p>
-                  <p className="text-2xl font-black text-white">{card.value}</p>
+                  <p className="text-xs text-textTertiary font-bold uppercase tracking-wider mb-1">{card.label}</p>
+                  <p className="text-2xl font-black text-textPrimary">{card.value}</p>
                 </div>
               ))}
             </div>
@@ -754,20 +754,20 @@ export default function B2BEquipmentDashboard() {
             {/* Top Items */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Most Rented */}
-              <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-                <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+              <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+                <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                   <RefreshCw size={16} className="text-cyan-400" /> Most Rented Equipment
                 </h3>
                 <div className="space-y-3">
                   {MOCK_REVENUE.topRentedItems.map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-slate-600 w-5">#{i + 1}</span>
+                      <span className="text-xs font-bold text-textTertiary w-5">#{i + 1}</span>
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm font-bold text-white">{item.name}</span>
+                          <span className="text-sm font-bold text-textPrimary">{item.name}</span>
                           <span className="text-xs font-bold text-cyan-400">{item.count} rentals</span>
                         </div>
-                        <div className="w-full bg-slate-800 rounded-full h-1.5">
+                        <div className="w-full bg-surface rounded-full h-1.5">
                           <div className="bg-cyan-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${(item.count / MOCK_REVENUE.topRentedItems[0].count) * 100}%` }} />
                         </div>
                       </div>
@@ -777,20 +777,20 @@ export default function B2BEquipmentDashboard() {
               </div>
 
               {/* Most Purchased */}
-              <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-                <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+              <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+                <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                   <Package size={16} className="text-purple-400" /> Most Purchased Equipment
                 </h3>
                 <div className="space-y-3">
                   {MOCK_REVENUE.topPurchasedItems.map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-slate-600 w-5">#{i + 1}</span>
+                      <span className="text-xs font-bold text-textTertiary w-5">#{i + 1}</span>
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm font-bold text-white">{item.name}</span>
+                          <span className="text-sm font-bold text-textPrimary">{item.name}</span>
                           <span className="text-xs font-bold text-purple-400">{item.count} sold</span>
                         </div>
-                        <div className="w-full bg-slate-800 rounded-full h-1.5">
+                        <div className="w-full bg-surface rounded-full h-1.5">
                           <div className="bg-purple-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${(item.count / MOCK_REVENUE.topPurchasedItems[0].count) * 100}%` }} />
                         </div>
                       </div>
@@ -801,32 +801,32 @@ export default function B2BEquipmentDashboard() {
             </div>
 
             {/* Supplier Rating & Reviews */}
-            <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <h3 className="text-base font-bold text-textPrimary flex items-center gap-2">
                   <Star size={16} className="text-amber-400" /> Customer Reviews
                 </h3>
                 <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl">
                   <Star size={14} fill="#FFA502" color="#FFA502" />
                   <span className="text-sm font-black text-amber-400">{MOCK_PROVIDER.rating}</span>
-                  <span className="text-xs text-slate-400">({MOCK_PROVIDER.totalOrders} orders)</span>
+                  <span className="text-xs text-textSecondary">({MOCK_PROVIDER.totalOrders} orders)</span>
                 </div>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {MOCK_REVIEWS.map(review => (
-                  <div key={review.id} className="bg-[#0B1121] rounded-2xl p-4 border border-slate-800/50">
+                  <div key={review.id} className="bg-background rounded-2xl p-4 border border-border">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-bold text-white">{review.customerName}</span>
+                      <span className="text-sm font-bold text-textPrimary">{review.customerName}</span>
                       <div className="flex items-center gap-1">
                         {Array.from({ length: review.rating }).map((_, i) => (
                           <Star key={i} size={10} fill="#FFA502" color="#FFA502" />
                         ))}
                       </div>
                     </div>
-                    <p className="text-xs text-slate-400 mb-2">{review.text}</p>
+                    <p className="text-xs text-textSecondary mb-2">{review.text}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-slate-600">{review.equipmentName}</span>
-                      <span className="text-[10px] text-slate-600">{review.date}</span>
+                      <span className="text-[10px] text-textTertiary">{review.equipmentName}</span>
+                      <span className="text-[10px] text-textTertiary">{review.date}</span>
                     </div>
                   </div>
                 ))}
@@ -840,7 +840,7 @@ export default function B2BEquipmentDashboard() {
             ═══════════════════════════════════════════ */}
         {activeTab === 'verification' && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-textPrimary flex items-center gap-2">
               <ShieldCheck size={20} className="text-cyan-400" /> Provider Verification
             </h2>
 
@@ -870,7 +870,7 @@ export default function B2BEquipmentDashboard() {
                     ? '🟢 Verified LifeLink Provider'
                     : '🟡 Verification Pending'}
                 </h3>
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-sm text-textSecondary mt-1">
                   {MOCK_PROVIDER.verificationStatus === 'verified'
                     ? `Active since ${MOCK_PROVIDER.joinedDate} • ${MOCK_PROVIDER.totalOrders} orders fulfilled`
                     : 'Your application is being reviewed by the LifeLink compliance team.'}
@@ -880,8 +880,8 @@ export default function B2BEquipmentDashboard() {
 
             {/* Business Details */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-                <h3 className="text-base font-bold text-white mb-5 flex items-center gap-2">
+              <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+                <h3 className="text-base font-bold text-textPrimary mb-5 flex items-center gap-2">
                   <FileText size={16} className="text-cyan-400" /> Business Details
                 </h3>
                 <div className="space-y-4">
@@ -892,8 +892,8 @@ export default function B2BEquipmentDashboard() {
                     { label: 'License Number', value: MOCK_PROVIDER.licenseNumber },
                   ].map(field => (
                     <div key={field.label}>
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">{field.label}</label>
-                      <div className="bg-[#0B1121] border border-slate-800 rounded-xl py-2.5 px-3 text-sm text-white font-medium">
+                      <label className="text-[10px] font-bold text-textTertiary uppercase tracking-wider mb-1 block">{field.label}</label>
+                      <div className="bg-background border border-border rounded-xl py-2.5 px-3 text-sm text-textPrimary font-medium">
                         {field.value}
                       </div>
                     </div>
@@ -903,8 +903,8 @@ export default function B2BEquipmentDashboard() {
 
               <div className="space-y-6">
                 {/* Service Areas */}
-                <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-                  <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+                  <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                     <MapPin size={16} className="text-cyan-400" /> Service Areas
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -913,15 +913,15 @@ export default function B2BEquipmentDashboard() {
                         📍 {area}
                       </span>
                     ))}
-                    <button className="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-slate-400 hover:border-slate-600 transition-colors flex items-center gap-1">
+                    <button className="px-3 py-1.5 bg-surface border border-border rounded-xl text-xs font-bold text-textSecondary hover:border-border transition-colors flex items-center gap-1">
                       <Plus size={12} /> Add Area
                     </button>
                   </div>
                 </div>
 
                 {/* Compliance Checklist */}
-                <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-                  <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+                  <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                     <ClipboardCheck size={16} className="text-cyan-400" /> Compliance Checklist
                   </h3>
                   <div className="space-y-3">
@@ -935,26 +935,26 @@ export default function B2BEquipmentDashboard() {
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-3">
                         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-                          item.done ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-600'
+                          item.done ? 'bg-emerald-500/20 text-emerald-400' : 'bg-surface text-textTertiary'
                         }`}>
-                          {item.done ? <CheckCircle2 size={14} /> : <div className="w-3 h-3 border-2 border-slate-700 rounded" />}
+                          {item.done ? <CheckCircle2 size={14} /> : <div className="w-3 h-3 border-2 border-border rounded" />}
                         </div>
-                        <span className={`text-sm ${item.done ? 'text-white' : 'text-slate-500'}`}>{item.label}</span>
+                        <span className={`text-sm ${item.done ? 'text-textPrimary' : 'text-textTertiary'}`}>{item.label}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Document Uploads */}
-                <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl">
-                  <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <div className="bg-card border border-border rounded-3xl p-6 shadow-xl">
+                  <h3 className="text-base font-bold text-textPrimary mb-4 flex items-center gap-2">
                     <FileText size={16} className="text-cyan-400" /> Uploaded Documents
                   </h3>
                   <div className="space-y-2">
                     {['GST Certificate.pdf', 'Trade License.pdf', 'Equipment Quality Report.pdf', 'Insurance Policy.pdf'].map(doc => (
-                      <div key={doc} className="flex items-center gap-3 bg-[#0B1121] rounded-xl p-3 border border-slate-800/50">
-                        <FileText size={16} className="text-slate-500" />
-                        <span className="text-sm text-white font-medium flex-1">{doc}</span>
+                      <div key={doc} className="flex items-center gap-3 bg-background rounded-xl p-3 border border-border">
+                        <FileText size={16} className="text-textTertiary" />
+                        <span className="text-sm text-textPrimary font-medium flex-1">{doc}</span>
                         <CheckCircle2 size={14} className="text-emerald-400" />
                       </div>
                     ))}
@@ -969,13 +969,13 @@ export default function B2BEquipmentDashboard() {
       {/* ═══════════════════════════════════════════
           SIDEBAR NAV (Desktop)
           ═══════════════════════════════════════════ */}
-      <div className={`fixed bottom-6 md:bottom-auto md:top-0 md:left-0 md:h-full w-[90%] left-[5%] md:left-0 bg-[#131B2F]/90 backdrop-blur-xl border border-slate-700/50 md:border-y-0 md:border-l-0 md:border-r md:rounded-none rounded-full px-4 py-3 md:px-0 md:py-6 flex md:flex-col justify-between md:justify-start items-center gap-0 md:gap-4 shadow-2xl z-50 overflow-x-auto md:overflow-visible scrollbar-hide transition-transform duration-300 ${isSidebarExpanded ? 'md:w-64 md:items-start md:px-4 md:translate-x-0' : 'md:w-64 md:-translate-x-full'}`}>
+      <div className={`fixed bottom-6 md:bottom-auto md:top-0 md:left-0 md:h-full w-[90%] left-[5%] md:left-0 bg-card backdrop-blur-xl border border-border md:border-y-0 md:border-l-0 md:border-r md:rounded-none rounded-full px-4 py-3 md:px-0 md:py-6 flex md:flex-col justify-between md:justify-start items-center gap-0 md:gap-4 shadow-2xl z-50 overflow-x-auto md:overflow-visible scrollbar-hide transition-transform duration-300 ${isSidebarExpanded ? 'md:w-64 md:items-start md:px-4 md:translate-x-0' : 'md:w-64 md:-translate-x-full'}`}>
         
         {/* Toggle Button (Desktop only) */}
         <div className="hidden md:flex w-full justify-end mb-2 pr-1">
           <button 
             onClick={() => setIsSidebarExpanded(false)}
-            className="w-8 h-8 rounded-lg hover:bg-slate-800 flex items-center justify-center text-slate-400 transition-colors"
+            className="w-8 h-8 rounded-lg hover:bg-surface flex items-center justify-center text-textSecondary transition-colors"
           >
             <ChevronLeft size={20} />
           </button>
@@ -986,7 +986,7 @@ export default function B2BEquipmentDashboard() {
             key={item.id}
             onClick={() => setActiveTab(item.id)}
             className={`flex items-center active:scale-95 transition-all w-full px-2 md:px-3 py-2 md:py-3 md:rounded-xl ${
-              activeTab === item.id ? 'text-cyan-400 md:bg-cyan-500/10' : 'text-slate-500 hover:text-slate-300 md:hover:bg-slate-800/50'
+              activeTab === item.id ? 'text-cyan-400 md:bg-cyan-500/10' : 'text-textTertiary hover:text-textSecondary md:hover:bg-surface'
             } ${!isSidebarExpanded ? 'flex-col md:justify-center' : 'md:justify-start md:flex-row md:gap-3'}`}
             title={!isSidebarExpanded ? item.label : undefined}
           >

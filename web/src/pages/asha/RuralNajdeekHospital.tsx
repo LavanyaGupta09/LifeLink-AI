@@ -12,23 +12,23 @@ const RuralNajdeekHospital: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B1121] text-white flex flex-col items-center pb-24">
+    <div className="min-h-screen bg-background text-textPrimary flex flex-col items-center pb-24">
       <div className="w-full max-w-md p-4 flex flex-col gap-6">
         
         {/* Header */}
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-2 bg-[#131F35] rounded-full text-slate-300">
+          <button onClick={() => navigate(-1)} className="p-2 bg-card rounded-full text-textSecondary">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-bold text-white">Najdeek Hospital</h1>
+          <h1 className="text-xl font-bold text-textPrimary">Najdeek Hospital</h1>
         </div>
 
-        <p className="text-slate-300 text-sm">Aapke paas ke hospital aur clinic</p>
+        <p className="text-textSecondary text-sm">Aapke paas ke hospital aur clinic</p>
 
         {/* List */}
         <div className="flex flex-col gap-4">
           {hospitals.map((h, i) => (
-            <div key={i} className="bg-[#131F35] border border-slate-700 rounded-2xl p-4 flex flex-col gap-3">
+            <div key={i} className="bg-card border border-border rounded-2xl p-4 flex flex-col gap-3">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 bg-[#00C9A7]/10 rounded-full flex items-center justify-center shrink-0">
@@ -36,7 +36,7 @@ const RuralNajdeekHospital: React.FC = () => {
                   </div>
                   <div>
                     <h2 className="text-sm font-bold">{h.name}</h2>
-                    <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
+                    <p className="text-[10px] text-textSecondary mt-0.5 flex items-center gap-1">
                       <MapPin size={10} /> {h.dist}
                     </p>
                   </div>

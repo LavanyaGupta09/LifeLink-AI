@@ -6,7 +6,7 @@ const CATEGORIES = [
   { id: 'joint', icon: <Bone size={24} />, label: 'Joint / Bone Problem', color: 'text-amber-400', bg: 'bg-amber-500/10' },
   { id: 'sports', icon: <Activity size={24} />, label: 'Sports Injury', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 'surgery', icon: <ArrowUpRight size={24} />, label: 'Post-Surgery Recovery', color: 'text-rose-400', bg: 'bg-rose-500/10' },
-  { id: 'neuro', icon: <Brain size={24} />, label: 'Neurological Rehab', color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10' },
+  { id: 'neuro', icon: <Brain size={24} />, label: 'Neurological Rehab', color: 'text-[#8B5CF6]', bg: 'bg-accent-purple' },
 ];
 
 const PHYSIOS = [
@@ -31,9 +31,9 @@ export default function PhysioHomeBooking() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-[120px] px-6 py-6">
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 flex items-center gap-4 -mx-6 px-6 mb-6">
-        <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform" onClick={() => step > 1 ? setStep(step - 1) : navigate('/physiotherapy')}>
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-[120px] px-6 py-6">
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 flex items-center gap-4 -mx-6 px-6 mb-6">
+        <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform" onClick={() => step > 1 ? setStep(step - 1) : navigate('/physiotherapy')}>
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -46,14 +46,14 @@ export default function PhysioHomeBooking() {
       {step === 1 && (
         <div className="flex-1 flex flex-col animate-fade-in">
           <h2 className="text-xl font-bold mb-2">What do you need help with?</h2>
-          <p className="text-slate-400 text-sm mb-6">Select a category to find the right specialist.</p>
+          <p className="text-textSecondary text-sm mb-6">Select a category to find the right specialist.</p>
           
           <div className="grid grid-cols-2 gap-4">
             {CATEGORIES.map(cat => (
               <button 
                 key={cat.id}
                 onClick={() => { setCategory(cat.id); setStep(2); }}
-                className={`flex flex-col items-center justify-center p-6 rounded-3xl border transition-all active:scale-95 ${category === cat.id ? 'bg-[#8B5CF6]/20 border-[#8B5CF6]/50 shadow-[0_0_20px_rgba(139,92,246,0.2)]' : 'bg-[#131F35] border-slate-800 hover:border-slate-700'}`}
+                className={`flex flex-col items-center justify-center p-6 rounded-3xl border transition-all active:scale-95 ${category === cat.id ? 'bg-accent-purple border-[#8B5CF6]/50 shadow-[0_0_20px_rgba(139,92,246,0.2)]' : 'bg-card border-border hover:border-border'}`}
               >
                 <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-3 ${cat.bg} ${cat.color}`}>
                   {cat.icon}
@@ -70,7 +70,7 @@ export default function PhysioHomeBooking() {
         <div className="flex-1 flex flex-col animate-fade-in">
           <h2 className="text-xl font-bold mb-6">When do you need the visit?</h2>
           
-          <div className="bg-[#131F35] rounded-3xl border border-slate-800 p-5 mb-6">
+          <div className="bg-card rounded-3xl border border-border p-5 mb-6">
             <div className="flex items-center gap-3 mb-4 text-emerald-400">
               <Clock size={20} />
               <span className="font-bold">Next Available Slots (Today)</span>
@@ -80,7 +80,7 @@ export default function PhysioHomeBooking() {
                 <button 
                   key={t}
                   onClick={() => { setTime(t); setStep(3); }}
-                  className={`py-3 rounded-xl text-sm font-bold border transition-colors ${time === t ? 'bg-[#8B5CF6] text-white border-[#8B5CF6]' : 'bg-[#0B1121] text-slate-300 border-slate-700 hover:border-slate-500'}`}
+                  className={`py-3 rounded-xl text-sm font-bold border transition-colors ${time === t ? 'bg-accent-purple text-textPrimary border-[#8B5CF6]' : 'bg-background text-textSecondary border-border hover:border-slate-500'}`}
                 >
                   {t}
                 </button>
@@ -88,12 +88,12 @@ export default function PhysioHomeBooking() {
             </div>
           </div>
 
-          <div className="bg-[#131F35] rounded-3xl border border-slate-800 p-5">
-            <div className="flex items-center gap-3 mb-2 text-slate-300">
+          <div className="bg-card rounded-3xl border border-border p-5">
+            <div className="flex items-center gap-3 mb-2 text-textSecondary">
               <MapPin size={20} className="text-[#3D91FF]" />
               <span className="font-bold">Service Location</span>
             </div>
-            <p className="text-sm text-slate-400 pl-8">42, Residency Road, Shanthala Nagar, Bangalore</p>
+            <p className="text-sm text-textSecondary pl-8">42, Residency Road, Shanthala Nagar, Bangalore</p>
           </div>
         </div>
       )}
@@ -108,10 +108,10 @@ export default function PhysioHomeBooking() {
               <div 
                 key={p.id}
                 onClick={() => setProvider(p.id)}
-                className={`bg-[#131F35] border rounded-3xl p-5 cursor-pointer transition-all ${provider === p.id ? 'border-[#8B5CF6] shadow-[0_0_20px_rgba(139,92,246,0.15)] bg-[#8B5CF6]/5' : 'border-slate-800'}`}
+                className={`bg-card border rounded-3xl p-5 cursor-pointer transition-all ${provider === p.id ? 'border-[#8B5CF6] shadow-[0_0_20px_rgba(139,92,246,0.15)] bg-accent-purple' : 'border-border'}`}
               >
                 <div className="flex gap-4">
-                  <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-slate-800">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-surface">
                     <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
@@ -123,8 +123,8 @@ export default function PhysioHomeBooking() {
                     </div>
                     <p className="text-[#8B5CF6] text-xs font-medium mb-2">{p.role}</p>
                     <div className="flex justify-between items-end">
-                      <span className="text-slate-400 text-xs flex items-center gap-1"><MapPin size={12}/> {p.distance}</span>
-                      <span className="font-black text-white">₹{p.fee}</span>
+                      <span className="text-textSecondary text-xs flex items-center gap-1"><MapPin size={12}/> {p.distance}</span>
+                      <span className="font-black text-textPrimary">₹{p.fee}</span>
                     </div>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export default function PhysioHomeBooking() {
           <button 
             disabled={!provider || isBooking}
             onClick={handleBook}
-            className="w-full bg-[#8B5CF6] hover:bg-[#7c3aed] disabled:bg-slate-700 disabled:text-slate-400 text-white font-bold py-4 rounded-xl transition-all shadow-lg mt-6 flex justify-center items-center"
+            className="w-full bg-accent-purple hover:bg-[#7c3aed] disabled:bg-surface disabled:text-textSecondary text-white font-bold py-4 rounded-xl transition-all shadow-lg mt-6 flex justify-center items-center"
           >
             {isBooking ? <span className="animate-pulse">Confirming Booking...</span> : 'Confirm & Pay'}
           </button>

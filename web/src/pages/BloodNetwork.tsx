@@ -378,20 +378,20 @@ const BloodNetwork: React.FC = () => {
       {/* SOS Broadcast Modal */}
       {showSosModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 animate-fade-in backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm overflow-hidden animate-scale-in shadow-2xl z-20">
+          <div className="bg-background border border-border rounded-2xl w-full max-w-sm overflow-hidden animate-scale-in shadow-2xl z-20">
             <div className="bg-red-500/10 p-4 border-b border-red-500/20 flex items-center justify-between">
               <div className="flex items-center gap-2 text-red-500 font-bold">
                 <AlertTriangle size={18} />
                 <h3>Emergency Blood SOS</h3>
               </div>
-              <button onClick={() => setShowSosModal(false)}><X size={18} className="text-secondary hover:text-white" /></button>
+              <button onClick={() => setShowSosModal(false)}><X size={18} className="text-secondary hover:text-textPrimary" /></button>
             </div>
             
             <div className="p-4 space-y-4">
               <div>
                 <label className="text-xs text-secondary mb-1 block uppercase font-bold">Blood Group Needed</label>
                 <select 
-                  className="w-full bg-slate-800 border border-slate-700 text-white p-3 rounded-lg outline-none focus:border-red-500 transition-colors"
+                  className="w-full bg-surface border border-border text-textPrimary p-3 rounded-lg outline-none focus:border-red-500 transition-colors"
                   value={sosForm.blood_group}
                   onChange={(e) => setSosForm({...sosForm, blood_group: e.target.value})}
                 >
@@ -403,7 +403,7 @@ const BloodNetwork: React.FC = () => {
                 <input 
                   type="text" 
                   placeholder="e.g., Apollo Hospital, Sector 14"
-                  className="w-full bg-slate-800 border border-slate-700 text-white p-3 rounded-lg placeholder-slate-400 outline-none focus:border-red-500 transition-colors"
+                  className="w-full bg-surface border border-border text-textPrimary p-3 rounded-lg placeholder-slate-400 outline-none focus:border-red-500 transition-colors"
                   value={sosForm.location}
                   onChange={(e) => setSosForm({...sosForm, location: e.target.value})}
                 />
@@ -413,7 +413,7 @@ const BloodNetwork: React.FC = () => {
                 <input 
                   type="number" 
                   min="1" max="10"
-                  className="w-full bg-slate-800 border border-slate-700 text-white p-3 rounded-lg outline-none focus:border-red-500 transition-colors"
+                  className="w-full bg-surface border border-border text-textPrimary p-3 rounded-lg outline-none focus:border-red-500 transition-colors"
                   value={sosForm.units}
                   onChange={(e) => setSosForm({...sosForm, units: parseInt(e.target.value) || 1})}
                 />
@@ -444,7 +444,7 @@ const BloodNetwork: React.FC = () => {
             </div>
             
             <h2 className="text-2xl font-bold text-red-500 mb-2 uppercase tracking-wide">URGENT REQUEST</h2>
-            <p className="text-white text-lg font-medium mb-1">
+            <p className="text-textPrimary text-lg font-medium mb-1">
               <span className="text-red-400 font-bold">{incomingSos.blood_group}</span> Blood Required
             </p>
             <p className="text-secondary text-sm mb-6 flex justify-center items-center gap-1">

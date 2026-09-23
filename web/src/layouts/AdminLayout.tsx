@@ -54,7 +54,7 @@ const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[#060b14] text-slate-300 font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#060b14] text-textSecondary font-sans overflow-hidden">
       
       {/* ─── DESKTOP SIDEBAR ─── */}
       {!isSidebarCollapsed && (
@@ -67,18 +67,18 @@ const AdminLayout: React.FC = () => {
                 <ShieldCheck size={22} className="text-indigo-400" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white tracking-tight leading-none">LifeLink <span className="text-indigo-400">AI</span></h1>
-                <p className="text-[10px] text-slate-400 font-medium tracking-wide mt-1 uppercase">System Admin</p>
+                <h1 className="text-xl font-bold text-textPrimary tracking-tight leading-none">LifeLink <span className="text-indigo-400">AI</span></h1>
+                <p className="text-[10px] text-textSecondary font-medium tracking-wide mt-1 uppercase">System Admin</p>
               </div>
             </div>
-            <button onClick={() => setIsSidebarCollapsed(true)} className="p-1 text-slate-500 hover:text-white transition-colors lg:hidden">
+            <button onClick={() => setIsSidebarCollapsed(true)} className="p-1 text-textTertiary hover:text-textPrimary transition-colors lg:hidden">
               <X size={18} />
             </button>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-6 flex flex-col gap-1 mt-4">
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">Management</div>
+            <div className="text-[10px] font-bold text-textTertiary uppercase tracking-wider mb-2 px-2">Management</div>
             {menuItems.slice(0, 3).map((item) => {
               const isActive = location.pathname === item.path || (item.path === '/admin/providers' && location.pathname.startsWith('/admin/providers'));
               return (
@@ -88,17 +88,17 @@ const AdminLayout: React.FC = () => {
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                     isActive 
                       ? 'bg-indigo-500/10 text-indigo-400 font-medium' 
-                      : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                      : 'text-textSecondary hover:bg-surface hover:text-textPrimary'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300 transition-colors'}>
+                    <div className={isActive ? 'text-indigo-400' : 'text-textTertiary group-hover:text-textSecondary transition-colors'}>
                       {item.icon}
                     </div>
                     <span className="text-sm">{item.name}</span>
                   </div>
                   {item.badge && (
-                    <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-full ${item.badgeColor}`}>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold text-textPrimary rounded-full ${item.badgeColor}`}>
                       {item.badge}
                     </span>
                   )}
@@ -106,7 +106,7 @@ const AdminLayout: React.FC = () => {
               );
             })}
 
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-2 mt-6">Monitoring</div>
+            <div className="text-[10px] font-bold text-textTertiary uppercase tracking-wider mb-2 px-2 mt-6">Monitoring</div>
             {menuItems.slice(3, 8).map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -116,17 +116,17 @@ const AdminLayout: React.FC = () => {
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                     isActive 
                       ? 'bg-indigo-500/10 text-indigo-400 font-medium' 
-                      : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                      : 'text-textSecondary hover:bg-surface hover:text-textPrimary'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300 transition-colors'}>
+                    <div className={isActive ? 'text-indigo-400' : 'text-textTertiary group-hover:text-textSecondary transition-colors'}>
                       {item.icon}
                     </div>
                     <span className="text-sm">{item.name}</span>
                   </div>
                   {item.badge && (
-                    <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-full ${item.badgeColor}`}>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold text-textPrimary rounded-full ${item.badgeColor}`}>
                       {item.badge}
                     </span>
                   )}
@@ -134,7 +134,7 @@ const AdminLayout: React.FC = () => {
               );
             })}
 
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-2 mt-6">System</div>
+            <div className="text-[10px] font-bold text-textTertiary uppercase tracking-wider mb-2 px-2 mt-6">System</div>
             {menuItems.slice(8).map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -144,11 +144,11 @@ const AdminLayout: React.FC = () => {
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                     isActive 
                       ? 'bg-indigo-500/10 text-indigo-400 font-medium' 
-                      : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                      : 'text-textSecondary hover:bg-surface hover:text-textPrimary'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300 transition-colors'}>
+                    <div className={isActive ? 'text-indigo-400' : 'text-textTertiary group-hover:text-textSecondary transition-colors'}>
                       {item.icon}
                     </div>
                     <span className="text-sm">{item.name}</span>
@@ -159,9 +159,9 @@ const AdminLayout: React.FC = () => {
           </nav>
 
           {/* Footer Profile */}
-          <div className="p-4 mt-auto border-t border-slate-800/50 bg-[#060b14]">
+          <div className="p-4 mt-auto border-t border-border bg-[#060b14]">
             <div 
-              className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/50 cursor-pointer transition-colors"
+              className="flex items-center justify-between p-3 rounded-xl hover:bg-surface cursor-pointer transition-colors"
               onClick={() => navigate('/admin/profile')}
             >
               <div className="flex items-center gap-3">
@@ -169,15 +169,15 @@ const AdminLayout: React.FC = () => {
                   A
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">Administrator</p>
-                  <p className="text-[10px] text-slate-400">admin@lifelink.ai</p>
+                  <p className="text-sm font-medium text-textPrimary">Administrator</p>
+                  <p className="text-[10px] text-textSecondary">admin@lifelink.ai</p>
                 </div>
               </div>
-              <ChevronRight size={16} className="text-slate-500" />
+              <ChevronRight size={16} className="text-textTertiary" />
             </div>
             <button 
               onClick={handleLogout}
-              className="w-full mt-3 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              className="w-full mt-3 py-2 text-xs font-medium text-textSecondary hover:text-textPrimary hover:bg-surface rounded-lg transition-colors"
             >
               Secure Logout
             </button>
@@ -186,7 +186,7 @@ const AdminLayout: React.FC = () => {
       )}
 
       {/* ─── MAIN CONTENT AREA ─── */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#0a0f1a]">
+      <div className="flex-1 flex flex-col min-w-0 bg-background">
         
         {/* TOP HEADER */}
         <header className="h-[72px] shrink-0 border-b border-[#1e293b]/50 bg-[#060b14]/80 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 z-20 gap-4">
@@ -195,7 +195,7 @@ const AdminLayout: React.FC = () => {
             {/* Desktop Sidebar Toggle */}
             <button 
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-              className="hidden md:flex p-2 -ml-2 text-slate-400 hover:text-white"
+              className="hidden md:flex p-2 -ml-2 text-textSecondary hover:text-textPrimary"
               title="Toggle Sidebar"
             >
               <Menu size={24} />
@@ -204,14 +204,14 @@ const AdminLayout: React.FC = () => {
             {/* Mobile Header Logo */}
             <div className="flex md:hidden items-center gap-2" onClick={() => navigate('/admin/dashboard')}>
               <ShieldCheck size={24} className="text-indigo-400" />
-              <h1 className="text-lg font-bold text-white tracking-tight leading-none">LifeLink <span className="text-indigo-400">Admin</span></h1>
+              <h1 className="text-lg font-bold text-textPrimary tracking-tight leading-none">LifeLink <span className="text-indigo-400">Admin</span></h1>
             </div>
 
             {/* Logo on Desktop when sidebar is collapsed */}
             {isSidebarCollapsed && (
               <div className="hidden md:flex items-center gap-2 cursor-pointer ml-2" onClick={() => navigate('/admin/dashboard')}>
                 <ShieldCheck size={20} className="text-indigo-400" />
-                <h1 className="text-lg font-bold text-white tracking-tight leading-none">LifeLink <span className="text-indigo-400">AI</span></h1>
+                <h1 className="text-lg font-bold text-textPrimary tracking-tight leading-none">LifeLink <span className="text-indigo-400">AI</span></h1>
               </div>
             )}
           </div>
@@ -219,27 +219,27 @@ const AdminLayout: React.FC = () => {
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-xl relative mx-auto">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="text-slate-500" size={18} />
+              <Search className="text-textTertiary" size={18} />
             </div>
             <input 
               type="text" 
               style={{ paddingLeft: '44px' }}
               placeholder="Search users, providers, hospitals, or activities..." 
-              className="w-full bg-[#111827] border border-slate-700 focus:border-indigo-500 focus:outline-none rounded-full py-2 pr-4 text-sm text-white placeholder-slate-500 transition-colors shadow-inner"
+              className="w-full bg-background border border-border focus:border-indigo-500 focus:outline-none rounded-full py-2 pr-4 text-sm text-textPrimary placeholder-slate-500 transition-colors shadow-inner"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
-              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-slate-500 bg-[#1e293b] border border-slate-700 rounded-md">⌘</kbd>
-              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-slate-500 bg-[#1e293b] border border-slate-700 rounded-md">K</kbd>
+              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-textTertiary bg-surface border border-border rounded-md">⌘</kbd>
+              <kbd className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-medium text-textTertiary bg-surface border border-border rounded-md">K</kbd>
             </div>
           </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-3 md:gap-5">
-            <button className="md:hidden p-2 text-slate-400 hover:text-white">
+            <button className="md:hidden p-2 text-textSecondary hover:text-textPrimary">
               <Search size={20} />
             </button>
             <button 
-              className="relative p-2 text-slate-400 hover:text-white transition-colors"
+              className="relative p-2 text-textSecondary hover:text-textPrimary transition-colors"
               onClick={() => navigate('/admin/notifications')}
             >
               <Bell size={20} />
@@ -263,7 +263,7 @@ const AdminLayout: React.FC = () => {
       </div>
 
       {/* ─── MOBILE BOTTOM NAV ─── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#060b14]/90 backdrop-blur-lg border-t border-slate-800/50 px-2 pb-safe pt-2 flex items-center justify-between z-40">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#060b14]/90 backdrop-blur-lg border-t border-border px-2 pb-safe pt-2 flex items-center justify-between z-40">
         {[
           { name: 'Home', path: '/admin/dashboard', icon: <Home size={22} /> },
           { name: 'Providers', path: '/admin/providers', icon: <Building2 size={22} /> },
@@ -277,10 +277,10 @@ const AdminLayout: React.FC = () => {
               onClick={() => navigate(item.path)}
               className="flex-1 flex flex-col items-center justify-center gap-1 py-1"
             >
-              <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-indigo-500/20 text-indigo-400' : 'text-slate-400'}`}>
+              <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-indigo-500/20 text-indigo-400' : 'text-textSecondary'}`}>
                 {item.icon}
               </div>
-              <span className={`text-[10px] font-medium ${isActive ? 'text-indigo-400' : 'text-slate-500'}`}>
+              <span className={`text-[10px] font-medium ${isActive ? 'text-indigo-400' : 'text-textTertiary'}`}>
                 {item.name}
               </span>
             </button>
@@ -290,10 +290,10 @@ const AdminLayout: React.FC = () => {
           onClick={() => setIsMobileMenuOpen(true)}
           className="flex-1 flex flex-col items-center justify-center gap-1 py-1"
         >
-          <div className="p-1.5 rounded-xl text-slate-400">
+          <div className="p-1.5 rounded-xl text-textSecondary">
             <Menu size={22} />
           </div>
-          <span className="text-[10px] font-medium text-slate-500">More</span>
+          <span className="text-[10px] font-medium text-textTertiary">More</span>
         </button>
       </nav>
 
@@ -301,13 +301,13 @@ const AdminLayout: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex justify-end">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="w-[280px] bg-[#0B1221] h-full relative flex flex-col animate-slide-left shadow-2xl border-l border-slate-800">
-            <div className="p-5 flex items-center justify-between border-b border-slate-800/50 bg-[#060b14]">
+          <div className="w-[280px] bg-background h-full relative flex flex-col animate-slide-left shadow-2xl border-l border-border">
+            <div className="p-5 flex items-center justify-between border-b border-border bg-[#060b14]">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={20} className="text-indigo-400" />
-                <h2 className="text-lg font-bold text-white tracking-tight">Admin Menu</h2>
+                <h2 className="text-lg font-bold text-textPrimary tracking-tight">Admin Menu</h2>
               </div>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-slate-400 hover:text-white">
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-textSecondary hover:text-textPrimary">
                 <X size={20} />
               </button>
             </div>
@@ -320,14 +320,14 @@ const AdminLayout: React.FC = () => {
                     navigate(item.path);
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center justify-between p-3 rounded-xl bg-[#131b2f] border border-slate-800 text-slate-300 hover:text-white active:bg-slate-800"
+                  className="flex items-center justify-between p-3 rounded-xl bg-[#131b2f] border border-border text-textSecondary hover:text-white active:bg-surface"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="text-slate-400">{item.icon}</div>
+                    <div className="text-textSecondary">{item.icon}</div>
                     <span className="font-medium text-sm">{item.name}</span>
                   </div>
                   {item.badge && (
-                    <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-full ${item.badgeColor}`}>
+                    <span className={`px-2 py-0.5 text-[10px] font-bold text-textPrimary rounded-full ${item.badgeColor}`}>
                       {item.badge}
                     </span>
                   )}
@@ -335,7 +335,7 @@ const AdminLayout: React.FC = () => {
               ))}
             </div>
 
-            <div className="p-4 bg-[#060b14] border-t border-slate-800/50">
+            <div className="p-4 bg-[#060b14] border-t border-border">
               <button 
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-3 bg-red-500/10 text-red-500 font-bold text-sm rounded-xl"

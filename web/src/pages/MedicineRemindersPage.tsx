@@ -101,7 +101,7 @@ const MedicineRemindersPage: React.FC = () => {
   }, [reminders, waterIntake]);
 
   return (
-    <div className="w-full bg-[#0B1121] text-white font-sans flex flex-col pb-[120px] md:pb-12 md:pl-28 relative min-h-screen px-6 py-6 ">
+    <div className="w-full bg-background text-textPrimary font-sans flex flex-col pb-[120px] md:pb-12 md:pl-28 relative min-h-screen px-6 py-6 ">
       
       {/* Dynamic Background Elements */}
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#3D91FF]/10 to-transparent pointer-events-none" />
@@ -110,17 +110,17 @@ const MedicineRemindersPage: React.FC = () => {
       {/* HEADER */}
       <header className="w-full flex items-center gap-4 p-6 lg:px-10 lg:py-8 relative z-10">
         <button 
-          className="w-12 h-12 flex items-center justify-center bg-[#131B2F] border border-slate-800 rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-lg" 
+          className="w-12 h-12 flex items-center justify-center bg-card border border-border rounded-full hover:bg-surface transition-all active:scale-95 shadow-lg" 
           onClick={() => navigate(-1)}
         >
-          <ChevronLeft size={24} className="text-slate-300" />
+          <ChevronLeft size={24} className="text-textSecondary" />
         </button>
         <div>
           <h1 className="text-2xl lg:text-4xl font-black tracking-tight flex items-center gap-3">
             <Activity size={32} className="text-[#00C9A7]" />
             Daily Wellness Tracker
           </h1>
-          <p className="text-slate-400 text-sm lg:text-base font-medium mt-1">Smart Pills & Hydration Schedule</p>
+          <p className="text-textSecondary text-sm lg:text-base font-medium mt-1">Smart Pills & Hydration Schedule</p>
         </div>
       </header>
 
@@ -128,12 +128,12 @@ const MedicineRemindersPage: React.FC = () => {
       <main className="w-full px-6 flex-1 relative z-10 flex flex-col gap-8">
         
         {/* WIDGET 1: UNIFIED DAILY ADHERENCE & WATER GOAL HEADER */}
-        <div className="bg-gradient-to-br from-[#131B2F] to-[#0B1121] border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+        <div className="bg-gradient-to-br from-[#131B2F] to-background border border-border rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-r from-[#00C9A7]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
           
           <div className="grid grid-cols-2 gap-8 relative z-10">
             {/* Pill Adherence */}
-            <div className="flex flex-col items-center text-center border-r border-slate-800/80 pr-4">
+            <div className="flex flex-col items-center text-center border-r border-border pr-4">
               <div className="flex items-center gap-2 mb-4">
                 <Pill size={16} className="text-[#3D91FF]" />
                 <p className="text-xs font-bold text-[#3D91FF] uppercase tracking-widest">Pill Adherence</p>
@@ -144,10 +144,10 @@ const MedicineRemindersPage: React.FC = () => {
                   <path className={`${adherence > 80 ? 'text-emerald-500' : 'text-amber-500'} transition-all duration-1000 ease-out`} strokeDasharray={`${adherence}, 100`} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-black text-white">{adherence}%</span>
+                  <span className="text-2xl font-black text-textPrimary">{adherence}%</span>
                 </div>
               </div>
-              <p className="text-slate-400 text-xs font-medium">{adherence > 80 ? 'Excellent! Keep it up.' : 'You missed a few doses.'}</p>
+              <p className="text-textSecondary text-xs font-medium">{adherence > 80 ? 'Excellent! Keep it up.' : 'You missed a few doses.'}</p>
             </div>
 
             {/* Hydration Goal */}
@@ -162,11 +162,11 @@ const MedicineRemindersPage: React.FC = () => {
                   <path className="text-[#00C9A7] transition-all duration-1000 ease-out" strokeDasharray={`${waterPercentage}, 100`} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-black text-white">{waterIntake}</span>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase">/ {waterGoal} ml</span>
+                  <span className="text-2xl font-black text-textPrimary">{waterIntake}</span>
+                  <span className="text-[10px] text-textSecondary font-bold uppercase">/ {waterGoal} ml</span>
                 </div>
               </div>
-              <p className="text-slate-400 text-xs font-medium">{waterPercentage >= 100 ? 'Goal reached!' : 'Keep drinking water.'}</p>
+              <p className="text-textSecondary text-xs font-medium">{waterPercentage >= 100 ? 'Goal reached!' : 'Keep drinking water.'}</p>
             </div>
           </div>
         </div>
@@ -175,24 +175,24 @@ const MedicineRemindersPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* Action Buttons (Scan Rx & Manual) */}
-          <div className="bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl flex gap-4">
+          <div className="bg-card border border-border rounded-3xl p-6 shadow-xl flex gap-4">
             <button 
-              className="flex-1 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#3D91FF] to-blue-600 rounded-2xl p-4 shadow-[0_0_30px_rgba(61,145,255,0.3)] hover:shadow-[0_0_40px_rgba(61,145,255,0.5)] transition-all active:scale-95 text-white" 
+              className="flex-1 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#3D91FF] to-blue-600 rounded-2xl p-4 shadow-[0_0_30px_rgba(61,145,255,0.3)] hover:shadow-[0_0_40px_rgba(61,145,255,0.5)] transition-all active:scale-95 text-textPrimary" 
               onClick={handleUpload}
             >
               {isUploading ? <Loader2 size={24} className="animate-spin" /> : <Camera size={24} />}
               <span className="text-xs font-bold uppercase tracking-wider">Scan Rx</span>
             </button>
-            <button className="flex-1 flex flex-col items-center justify-center gap-3 bg-[#0B1121] border-2 border-dashed border-slate-700 hover:border-[#3D91FF] rounded-2xl p-4 transition-all active:scale-95 text-slate-300 hover:text-white">
-              <Plus size={24} className="text-slate-400" />
+            <button className="flex-1 flex flex-col items-center justify-center gap-3 bg-background border-2 border-dashed border-border hover:border-[#3D91FF] rounded-2xl p-4 transition-all active:scale-95 text-textSecondary hover:text-textPrimary">
+              <Plus size={24} className="text-textSecondary" />
               <span className="text-xs font-bold uppercase tracking-wider">Manual</span>
             </button>
           </div>
 
           {/* WIDGET 2: INTERACTIVE WATER INTAKE LOGGING */}
-          <div className={`bg-[#131B2F] border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col justify-center transition-all duration-300 ${isAddingWater ? 'scale-[1.02] border-[#00C9A7]/50 shadow-[0_0_30px_rgba(0,201,167,0.2)]' : ''}`}>
+          <div className={`bg-card border border-border rounded-3xl p-6 shadow-xl flex flex-col justify-center transition-all duration-300 ${isAddingWater ? 'scale-[1.02] border-[#00C9A7]/50 shadow-[0_0_30px_rgba(0,201,167,0.2)]' : ''}`}>
              <div className="flex items-center justify-between mb-4">
-               <h3 className="font-bold text-white flex items-center gap-2 text-sm"><Droplets size={16} className="text-[#00C9A7]"/> Log Water</h3>
+               <h3 className="font-bold text-textPrimary flex items-center gap-2 text-sm"><Droplets size={16} className="text-[#00C9A7]"/> Log Water</h3>
                <span className="bg-[#00C9A7]/10 text-[#00C9A7] text-[10px] font-bold px-2 py-1 rounded-md uppercase">1-2 hr intervals</span>
              </div>
              <div className="flex gap-4">
@@ -218,30 +218,30 @@ const MedicineRemindersPage: React.FC = () => {
 
         {/* WIDGET 3: COMBINED NOTIFICATION & TIMELINE STREAM */}
         <div className="pb-10">
-          <div className="flex justify-between items-end mb-6 border-b border-slate-800/50 pb-4">
-            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <Activity size={20} className="text-slate-400" /> Daily Schedule
+          <div className="flex justify-between items-end mb-6 border-b border-border pb-4">
+            <h3 className="text-xl font-bold text-textPrimary flex items-center gap-2">
+              <Activity size={20} className="text-textSecondary" /> Daily Schedule
             </h3>
-            <span className="bg-slate-800 text-slate-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">{timelineItems.length} Events</span>
+            <span className="bg-surface text-textSecondary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">{timelineItems.length} Events</span>
           </div>
           
           {timelineItems.length === 0 ? (
-            <div className="w-full bg-[#131B2F] border border-slate-800 rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-inner">
-              <div className="w-24 h-24 bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
-                <Activity size={48} className="text-slate-500" />
+            <div className="w-full bg-card border border-border rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-inner">
+              <div className="w-24 h-24 bg-surface rounded-full flex items-center justify-center mb-6">
+                <Activity size={48} className="text-textTertiary" />
               </div>
-              <h3 className="text-xl font-bold text-slate-300 mb-2">Your schedule is clear</h3>
-              <p className="text-slate-500 max-w-sm">No pills or water checkpoints scheduled yet.</p>
+              <h3 className="text-xl font-bold text-textSecondary mb-2">Your schedule is clear</h3>
+              <p className="text-textTertiary max-w-sm">No pills or water checkpoints scheduled yet.</p>
             </div>
           ) : (
-            <div className="relative border-l-2 border-slate-800/50 ml-4 pl-8 flex flex-col gap-6">
+            <div className="relative border-l-2 border-border ml-4 pl-8 flex flex-col gap-6">
               {timelineItems.map((item) => (
                 <div key={item.id} className="relative group">
                   {/* Timeline Dot */}
-                  <div className={`absolute -left-[41px] top-4 w-5 h-5 rounded-full border-4 border-[#0B1121] flex items-center justify-center shadow-lg ${item.type === 'pill' ? (item.completed ? 'bg-emerald-500' : 'bg-[#3D91FF]') : (item.completed ? 'bg-emerald-500' : 'bg-[#00C9A7]')}`} />
+                  <div className={`absolute -left-[41px] top-4 w-5 h-5 rounded-full border-4 border-border flex items-center justify-center shadow-lg ${item.type === 'pill' ? (item.completed ? 'bg-emerald-500' : 'bg-[#3D91FF]') : (item.completed ? 'bg-emerald-500' : 'bg-[#00C9A7]')}`} />
                   
                   {/* Item Card */}
-                  <div className={`bg-[#131B2F] border border-slate-800 rounded-3xl p-5 transition-all hover:shadow-xl group-hover:border-slate-600 relative overflow-hidden ${item.completed ? 'opacity-75' : ''}`}>
+                  <div className={`bg-card border border-border rounded-3xl p-5 transition-all hover:shadow-xl group-hover:border-border relative overflow-hidden ${item.completed ? 'opacity-75' : ''}`}>
                     
                     {/* Subtle Background Glow for Critical Pills */}
                     {item.type === 'pill' && item.data?.isCritical && !item.completed && (
@@ -254,18 +254,18 @@ const MedicineRemindersPage: React.FC = () => {
                           {item.type === 'pill' ? <Pill size={24} /> : <Droplets size={24} />}
                         </div>
                         <div>
-                          <h4 className="text-lg font-black text-white flex items-center gap-2 tracking-tight">
+                          <h4 className="text-lg font-black text-textPrimary flex items-center gap-2 tracking-tight">
                             {item.title}
                             {item.type === 'pill' && item.data?.isCritical && !item.completed && <AlertTriangle size={16} className="text-rose-500 animate-pulse" />}
                           </h4>
-                          <p className="text-xs font-medium text-slate-400 mt-1">{item.subtitle}</p>
+                          <p className="text-xs font-medium text-textSecondary mt-1">{item.subtitle}</p>
                         </div>
                       </div>
                       
                       <div className="flex flex-col items-end gap-2">
-                        <div className="bg-slate-800/50 border border-slate-700 px-3 py-1 rounded-lg flex items-center gap-2">
-                          <BellRing size={12} className="text-slate-400" />
-                          <span className="text-xs font-black tracking-widest text-white">{item.time}</span>
+                        <div className="bg-surface border border-border px-3 py-1 rounded-lg flex items-center gap-2">
+                          <BellRing size={12} className="text-textSecondary" />
+                          <span className="text-xs font-black tracking-widest text-textPrimary">{item.time}</span>
                         </div>
                         {item.type === 'pill' && !item.completed && (
                           <button 

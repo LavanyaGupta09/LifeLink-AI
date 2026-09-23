@@ -15,7 +15,7 @@ const PlanDetails: React.FC = () => {
 
   if (!plan) {
     return (
-      <div className="min-h-screen bg-[#060B14] flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-textPrimary">
         <AlertTriangle size={64} className="text-amber-500 mb-4" />
         <h2 className="text-2xl font-bold mb-2">Plan Not Found</h2>
         <button onClick={() => navigate('/insurance')} className="text-[#3D91FF] font-bold">Return to Hub</button>
@@ -33,19 +33,19 @@ const PlanDetails: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#060B14] text-white pb-[120px] relative">
+    <div className="w-full min-h-[100dvh] bg-background text-textPrimary pb-[120px] relative">
       {/* Header */}
-      <div className="sticky top-0 z-40 w-full bg-[#0B1121]/90 backdrop-blur-md border-b border-slate-800 p-4">
+      <div className="sticky top-0 z-40 w-full bg-background backdrop-blur-md border-b border-border p-4">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-slate-800 transition-colors">
+          <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-surface transition-colors">
             <ArrowLeft size={20} />
           </button>
           <div className="flex gap-2">
             <button 
               onClick={() => toggleSavePlan(plan.id)}
-              className="p-2 bg-[#131F35] rounded-xl border border-slate-800 hover:border-pink-500/50 transition-colors"
+              className="p-2 bg-card rounded-xl border border-border hover:border-pink-500/50 transition-colors"
             >
-              <Heart size={20} className={isSaved ? "fill-pink-500 text-pink-500" : "text-slate-400"} />
+              <Heart size={20} className={isSaved ? "fill-pink-500 text-pink-500" : "text-textSecondary"} />
             </button>
           </div>
         </div>
@@ -54,25 +54,25 @@ const PlanDetails: React.FC = () => {
       <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-8">
         
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-slate-800 pb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-border pb-8">
           <div className="flex gap-4">
             <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
               <Shield size={32} className="text-[#3D91FF]" />
             </div>
             <div>
-              <p className="text-sm text-slate-400 mb-1">{plan.provider}</p>
+              <p className="text-sm text-textSecondary mb-1">{plan.provider}</p>
               <h1 className="text-2xl md:text-3xl font-black mb-2">{plan.planName}</h1>
               <div className="flex items-center gap-2">
-                <span className="bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded-md">{plan.planType}</span>
-                <span className="text-xs text-slate-500">• Rated {plan.rating}/5</span>
+                <span className="bg-surface text-textSecondary text-xs px-2 py-1 rounded-md">{plan.planType}</span>
+                <span className="text-xs text-textTertiary">• Rated {plan.rating}/5</span>
               </div>
             </div>
           </div>
           
-          <div className="bg-[#131F35] border border-slate-800 rounded-2xl p-5 min-w-[250px] w-full md:w-auto text-center">
-            <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">Monthly Premium</p>
-            <p className="text-3xl font-black text-white mb-1">₹{plan.monthlyPremium}</p>
-            <p className="text-[10px] text-slate-500 mb-4">₹{plan.annualPremium.toLocaleString()} / year</p>
+          <div className="bg-card border border-border rounded-2xl p-5 min-w-[250px] w-full md:w-auto text-center">
+            <p className="text-xs text-textSecondary uppercase tracking-widest mb-1">Monthly Premium</p>
+            <p className="text-3xl font-black text-textPrimary mb-1">₹{plan.monthlyPremium}</p>
+            <p className="text-[10px] text-textTertiary mb-4">₹{plan.annualPremium.toLocaleString()} / year</p>
             
             <button 
               onClick={() => navigate(`/insurance/apply/${plan.id}`)}
@@ -90,14 +90,14 @@ const PlanDetails: React.FC = () => {
             className={`flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors border ${
               isCompared 
                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
-                : 'bg-[#131F35] border-slate-700 text-slate-300 hover:bg-slate-800'
+                : 'bg-card border-border text-textSecondary hover:bg-surface'
             }`}
           >
             {isCompared ? <Check size={16} /> : <Plus size={16} />} 
             {isCompared ? 'Added to Compare' : 'Add to Compare'}
           </button>
           
-          <button className="flex-1 bg-[#131F35] border border-slate-700 text-slate-300 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-800">
+          <button className="flex-1 bg-card border border-border text-textSecondary py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-surface">
             <ExternalLink size={16} /> Contact Provider
           </button>
         </div>
@@ -106,27 +106,27 @@ const PlanDetails: React.FC = () => {
         <div>
           <h2 className="text-lg font-bold mb-4">Key Coverage</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4">
-              <p className="text-[10px] text-slate-500 uppercase mb-1">Sum Insured</p>
+            <div className="bg-background border border-border rounded-2xl p-4">
+              <p className="text-[10px] text-textTertiary uppercase mb-1">Sum Insured</p>
               <p className="font-bold text-lg">₹{(plan.coverage / 100000)} Lakh</p>
             </div>
-            <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4">
-              <p className="text-[10px] text-slate-500 uppercase mb-1">Network Hospitals</p>
+            <div className="bg-background border border-border rounded-2xl p-4">
+              <p className="text-[10px] text-textTertiary uppercase mb-1">Network Hospitals</p>
               <p className="font-bold text-lg">{plan.networkHospitals.toLocaleString()}+</p>
             </div>
             
             {/* Items with AI Help */}
-            <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 relative group">
+            <div className="bg-background border border-border rounded-2xl p-4 relative group">
               <div className="flex justify-between items-start">
-                <p className="text-[10px] text-slate-500 uppercase mb-1">Co-pay</p>
+                <p className="text-[10px] text-textTertiary uppercase mb-1">Co-pay</p>
                 <button onClick={() => setShowAiHelp('copay')} className="text-[#3D91FF] p-1"><Bot size={14}/></button>
               </div>
               <p className="font-bold text-lg">{plan.copay}%</p>
             </div>
             
-            <div className="bg-[#0B1121] border border-slate-800 rounded-2xl p-4 relative">
+            <div className="bg-background border border-border rounded-2xl p-4 relative">
               <div className="flex justify-between items-start">
-                <p className="text-[10px] text-slate-500 uppercase mb-1">Room Rent</p>
+                <p className="text-[10px] text-textTertiary uppercase mb-1">Room Rent</p>
                 <button onClick={() => setShowAiHelp('roomRent')} className="text-[#3D91FF] p-1"><Bot size={14}/></button>
               </div>
               <p className="font-bold text-base mt-1">{plan.roomRent}</p>
@@ -136,32 +136,32 @@ const PlanDetails: React.FC = () => {
 
         {/* Benefits & Waiting Periods */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[#131F35] border border-slate-800 rounded-2xl p-6">
+          <div className="bg-card border border-border rounded-2xl p-6">
             <h3 className="font-bold mb-4 flex items-center gap-2"><Check size={18} className="text-[#00C9A7]" /> Included Benefits</h3>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2 text-sm text-slate-300">
+              <li className="flex items-start gap-2 text-sm text-textSecondary">
                 <span className="text-[#00C9A7] mt-0.5">•</span> <span>{plan.ambulance ? 'Ambulance cover included' : 'No ambulance cover'}</span>
               </li>
-              <li className="flex items-start gap-2 text-sm text-slate-300">
+              <li className="flex items-start gap-2 text-sm text-textSecondary">
                 <span className="text-[#00C9A7] mt-0.5">•</span> <span>{plan.daycare ? 'Day-care procedures covered' : 'No day-care cover'}</span>
               </li>
-              <li className="flex items-start gap-2 text-sm text-slate-300">
-                <span className={plan.maternity ? "text-[#00C9A7] mt-0.5" : "text-slate-600 mt-0.5"}>•</span> 
+              <li className="flex items-start gap-2 text-sm text-textSecondary">
+                <span className={plan.maternity ? "text-[#00C9A7] mt-0.5" : "text-textTertiary mt-0.5"}>•</span> 
                 <span className={!plan.maternity ? "line-through opacity-50" : ""}>Maternity coverage</span>
               </li>
-              <li className="flex items-start gap-2 text-sm text-slate-300">
-                <span className={plan.opd ? "text-[#00C9A7] mt-0.5" : "text-slate-600 mt-0.5"}>•</span> 
+              <li className="flex items-start gap-2 text-sm text-textSecondary">
+                <span className={plan.opd ? "text-[#00C9A7] mt-0.5" : "text-textTertiary mt-0.5"}>•</span> 
                 <span className={!plan.opd ? "line-through opacity-50" : ""}>OPD expenses</span>
               </li>
               {plan.benefits?.map((benefit, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                <li key={i} className="flex items-start gap-2 text-sm text-textSecondary">
                   <span className="text-[#00C9A7] mt-0.5">•</span> <span>{benefit}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="bg-[#131F35] border border-slate-800 rounded-2xl p-6">
+          <div className="bg-card border border-border rounded-2xl p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold flex items-center gap-2"><FileText size={18} className="text-amber-500" /> Waiting Periods</h3>
               <button onClick={() => setShowAiHelp('waiting')} className="text-[#3D91FF] text-xs font-bold flex items-center gap-1"><Bot size={14}/> Help</button>
@@ -169,21 +169,21 @@ const PlanDetails: React.FC = () => {
             
             <div className="space-y-4">
               <div>
-                <p className="text-xs text-slate-400 mb-1">Initial Waiting Period</p>
-                <p className="font-bold text-slate-200">{plan.waitingPeriod}</p>
+                <p className="text-xs text-textSecondary mb-1">Initial Waiting Period</p>
+                <p className="font-bold text-textPrimary">{plan.waitingPeriod}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 mb-1">Pre-existing Diseases (PED)</p>
-                <p className="font-bold text-slate-200">{plan.preExistingWaiting}</p>
+                <p className="text-xs text-textSecondary mb-1">Pre-existing Diseases (PED)</p>
+                <p className="font-bold text-textPrimary">{plan.preExistingWaiting}</p>
               </div>
             </div>
             
             {plan.exclusions && (
-              <div className="mt-6 pt-6 border-t border-slate-800">
-                <h4 className="font-bold text-xs uppercase tracking-widest text-slate-500 mb-3">Exclusions</h4>
+              <div className="mt-6 pt-6 border-t border-border">
+                <h4 className="font-bold text-xs uppercase tracking-widest text-textTertiary mb-3">Exclusions</h4>
                 <ul className="space-y-2">
                   {plan.exclusions.map((excl, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-400">
+                    <li key={i} className="flex items-start gap-2 text-sm text-textSecondary">
                       <X size={14} className="text-red-500 flex-shrink-0 mt-0.5" /> <span>{excl}</span>
                     </li>
                   ))}
@@ -196,8 +196,8 @@ const PlanDetails: React.FC = () => {
         {/* AI Help Modal Overlay */}
         {showAiHelp && (
           <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-            <div className="bg-[#131F35] border border-[#3D91FF]/30 rounded-2xl p-6 max-w-sm w-full animate-fade-in relative">
-              <button onClick={() => setShowAiHelp(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+            <div className="bg-card border border-[#3D91FF]/30 rounded-2xl p-6 max-w-sm w-full animate-fade-in relative">
+              <button onClick={() => setShowAiHelp(null)} className="absolute top-4 right-4 text-textSecondary hover:text-textPrimary">
                 <X size={20} />
               </button>
               <div className="flex items-center gap-3 mb-4">
@@ -206,10 +206,10 @@ const PlanDetails: React.FC = () => {
                 </div>
                 <h3 className="font-bold">AI Explanation</h3>
               </div>
-              <p className="text-slate-300 text-sm leading-relaxed mb-6">
+              <p className="text-textSecondary text-sm leading-relaxed mb-6">
                 {aiExplanations[showAiHelp]}
               </p>
-              <button onClick={() => setShowAiHelp(null)} className="w-full bg-slate-800 text-white py-2 rounded-xl font-bold">
+              <button onClick={() => setShowAiHelp(null)} className="w-full bg-surface text-textPrimary py-2 rounded-xl font-bold">
                 Got it
               </button>
             </div>

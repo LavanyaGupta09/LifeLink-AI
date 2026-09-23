@@ -40,7 +40,7 @@ const HealthAuditPage: React.FC = () => {
         <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(46,213,115,0.2)', color: '#2ED573' }}>
           <ShieldCheck size={36} />
         </div>
-        <h2 className="font-display text-2xl font-bold text-white mb-2">Audit Complete</h2>
+        <h2 className="font-display text-2xl font-bold text-textPrimary mb-2">Audit Complete</h2>
         <p className="text-secondary text-sm mb-8">Your health profile is now marked as Verified Fresh. First responders will receive your latest data.</p>
         
         <button className="btn btn-primary btn-block mb-4" onClick={() => navigate('/dashboard')}>
@@ -85,7 +85,7 @@ const HealthAuditPage: React.FC = () => {
         </div>
 
         <div className="p-5 animate-fade-in">
-          <h3 className="font-display font-bold text-lg text-white mb-1">{steps[auditStep].title}</h3>
+          <h3 className="font-display font-bold text-lg text-textPrimary mb-1">{steps[auditStep].title}</h3>
           <p className="text-sm text-secondary mb-6">{steps[auditStep].desc}</p>
 
           {/* Step Content */}

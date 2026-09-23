@@ -44,7 +44,7 @@ const AdminProviders: React.FC = () => {
       case 'rejected':
         return <span className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 text-red-400 text-xs font-bold rounded-md"><XCircle size={14} /> Rejected</span>;
       case 'suspended':
-        return <span className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-500/20 text-slate-400 text-xs font-bold rounded-md"><XCircle size={14} /> Suspended</span>;
+        return <span className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-500/20 text-textSecondary text-xs font-bold rounded-md"><XCircle size={14} /> Suspended</span>;
       case 'action_required':
         return <span className="flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold rounded-md"><AlertTriangle size={14} /> Needs Info</span>;
       default:
@@ -57,12 +57,12 @@ const AdminProviders: React.FC = () => {
       
       {/* Header */}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Provider Management</h1>
-        <p className="text-slate-400 mt-1 text-sm">Review, verify and manage LifeLink healthcare providers.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-textPrimary tracking-tight">Provider Management</h1>
+        <p className="text-textSecondary mt-1 text-sm">Review, verify and manage LifeLink healthcare providers.</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex overflow-x-auto custom-scrollbar gap-2 border-b border-slate-800 pb-px">
+      <div className="flex overflow-x-auto custom-scrollbar gap-2 border-b border-border pb-px">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -70,7 +70,7 @@ const AdminProviders: React.FC = () => {
             className={`px-4 py-2.5 text-sm font-bold whitespace-nowrap border-b-2 transition-colors ${
               activeTab === tab.id 
                 ? 'border-indigo-500 text-indigo-400' 
-                : 'border-transparent text-slate-400 hover:text-slate-300'
+                : 'border-transparent text-textSecondary hover:text-textSecondary'
             }`}
           >
             {tab.label}
@@ -83,7 +83,7 @@ const AdminProviders: React.FC = () => {
         
         {/* Type Filter */}
         <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar w-full md:w-auto pb-2 md:pb-0">
-          <Filter size={16} className="text-slate-500 shrink-0" />
+          <Filter size={16} className="text-textTertiary shrink-0" />
           {types.map(type => (
             <button
               key={type}
@@ -91,7 +91,7 @@ const AdminProviders: React.FC = () => {
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap rounded-lg border transition-colors ${
                 typeFilter === type 
                   ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' 
-                  : 'bg-[#111827] border-slate-800 text-slate-400 hover:border-slate-600'
+                  : 'bg-background border-border text-textSecondary hover:border-border'
               }`}
             >
               {type}
@@ -101,44 +101,44 @@ const AdminProviders: React.FC = () => {
 
         {/* Search */}
         <div className="relative w-full md:w-64 shrink-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-textTertiary" size={16} />
           <input 
             type="text" 
             placeholder="Search provider name or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#111827] border border-slate-700 focus:border-indigo-500 focus:outline-none rounded-lg py-2 pl-9 pr-4 text-sm text-white placeholder-slate-500 transition-colors"
+            className="w-full bg-background border border-border focus:border-indigo-500 focus:outline-none rounded-lg py-2 pl-9 pr-4 text-sm text-textPrimary placeholder-slate-500 transition-colors"
           />
         </div>
       </div>
 
       {/* Provider List */}
-      <div className="bg-[#0B1221] border border-slate-800 rounded-xl overflow-hidden">
+      <div className="bg-background border border-border rounded-xl overflow-hidden">
         
         {/* Desktop Table (Hidden on small screens) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#060b14]/50 border-b border-slate-800/50">
-                <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Provider</th>
-                <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Type & Location</th>
-                <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Submitted</th>
-                <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-5 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+              <tr className="bg-[#060b14]/50 border-b border-border">
+                <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Provider</th>
+                <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Type & Location</th>
+                <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Submitted</th>
+                <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Status</th>
+                <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50">
               {filteredProviders.map(provider => (
-                <tr key={provider.id} className="hover:bg-slate-800/20 transition-colors group">
+                <tr key={provider.id} className="hover:bg-surface transition-colors group">
                   <td className="px-5 py-4">
-                    <p className="text-sm font-bold text-white">{provider.name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{provider.registrationId}</p>
+                    <p className="text-sm font-bold text-textPrimary">{provider.name}</p>
+                    <p className="text-xs text-textSecondary mt-0.5">{provider.registrationId}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <p className="text-sm text-slate-300 font-medium">{provider.type}</p>
-                    <p className="text-xs text-slate-500">{provider.location}</p>
+                    <p className="text-sm text-textSecondary font-medium">{provider.type}</p>
+                    <p className="text-xs text-textTertiary">{provider.location}</p>
                   </td>
-                  <td className="px-5 py-4 text-sm text-slate-400">
+                  <td className="px-5 py-4 text-sm text-textSecondary">
                     {new Date(provider.submittedDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-5 py-4">
@@ -147,7 +147,7 @@ const AdminProviders: React.FC = () => {
                   <td className="px-5 py-4 text-right">
                     <button 
                       onClick={() => navigate(`/admin/providers/${provider.id}`)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-indigo-500 hover:text-white text-xs font-bold rounded-lg transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface text-textSecondary hover:bg-indigo-500 hover:text-textPrimary text-xs font-bold rounded-lg transition-colors"
                     >
                       <Eye size={14} /> Review
                     </button>
@@ -161,21 +161,21 @@ const AdminProviders: React.FC = () => {
         {/* Mobile Cards (Hidden on md+ screens) */}
         <div className="md:hidden flex flex-col divide-y divide-slate-800/50">
           {filteredProviders.map(provider => (
-            <div key={provider.id} className="p-4 flex flex-col gap-3 hover:bg-slate-800/20 transition-colors">
+            <div key={provider.id} className="p-4 flex flex-col gap-3 hover:bg-surface transition-colors">
               <div className="flex justify-between items-start gap-2">
                 <div>
-                  <h3 className="text-base font-bold text-white">{provider.name}</h3>
+                  <h3 className="text-base font-bold text-textPrimary">{provider.name}</h3>
                   <div className="flex flex-wrap items-center gap-2 mt-1">
-                    <span className="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md">{provider.type}</span>
-                    <span className="text-xs text-slate-500">{provider.location}</span>
+                    <span className="text-xs text-textSecondary bg-surface px-2 py-0.5 rounded-md">{provider.type}</span>
+                    <span className="text-xs text-textTertiary">{provider.location}</span>
                   </div>
                 </div>
                 {getStatusBadge(provider.status)}
               </div>
               
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/50">
-                <div className="text-xs text-slate-500">
-                  ID: <span className="text-slate-400">{provider.registrationId}</span>
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                <div className="text-xs text-textTertiary">
+                  ID: <span className="text-textSecondary">{provider.registrationId}</span>
                 </div>
                 <button 
                   onClick={() => navigate(`/admin/providers/${provider.id}`)}
@@ -191,11 +191,11 @@ const AdminProviders: React.FC = () => {
         {/* Empty State */}
         {filteredProviders.length === 0 && (
           <div className="p-12 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-              <Building2 size={24} className="text-slate-500" />
+            <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-4">
+              <Building2 size={24} className="text-textTertiary" />
             </div>
-            <h3 className="text-lg font-bold text-white">No Providers Found</h3>
-            <p className="text-slate-400 text-sm mt-1 max-w-sm">
+            <h3 className="text-lg font-bold text-textPrimary">No Providers Found</h3>
+            <p className="text-textSecondary text-sm mt-1 max-w-sm">
               We couldn't find any providers matching your current filters and search query.
             </p>
             <button 
@@ -204,7 +204,7 @@ const AdminProviders: React.FC = () => {
                 setTypeFilter('All');
                 setActiveTab('all');
               }}
-              className="mt-4 px-4 py-2 bg-slate-800 text-white text-sm font-bold rounded-lg hover:bg-slate-700 transition-colors"
+              className="mt-4 px-4 py-2 bg-surface text-textPrimary text-sm font-bold rounded-lg hover:bg-surface transition-colors"
             >
               Clear Filters
             </button>

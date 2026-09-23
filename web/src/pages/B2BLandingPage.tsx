@@ -13,7 +13,7 @@ const B2BLandingPage: React.FC = () => {
           <Activity size={28} className="text-[#0ea5e9]" />
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">LifeLink <span className="text-[#0ea5e9]">Enterprise</span></h1>
         </div>
-        <button className="text-sm font-semibold text-slate-500 hover:text-slate-900" onClick={() => navigate('/')}>
+        <button className="text-sm font-semibold text-textTertiary hover:text-slate-900" onClick={() => navigate('/')}>
           Return to Patient App
         </button>
       </header>
@@ -21,7 +21,7 @@ const B2BLandingPage: React.FC = () => {
       <main className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-5xl font-extrabold text-slate-900 tracking-tight mb-6">Partner with the Future of Emergency Care</h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-textTertiary max-w-3xl mx-auto leading-relaxed">
             Monetize your services and save lives by joining the LifeLink AI network.
             Real-time trauma alerting for Hospitals and automated fulfillment for Pharmacies.
           </p>
@@ -37,7 +37,7 @@ const B2BLandingPage: React.FC = () => {
               <Building2 size={28} className="text-[#0ea5e9]" />
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900">Hospital ER Desk</h3>
-            <p className="text-slate-600 mb-6">
+            <p className="text-textTertiary mb-6">
               Receive automated Pre-Arrival Trauma Alerts. See patient vitals, medical history, and precise ambulance ETAs before they reach your doors.
             </p>
             <div className="flex items-center justify-between text-sm font-semibold text-[#0ea5e9]">
@@ -55,7 +55,7 @@ const B2BLandingPage: React.FC = () => {
               <Pill size={28} className="text-emerald-600" />
             </div>
             <h3 className="text-2xl font-bold mb-3 text-slate-900">Pharmacy Fulfillment</h3>
-            <p className="text-slate-600 mb-6">
+            <p className="text-textTertiary mb-6">
               Connect your local inventory to our AI Pillbox. Receive automated refill requests and earn fulfillment fees directly from our network.
             </p>
             <div className="flex items-center justify-between text-sm font-semibold text-emerald-600">
@@ -65,10 +65,10 @@ const B2BLandingPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-16 bg-slate-900 rounded-3xl p-10 text-white flex items-center justify-between shadow-2xl">
+        <div className="mt-16 bg-background rounded-3xl p-10 text-textPrimary flex items-center justify-between shadow-2xl">
           <div>
             <h3 className="text-3xl font-bold mb-2">HIPAA Compliant. End-to-End Encrypted.</h3>
-            <p className="text-slate-400">Join 500+ healthcare institutions already on the network.</p>
+            <p className="text-textSecondary">Join 500+ healthcare institutions already on the network.</p>
           </div>
           <ShieldCheck size={64} className="text-sky-400 opacity-80" />
         </div>

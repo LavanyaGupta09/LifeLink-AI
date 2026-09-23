@@ -81,14 +81,14 @@ const EquipmentMarketplace: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#060B14] text-white font-sans flex flex-col pb-24 px-0 py-0">
+    <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-24 px-0 py-0">
 
       {/* ═══════════════════════════════════════════
           STICKY HEADER
           ═══════════════════════════════════════════ */}
-      <header className="sticky top-0 z-40 bg-[#0B1121]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
+      <header className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-border px-4 py-4 pt-[env(safe-area-inset-top,16px)] flex items-center gap-4">
         <button
-          className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform"
+          className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform"
           onClick={() => navigate('/dashboard')}
         >
           <ArrowLeft size={20} />
@@ -100,7 +100,7 @@ const EquipmentMarketplace: React.FC = () => {
           </p>
         </div>
         <div className="relative">
-          <button className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white active:scale-95 transition-transform">
+          <button className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-textPrimary active:scale-95 transition-transform">
             <Sparkles size={18} className="text-cyan-400" />
           </button>
         </div>
@@ -112,9 +112,9 @@ const EquipmentMarketplace: React.FC = () => {
             SEARCH BAR
             ═══════════════════════════════════════════ */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-textSecondary" size={18} />
           <input
-            className="w-full bg-[#131B2F] border border-slate-700/50 rounded-2xl py-3.5 pl-11 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all text-sm"
+            className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-4 text-textPrimary placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all text-sm"
             placeholder="Search equipment, brands..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -132,7 +132,7 @@ const EquipmentMarketplace: React.FC = () => {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95 border ${
                 category === cat.value
                   ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-[0_0_15px_rgba(14,165,233,0.15)]'
-                  : 'bg-[#131B2F] text-slate-400 border-slate-800 hover:border-slate-600'
+                  : 'bg-card text-textSecondary border-border hover:border-border'
               }`}
             >
               <span>{cat.emoji}</span>
@@ -144,7 +144,7 @@ const EquipmentMarketplace: React.FC = () => {
         {/* ═══════════════════════════════════════════
             RENT / BUY TOGGLE
             ═══════════════════════════════════════════ */}
-        <div className="bg-[#131B2F] border border-slate-800 rounded-2xl p-1.5 flex relative">
+        <div className="bg-card border border-border rounded-2xl p-1.5 flex relative">
           <div
             className="absolute top-1.5 bottom-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 transition-all duration-300 ease-out"
             style={{
@@ -155,7 +155,7 @@ const EquipmentMarketplace: React.FC = () => {
           <button
             onClick={() => setMode('rent')}
             className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors relative z-10 flex items-center justify-center gap-2 ${
-              mode === 'rent' ? 'text-cyan-300' : 'text-slate-500'
+              mode === 'rent' ? 'text-cyan-300' : 'text-textTertiary'
             }`}
           >
             <Clock size={16} /> Rent Equipment
@@ -163,7 +163,7 @@ const EquipmentMarketplace: React.FC = () => {
           <button
             onClick={() => setMode('buy')}
             className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors relative z-10 flex items-center justify-center gap-2 ${
-              mode === 'buy' ? 'text-cyan-300' : 'text-slate-500'
+              mode === 'buy' ? 'text-cyan-300' : 'text-textTertiary'
             }`}
           >
             <Package size={16} /> Buy Equipment
@@ -175,15 +175,15 @@ const EquipmentMarketplace: React.FC = () => {
             ═══════════════════════════════════════════ */}
         {myRentals.length > 0 && (
           <section>
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-textSecondary uppercase tracking-wider mb-3 flex items-center gap-2">
               <Clock size={14} className="text-cyan-400" /> My Active Rentals
             </h3>
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
               {myRentals.map(rental => (
                 <div
                   key={rental.id}
-                  className={`min-w-[280px] bg-gradient-to-br from-[#131B2F] to-[#0B1121] border rounded-2xl p-4 relative overflow-hidden flex-shrink-0 ${
-                    rental.status === 'overdue' ? 'border-rose-500/40' : 'border-slate-800'
+                  className={`min-w-[280px] bg-gradient-to-br from-[#131B2F] to-background border rounded-2xl p-4 relative overflow-hidden flex-shrink-0 ${
+                    rental.status === 'overdue' ? 'border-rose-500/40' : 'border-border'
                   }`}
                 >
                   {rental.status === 'overdue' && (
@@ -192,8 +192,8 @@ const EquipmentMarketplace: React.FC = () => {
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-2xl">{rental.equipmentEmoji}</span>
                     <div className="flex-1">
-                      <h4 className="text-sm font-bold text-white">{rental.equipmentName}</h4>
-                      <p className="text-xs text-slate-400">₹{rental.monthlyRate.toLocaleString()}/mo</p>
+                      <h4 className="text-sm font-bold text-textPrimary">{rental.equipmentName}</h4>
+                      <p className="text-xs text-textSecondary">₹{rental.monthlyRate.toLocaleString()}/mo</p>
                     </div>
                     {rental.status === 'overdue' ? (
                       <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-1 rounded-lg flex items-center gap-1">
@@ -209,7 +209,7 @@ const EquipmentMarketplace: React.FC = () => {
                     <button className="flex-1 py-2 text-xs font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 rounded-xl active:scale-95 transition-transform">
                       Extend Rental
                     </button>
-                    <button className="flex-1 py-2 text-xs font-bold text-slate-300 bg-slate-800/50 border border-slate-700 rounded-xl active:scale-95 transition-transform">
+                    <button className="flex-1 py-2 text-xs font-bold text-textSecondary bg-surface border border-border rounded-xl active:scale-95 transition-transform">
                       Schedule Return
                     </button>
                   </div>
@@ -224,10 +224,10 @@ const EquipmentMarketplace: React.FC = () => {
             ═══════════════════════════════════════════ */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-textSecondary uppercase tracking-wider">
               {filteredEquipment.length} Equipment{filteredEquipment.length !== 1 ? 's' : ''} Available
             </h3>
-            <button className="flex items-center gap-1 text-xs text-slate-500 font-bold">
+            <button className="flex items-center gap-1 text-xs text-textTertiary font-bold">
               <Filter size={12} /> Sort
             </button>
           </div>
@@ -240,7 +240,7 @@ const EquipmentMarketplace: React.FC = () => {
               return (
                 <div
                   key={eq.id}
-                  className="bg-gradient-to-br from-[#131B2F] to-[#0D1626] border border-slate-800 rounded-3xl p-5 relative overflow-hidden group hover:border-slate-700 transition-all"
+                  className="bg-gradient-to-br from-[#131B2F] to-[#0D1626] border border-border rounded-3xl p-5 relative overflow-hidden group hover:border-border transition-all"
                 >
                   {/* Glow accent */}
                   <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -252,24 +252,24 @@ const EquipmentMarketplace: React.FC = () => {
 
                   {/* Top row: emoji + details */}
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-16 h-16 bg-[#0B1121] border border-slate-800 rounded-2xl flex items-center justify-center text-3xl shrink-0">
+                    <div className="w-16 h-16 bg-background border border-border rounded-2xl flex items-center justify-center text-3xl shrink-0">
                       {eq.emoji}
                     </div>
                     <div className="flex-1 pr-20">
-                      <h4 className="font-bold text-white text-base leading-tight mb-1">{eq.name}</h4>
-                      <p className="text-xs text-slate-500 font-medium mb-2">{eq.brand} • {eq.category}</p>
+                      <h4 className="font-bold text-textPrimary text-base leading-tight mb-1">{eq.name}</h4>
+                      <p className="text-xs text-textTertiary font-medium mb-2">{eq.brand} • {eq.category}</p>
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
                           <Star size={11} fill="#FFA502" color="#FFA502" />
-                          <span className="text-xs font-bold text-white">{eq.rating}</span>
+                          <span className="text-xs font-bold text-textPrimary">{eq.rating}</span>
                         </div>
-                        <span className="text-xs text-slate-600">({eq.reviewCount} reviews)</span>
+                        <span className="text-xs text-textTertiary">({eq.reviewCount} reviews)</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Description (truncated) */}
-                  <p className="text-xs text-slate-400 leading-relaxed mb-3 line-clamp-2">{eq.description}</p>
+                  <p className="text-xs text-textSecondary leading-relaxed mb-3 line-clamp-2">{eq.description}</p>
 
                   {/* Specs toggle */}
                   <button
@@ -281,10 +281,10 @@ const EquipmentMarketplace: React.FC = () => {
                   </button>
 
                   {showSpecs === eq.id && (
-                    <div className="bg-[#0B1121] rounded-xl p-3 border border-slate-800/50 mb-3 animate-fade-in">
+                    <div className="bg-background rounded-xl p-3 border border-border mb-3 animate-fade-in">
                       <div className="grid grid-cols-2 gap-2">
                         {eq.specs.map((spec, i) => (
-                          <p key={i} className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                          <p key={i} className="text-[11px] text-textSecondary flex items-center gap-1.5">
                             <span className="w-1 h-1 bg-cyan-500 rounded-full" />
                             {spec}
                           </p>
@@ -294,22 +294,22 @@ const EquipmentMarketplace: React.FC = () => {
                   )}
 
                   {/* Price row */}
-                  <div className="bg-[#0B1121] rounded-2xl p-4 border border-slate-800/50 mb-4">
+                  <div className="bg-background rounded-2xl p-4 border border-border mb-4">
                     <div className="flex items-end justify-between">
                       <div>
-                        <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-1">
+                        <p className="text-[10px] uppercase font-bold text-textTertiary tracking-wider mb-1">
                           {mode === 'rent' ? 'Rental Price' : 'Purchase Price'}
                         </p>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-black text-white">
+                          <span className="text-2xl font-black text-textPrimary">
                             ₹{mode === 'rent' ? eq.rentPrice.toLocaleString() : eq.buyPrice.toLocaleString()}
                           </span>
-                          {mode === 'rent' && <span className="text-xs text-slate-500 font-medium">/month</span>}
+                          {mode === 'rent' && <span className="text-xs text-textTertiary font-medium">/month</span>}
                         </div>
                       </div>
                       {mode === 'rent' ? (
                         <div className="text-right">
-                          <p className="text-[10px] text-slate-500 font-medium">Security Deposit</p>
+                          <p className="text-[10px] text-textTertiary font-medium">Security Deposit</p>
                           <p className="text-sm font-bold text-amber-400">₹{eq.securityDeposit.toLocaleString()}</p>
                         </div>
                       ) : (
@@ -335,8 +335,8 @@ const EquipmentMarketplace: React.FC = () => {
                     disabled={!isAvailable}
                     className={`w-full py-3.5 rounded-2xl font-bold transition-all active:scale-[0.97] flex items-center justify-center gap-2 text-sm ${
                       isAvailable
-                        ? 'bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white shadow-lg shadow-cyan-600/20'
-                        : 'bg-slate-800/50 text-slate-600 cursor-not-allowed'
+                        ? 'bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-textPrimary shadow-lg shadow-cyan-600/20'
+                        : 'bg-surface text-textTertiary cursor-not-allowed'
                     }`}
                   >
                     {isAvailable ? (
@@ -358,7 +358,7 @@ const EquipmentMarketplace: React.FC = () => {
             RECOVERY PLAN CTA
             ═══════════════════════════════════════════ */}
         <div
-          className="bg-gradient-to-br from-[#131B2F] to-[#0B1121] border border-cyan-500/20 rounded-3xl p-5 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+          className="bg-gradient-to-br from-[#131B2F] to-background border border-cyan-500/20 rounded-3xl p-5 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
           onClick={() => navigate('/physiotherapy/recovery')}
         >
           <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-500/0 via-cyan-500/50 to-cyan-500/0" />
@@ -368,10 +368,10 @@ const EquipmentMarketplace: React.FC = () => {
               <Sparkles size={22} className="text-cyan-400" />
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-bold text-white mb-0.5">Recovery Plan Equipment</h3>
-              <p className="text-xs text-slate-400">View equipment recommended in your recovery plan</p>
+              <h3 className="text-sm font-bold text-textPrimary mb-0.5">Recovery Plan Equipment</h3>
+              <p className="text-xs text-textSecondary">View equipment recommended in your recovery plan</p>
             </div>
-            <ChevronRight size={20} className="text-slate-600" />
+            <ChevronRight size={20} className="text-textTertiary" />
           </div>
         </div>
       </div>
@@ -388,10 +388,10 @@ const EquipmentMarketplace: React.FC = () => {
           />
 
           {/* Sheet */}
-          <div className="relative bg-[#0D1626] border-t border-slate-800 rounded-t-3xl max-h-[85vh] overflow-y-auto animate-slide-up">
+          <div className="relative bg-background border-t border-border rounded-t-3xl max-h-[85vh] overflow-y-auto animate-slide-up">
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-slate-700 rounded-full" />
+              <div className="w-10 h-1 bg-surface rounded-full" />
             </div>
 
             <div className="px-6 pb-8">
@@ -401,8 +401,8 @@ const EquipmentMarketplace: React.FC = () => {
                   <div className="w-20 h-20 bg-emerald-500/20 border-2 border-emerald-500 rounded-full flex items-center justify-center mb-4">
                     <CheckCircle2 size={40} className="text-emerald-400" />
                   </div>
-                  <h2 className="text-xl font-black text-white mb-2">Order Confirmed!</h2>
-                  <p className="text-sm text-slate-400 text-center">Redirecting to live tracking...</p>
+                  <h2 className="text-xl font-black text-textPrimary mb-2">Order Confirmed!</h2>
+                  <p className="text-sm text-textSecondary text-center">Redirecting to live tracking...</p>
                 </div>
               )}
 
@@ -411,26 +411,26 @@ const EquipmentMarketplace: React.FC = () => {
                 <>
                   {/* Header */}
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-black text-white">
+                    <h2 className="text-lg font-black text-textPrimary">
                       {checkout.step === 'details' ? 'Order Details' : 'Confirm Payment'}
                     </h2>
                     <button
                       onClick={() => setCheckout(null)}
-                      className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                      className="w-8 h-8 rounded-full bg-surface flex items-center justify-center text-textSecondary hover:text-textPrimary transition-colors"
                     >
                       <X size={16} />
                     </button>
                   </div>
 
                   {/* Equipment summary */}
-                  <div className="bg-[#131B2F] border border-slate-800 rounded-2xl p-4 flex items-center gap-4 mb-5">
+                  <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-4 mb-5">
                     <span className="text-3xl">{checkout.equipment.emoji}</span>
                     <div className="flex-1">
-                      <h3 className="font-bold text-white text-sm">{checkout.equipment.name}</h3>
-                      <p className="text-xs text-slate-400">{checkout.equipment.brand}</p>
+                      <h3 className="font-bold text-textPrimary text-sm">{checkout.equipment.name}</h3>
+                      <p className="text-xs text-textSecondary">{checkout.equipment.brand}</p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs text-slate-500 uppercase font-bold">{checkout.mode}</span>
+                      <span className="text-xs text-textTertiary uppercase font-bold">{checkout.mode}</span>
                     </div>
                   </div>
 
@@ -439,7 +439,7 @@ const EquipmentMarketplace: React.FC = () => {
                       {/* Rent: Duration selector */}
                       {checkout.mode === 'rent' && (
                         <div className="mb-5">
-                          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
+                          <label className="text-xs font-bold text-textSecondary uppercase tracking-wider mb-3 block">
                             Rental Duration
                           </label>
                           <div className="grid grid-cols-4 gap-2">
@@ -450,7 +450,7 @@ const EquipmentMarketplace: React.FC = () => {
                                 className={`py-3 rounded-xl text-xs font-bold transition-all border ${
                                   checkout.duration === dur.value
                                     ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                                    : 'bg-[#131B2F] text-slate-400 border-slate-800 hover:border-slate-600'
+                                    : 'bg-card text-textSecondary border-border hover:border-border'
                                 }`}
                               >
                                 {dur.label}
@@ -462,11 +462,11 @@ const EquipmentMarketplace: React.FC = () => {
 
                       {/* Address */}
                       <div className="mb-5">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
+                        <label className="text-xs font-bold text-textSecondary uppercase tracking-wider mb-3 block">
                           Delivery Address
                         </label>
                         <textarea
-                          className="w-full bg-[#131B2F] border border-slate-700/50 rounded-2xl py-3 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all text-sm resize-none h-20"
+                          className="w-full bg-card border border-border rounded-2xl py-3 px-4 text-textPrimary placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all text-sm resize-none h-20"
                           placeholder="Enter full delivery address..."
                           value={checkout.address}
                           onChange={e => setCheckout(prev => prev ? { ...prev, address: e.target.value } : null)}
@@ -474,14 +474,14 @@ const EquipmentMarketplace: React.FC = () => {
                       </div>
 
                       {/* Price breakdown */}
-                      <div className="bg-[#131B2F] border border-slate-800 rounded-2xl p-4 mb-5 space-y-3">
+                      <div className="bg-card border border-border rounded-2xl p-4 mb-5 space-y-3">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">
+                          <span className="text-textSecondary">
                             {checkout.mode === 'rent'
                               ? `Rental (${RENTAL_DURATIONS.find(d => d.value === checkout.duration)?.label})`
                               : 'Equipment Price'}
                           </span>
-                          <span className="text-white font-bold">
+                          <span className="text-textPrimary font-bold">
                             ₹{checkout.mode === 'rent'
                               ? getPrice(checkout.equipment, checkout.duration).toLocaleString()
                               : checkout.equipment.buyPrice.toLocaleString()}
@@ -489,16 +489,16 @@ const EquipmentMarketplace: React.FC = () => {
                         </div>
                         {checkout.mode === 'rent' && (
                           <div className="flex justify-between text-sm">
-                            <span className="text-slate-400">Security Deposit (Refundable)</span>
+                            <span className="text-textSecondary">Security Deposit (Refundable)</span>
                             <span className="text-amber-400 font-bold">₹{checkout.equipment.securityDeposit.toLocaleString()}</span>
                           </div>
                         )}
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Delivery & Setup</span>
+                          <span className="text-textSecondary">Delivery & Setup</span>
                           <span className="text-emerald-400 font-bold">FREE</span>
                         </div>
-                        <div className="border-t border-slate-800 pt-3 flex justify-between text-base">
-                          <span className="text-white font-bold">Total Payable</span>
+                        <div className="border-t border-border pt-3 flex justify-between text-base">
+                          <span className="text-textPrimary font-bold">Total Payable</span>
                           <span className="text-cyan-400 font-black text-xl">
                             ₹{(
                               (checkout.mode === 'rent'
@@ -515,14 +515,14 @@ const EquipmentMarketplace: React.FC = () => {
                           <ShieldCheck size={20} className="text-emerald-400 shrink-0" />
                           <div>
                             <p className="text-xs font-bold text-emerald-400">{checkout.equipment.warranty}</p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">7-day return policy • Free installation included</p>
+                            <p className="text-[10px] text-textSecondary mt-0.5">7-day return policy • Free installation included</p>
                           </div>
                         </div>
                       )}
 
                       <button
                         onClick={() => setCheckout(prev => prev ? { ...prev, step: 'payment' } : null)}
-                        className="w-full py-4 rounded-2xl font-bold bg-gradient-to-r from-cyan-600 to-cyan-500 text-white shadow-lg shadow-cyan-600/20 active:scale-[0.97] transition-transform text-sm flex items-center justify-center gap-2"
+                        className="w-full py-4 rounded-2xl font-bold bg-gradient-to-r from-cyan-600 to-cyan-500 text-textPrimary shadow-lg shadow-cyan-600/20 active:scale-[0.97] transition-transform text-sm flex items-center justify-center gap-2"
                       >
                         Proceed to Payment <ChevronRight size={16} />
                       </button>
@@ -532,12 +532,12 @@ const EquipmentMarketplace: React.FC = () => {
                   {checkout.step === 'payment' && (
                     <>
                       {/* Payment summary */}
-                      <div className="bg-[#131B2F] border border-slate-800 rounded-2xl p-5 mb-5">
-                        <h4 className="text-sm font-bold text-white mb-4">Payment Summary</h4>
+                      <div className="bg-card border border-border rounded-2xl p-5 mb-5">
+                        <h4 className="text-sm font-bold text-textPrimary mb-4">Payment Summary</h4>
                         <div className="space-y-3 mb-4">
                           <div className="flex justify-between text-sm">
-                            <span className="text-slate-400">Total Amount</span>
-                            <span className="text-white font-bold">
+                            <span className="text-textSecondary">Total Amount</span>
+                            <span className="text-textPrimary font-bold">
                               ₹{(
                                 checkout.mode === 'rent'
                                   ? getPrice(checkout.equipment, checkout.duration) + checkout.equipment.securityDeposit
@@ -546,8 +546,8 @@ const EquipmentMarketplace: React.FC = () => {
                             </span>
                           </div>
                           <div className="flex justify-between text-xs">
-                            <span className="text-slate-500">Delivery Address</span>
-                            <span className="text-slate-300 text-right max-w-[60%]">{checkout.address || 'Not specified'}</span>
+                            <span className="text-textTertiary">Delivery Address</span>
+                            <span className="text-textSecondary text-right max-w-[60%]">{checkout.address || 'Not specified'}</span>
                           </div>
                         </div>
 
@@ -559,11 +559,11 @@ const EquipmentMarketplace: React.FC = () => {
                               className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${
                                 i === 0
                                   ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300'
-                                  : 'bg-[#0B1121] border-slate-800 text-slate-400 hover:border-slate-600'
+                                  : 'bg-background border-border text-textSecondary hover:border-border'
                               }`}
                             >
                               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                i === 0 ? 'border-cyan-500' : 'border-slate-700'
+                                i === 0 ? 'border-cyan-500' : 'border-border'
                               }`}>
                                 {i === 0 && <div className="w-2.5 h-2.5 bg-cyan-500 rounded-full" />}
                               </div>
@@ -578,20 +578,20 @@ const EquipmentMarketplace: React.FC = () => {
                         <Truck size={20} className="text-cyan-400 shrink-0" />
                         <div>
                           <p className="text-xs font-bold text-cyan-300">Estimated Delivery: Within 24-48 hours</p>
-                          <p className="text-[10px] text-slate-400 mt-0.5">Includes professional setup & installation</p>
+                          <p className="text-[10px] text-textSecondary mt-0.5">Includes professional setup & installation</p>
                         </div>
                       </div>
 
                       <div className="flex gap-3">
                         <button
                           onClick={() => setCheckout(prev => prev ? { ...prev, step: 'details' } : null)}
-                          className="flex-1 py-4 rounded-2xl font-bold bg-slate-800 text-slate-300 active:scale-[0.97] transition-transform text-sm"
+                          className="flex-1 py-4 rounded-2xl font-bold bg-surface text-textSecondary active:scale-[0.97] transition-transform text-sm"
                         >
                           Back
                         </button>
                         <button
                           onClick={handleConfirmPayment}
-                          className="flex-[2] py-4 rounded-2xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-600/20 active:scale-[0.97] transition-transform text-sm flex items-center justify-center gap-2"
+                          className="flex-[2] py-4 rounded-2xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 text-textPrimary shadow-lg shadow-emerald-600/20 active:scale-[0.97] transition-transform text-sm flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 size={16} /> Confirm & Pay
                         </button>

@@ -192,7 +192,7 @@ const FloatingSOSTrigger: React.FC = () => {
           transform: tapCount > 0 ? 'scale(1.15)' : 'scale(1)',
           boxShadow: tapCount > 0
             ? '0 0 30px rgba(255,71,87,0.8), 0 0 60px rgba(255,71,87,0.4)'
-            : '0 4px 20px rgba(255,71,87,0.4), 0 0 40px rgba(255,71,87,0.15)',
+            : 'var(--shadow-danger)',
           animation: tapCount > 0 ? 'pulse-danger 0.5s ease-in-out infinite' : undefined,
         }}
       >
@@ -230,11 +230,9 @@ const FloatingSOSTrigger: React.FC = () => {
           style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)' }}
         >
           <div
-            className="mx-6 w-full max-w-sm rounded-3xl p-6 text-center animate-fade-in"
+            className="mx-6 w-full max-w-sm rounded-3xl p-6 text-center animate-fade-in bg-card border border-border"
             style={{
-              background: 'linear-gradient(180deg, #1A0A10 0%, #0B1121 100%)',
-              border: '1px solid rgba(255,71,87,0.3)',
-              boxShadow: '0 0 80px rgba(255,71,87,0.2)',
+              boxShadow: 'var(--shadow-danger)',
             }}
           >
             <div
@@ -251,10 +249,10 @@ const FloatingSOSTrigger: React.FC = () => {
               <AlertTriangle size={32} color="white" fill="white" />
             </div>
 
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white', marginBottom: '8px' }}>
+            <h2 className="text-2xl font-black text-textPrimary mb-2">
               Trigger SOS?
             </h2>
-            <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginBottom: '24px', lineHeight: 1.6 }}>
+            <p className="text-sm text-textSecondary mb-6 leading-relaxed">
               This will alert emergency services, notify your emergency contacts, and dispatch an ambulance to your location.
             </p>
 

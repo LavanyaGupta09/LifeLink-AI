@@ -12,16 +12,16 @@ const SavedPlans: React.FC = () => {
   const plans = savedPlans.map(id => mockInsurancePlans.find(p => p.id === id)).filter(Boolean) as typeof mockInsurancePlans;
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#060B14] text-white pb-[120px]">
+    <div className="w-full min-h-[100dvh] bg-background text-textPrimary pb-[120px]">
       {/* Header */}
-      <div className="sticky top-0 z-40 w-full bg-[#0B1121]/90 backdrop-blur-md border-b border-slate-800 p-4">
+      <div className="sticky top-0 z-40 w-full bg-background backdrop-blur-md border-b border-border p-4">
         <div className="max-w-7xl mx-auto flex items-center gap-3">
-          <button onClick={() => navigate('/insurance')} className="p-2 -ml-2 rounded-full hover:bg-slate-800 transition-colors">
+          <button onClick={() => navigate('/insurance')} className="p-2 -ml-2 rounded-full hover:bg-surface transition-colors">
             <ArrowLeft size={20} />
           </button>
           <div>
             <h1 className="font-bold text-lg leading-tight">Saved Plans</h1>
-            <p className="text-[10px] text-slate-400">{plans.length} saved</p>
+            <p className="text-[10px] text-textSecondary">{plans.length} saved</p>
           </div>
         </div>
       </div>
@@ -29,11 +29,11 @@ const SavedPlans: React.FC = () => {
       <div className="max-w-7xl mx-auto p-4 md:p-6">
         {plans.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6">
-              <Heart size={32} className="text-slate-600" />
+            <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-6">
+              <Heart size={32} className="text-textTertiary" />
             </div>
             <h2 className="text-xl font-bold mb-2">No Saved Plans</h2>
-            <p className="text-slate-400 max-w-sm mb-6">You haven't saved any plans yet. Explore the hub to find and save plans for later.</p>
+            <p className="text-textSecondary max-w-sm mb-6">You haven't saved any plans yet. Explore the hub to find and save plans for later.</p>
             <button 
               onClick={() => navigate('/insurance')}
               className="bg-[#3D91FF] text-white px-8 py-3 rounded-xl font-bold"
