@@ -9,7 +9,11 @@ const AreaSelectionPage: React.FC = () => {
 
   const handleSelect = (type: 'urban' | 'rural') => {
     setAreaType(type);
-    navigate('/login');
+    if (type === 'rural') {
+      navigate('/rural-onboarding');
+    } else {
+      navigate('/login');
+    }
   };
 
   const handleSkip = () => {

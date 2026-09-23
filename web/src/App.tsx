@@ -58,6 +58,7 @@ import B2BEquipmentDashboard from './pages/B2BEquipmentDashboard';
 import HomeCareHub from './pages/HomeCareHub';
 import UberRideFlow from './components/UberRideFlow';
 import AreaSelectionPage from './pages/AreaSelectionPage';
+import RuralOnboarding from './pages/asha/RuralOnboarding';
 
 // ASHA Worker Module
 import AshaPortal from './pages/asha/AshaPortal';
@@ -217,6 +218,7 @@ const App: React.FC = () => {
 
         {/* Area Selection (Pre-login, no AuthGuard) */}
         <Route path="/area-select" element={<ResponsiveLayout><AreaSelectionPage /></ResponsiveLayout>} />
+        <Route path="/rural-onboarding" element={<RuralOnboarding />} />
 
         {/* ASHA Worker Module */}
         <Route path="/asha" element={<AuthGuard><ResponsiveLayout><AshaPortal /></ResponsiveLayout></AuthGuard>} />
