@@ -100,6 +100,380 @@
 }
 
 /* ============================================
+   LIGHT MODE — CSS Variable Overrides
+   ============================================ */
+html.light-mode {
+  /* === Background System === */
+  --bg-base: #F0F5FF;
+  --bg-surface: #E8EEF8;
+  --bg-elevated: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #EDF2FC;
+  --bg-overlay: rgba(240, 245, 255, 0.85);
+
+  /* === Border System === */
+  --border: rgba(0, 30, 80, 0.10);
+  --border-light: rgba(0, 30, 80, 0.18);
+  --border-primary: rgba(0, 201, 167, 0.35);
+  --border-danger: rgba(255, 71, 87, 0.35);
+
+  /* === Text System === */
+  --text-primary: #0D1B3E;
+  --text-secondary: #5A6B8A;
+  --text-tertiary: #8B9CC5;
+  --text-inverse: #FFFFFF;
+
+  /* === Shadows (lighter for light mode) === */
+  --shadow-sm: 0 2px 8px rgba(0, 30, 80, 0.06);
+  --shadow-md: 0 4px 24px rgba(0, 30, 80, 0.08);
+  --shadow-lg: 0 8px 40px rgba(0, 30, 80, 0.10);
+  --shadow-primary: 0 0 30px rgba(0, 201, 167, 0.12);
+  --shadow-danger: 0 0 40px rgba(255, 71, 87, 0.15);
+
+  /* === Glassmorphism (light version) === */
+  --glass-bg: rgba(255, 255, 255, 0.80);
+  --glass-border: rgba(0, 30, 80, 0.10);
+  --glass-blur: blur(20px);
+}
+
+/* ============================================
+   LIGHT MODE — Tailwind Hardcoded Overrides
+   Catches bg-[#0B1121], bg-[#060B14], bg-slate-*,
+   text-white, text-slate-*, border-slate-*, etc.
+   across all 60+ component files.
+   ============================================ */
+
+/* --- Page / Shell Backgrounds --- */
+html.light-mode .bg-\[\#0B1121\],
+html.light-mode .bg-\[\#060B14\],
+html.light-mode .bg-\[\#040814\],
+html.light-mode .bg-\[\#070D18\],
+html.light-mode .bg-\[\#0a0f1a\],
+html.light-mode .bg-\[\#0A1128\],
+html.light-mode .bg-\[\#0A1628\],
+html.light-mode .bg-\[\#0B1221\],
+html.light-mode .bg-\[\#0B141F\],
+html.light-mode .bg-\[\#0B1525\],
+html.light-mode .bg-\[\#0F172A\],
+html.light-mode .bg-\[\#111827\],
+html.light-mode .bg-\[\#120F26\],
+html.light-mode .bg-\[\#190F24\],
+html.light-mode .bg-\[\#1e102e\],
+html.light-mode .bg-\[\#0B1121\]\/95 {
+  background-color: #F0F5FF !important;
+}
+
+html.light-mode .bg-slate-950 {
+  background-color: #F0F5FF !important;
+}
+
+html.light-mode .bg-slate-900 {
+  background-color: #F5F8FF !important;
+}
+
+html.light-mode .bg-slate-50 {
+  background-color: #F8FAFC !important;
+}
+
+/* --- Card / Section Backgrounds --- */
+html.light-mode .bg-\[\#131B2F\],
+html.light-mode .bg-\[\#131B31\],
+html.light-mode .bg-\[\#131F35\],
+html.light-mode .bg-\[\#142640\] {
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0, 30, 80, 0.06);
+}
+
+html.light-mode .bg-\[\#172236\] {
+  background-color: #FFFFFF !important;
+}
+
+html.light-mode .bg-\[\#1A2542\],
+html.light-mode .bg-\[\#1A233A\],
+html.light-mode .bg-\[\#1a2942\],
+html.light-mode .bg-\[\#122A3B\],
+html.light-mode .bg-\[\#1A3A52\] {
+  background-color: #EDF2FC !important;
+}
+
+html.light-mode .bg-\[\#0D1626\],
+html.light-mode .bg-\[\#0F1D32\] {
+  background-color: #E8EEF8 !important;
+}
+
+html.light-mode .bg-slate-800,
+html.light-mode .bg-slate-800\/80,
+html.light-mode .bg-\[\#1e293b\] {
+  background-color: #E8EEF8 !important;
+}
+
+html.light-mode .bg-slate-700 {
+  background-color: #D0DAE8 !important;
+}
+
+html.light-mode .bg-slate-600 {
+  background-color: #CBD5E8 !important;
+}
+
+html.light-mode .bg-slate-500 {
+  background-color: #B5C1D8 !important;
+}
+
+html.light-mode .bg-slate-400 {
+  background-color: #94A3B8 !important;
+}
+
+/* --- Text Colors --- */
+html.light-mode .text-white {
+  color: #0D1B3E !important;
+}
+
+html.light-mode .text-slate-400,
+html.light-mode .text-gray-400 {
+  color: #5A6B8A !important;
+}
+
+html.light-mode .text-slate-500 {
+  color: #6B7DA0 !important;
+}
+
+html.light-mode .text-slate-300,
+html.light-mode .text-gray-300 {
+  color: #3D4F6F !important;
+}
+
+html.light-mode .text-slate-200 {
+  color: #2E3F5C !important;
+}
+
+html.light-mode .text-slate-100 {
+  color: #1C2D47 !important;
+}
+
+html.light-mode .text-slate-600 {
+  color: #5A6B8A !important;
+}
+
+html.light-mode .text-slate-700 {
+  color: #3D4F6F !important;
+}
+
+html.light-mode .text-slate-800 {
+  color: #2E3F5C !important;
+}
+
+html.light-mode .text-slate-900 {
+  color: #1C2D47 !important;
+}
+
+html.light-mode .text-slate-950 {
+  color: #0D1B3E !important;
+}
+
+/* --- Border Colors --- */
+html.light-mode .border-slate-800,
+html.light-mode .border-slate-800\/60 {
+  border-color: #CBD5E8 !important;
+}
+
+html.light-mode .border-slate-700 {
+  border-color: #CBD5E8 !important;
+}
+
+html.light-mode .border-slate-600 {
+  border-color: #B5C1D8 !important;
+}
+
+html.light-mode .border-slate-500 {
+  border-color: #CBD5E8 !important;
+}
+
+/* --- Specific hex borders used in components --- */
+html.light-mode .border-\[\#0B1121\] {
+  border-color: #CBD5E8 !important;
+}
+
+/* --- Shadow overrides for dark-mode box-shadows --- */
+html.light-mode .shadow-\[0_-10px_40px_rgba\(0\2c 0\2c 0\2c 0\.3\)\] {
+  box-shadow: 0 -4px 20px rgba(0, 30, 80, 0.06) !important;
+}
+
+/* --- Form Inputs --- */
+html.light-mode input.bg-\[\#0B1121\],
+html.light-mode input.bg-slate-800,
+html.light-mode textarea.bg-slate-800,
+html.light-mode select.bg-slate-800,
+html.light-mode input.bg-\[\#131B2F\],
+html.light-mode textarea.bg-\[\#131B2F\],
+html.light-mode input.bg-\[\#0A1628\],
+html.light-mode input.bg-\[\#0B1525\],
+html.light-mode select.bg-\[\#0A1628\] {
+  background-color: #F0F5FF !important;
+  color: #0D1B3E !important;
+  border-color: #CBD5E8 !important;
+}
+
+/* Force date/time pickers to light mode */
+html.light-mode input[type="date"],
+html.light-mode input[type="time"] {
+  color-scheme: light !important;
+}
+
+html.light-mode input.text-white,
+html.light-mode textarea.text-white,
+html.light-mode select.text-white {
+  color: #0D1B3E !important;
+}
+
+html.light-mode .placeholder-slate-500::placeholder {
+  color: #8B9CC5 !important;
+}
+
+/* --- Backdrop / Semi-transparent Backgrounds --- */
+html.light-mode .bg-black\/80 {
+  background-color: rgba(240, 245, 255, 0.9) !important;
+}
+
+html.light-mode .bg-black\/70 {
+  background-color: rgba(240, 245, 255, 0.85) !important;
+}
+
+html.light-mode .bg-black\/60 {
+  background-color: rgba(240, 245, 255, 0.8) !important;
+}
+
+html.light-mode .bg-black\/50 {
+  background-color: rgba(240, 245, 255, 0.7) !important;
+}
+
+html.light-mode .bg-black\/40 {
+  background-color: rgba(240, 245, 255, 0.6) !important;
+}
+
+html.light-mode .bg-black\/20 {
+  background-color: rgba(240, 245, 255, 0.3) !important;
+}
+
+/* --- Gradient Overlays --- */
+html.light-mode .from-\[\#0B1121\],
+html.light-mode .from-slate-900 {
+  --tw-gradient-from: #F0F5FF !important;
+}
+
+html.light-mode .to-\[\#0B1121\],
+html.light-mode .to-slate-900 {
+  --tw-gradient-to: #F0F5FF !important;
+}
+
+html.light-mode .from-\[\#060B14\] {
+  --tw-gradient-from: #F0F5FF !important;
+}
+
+html.light-mode .via-slate-900 {
+  --tw-gradient-stops: var(--tw-gradient-from), #F0F5FF, var(--tw-gradient-to) !important;
+}
+
+/* --- Ring/Focus Colors --- */
+html.light-mode .ring-slate-700 {
+  --tw-ring-color: #CBD5E8 !important;
+}
+
+/* --- Divide Colors --- */
+html.light-mode .divide-slate-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #CBD5E8 !important;
+}
+
+html.light-mode .divide-slate-700 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #CBD5E8 !important;
+}
+
+/* --- Scrollbar --- */
+html.light-mode ::-webkit-scrollbar-thumb {
+  background: #CBD5E8 !important;
+}
+
+/* --- Keep accent/danger/SOS colors untouched --- */
+/* .text-\[\#00C9A7\], .text-\[\#FF4757\], .bg-red-*, etc. are NOT overridden */
+
+/* --- Responsive shell border override --- */
+@media (min-width: 431px) {
+  html.light-mode .app-shell {
+    box-shadow: 0 0 40px rgba(0, 30, 80, 0.06);
+    border-color: #CBD5E8;
+  }
+}
+
+/* --- Skeleton (loading shimmer) --- */
+html.light-mode .skeleton {
+  background: linear-gradient(90deg, #E8EEF8 25%, #FFFFFF 50%, #E8EEF8 75%);
+  background-size: 200% 100%;
+}
+
+/* --- Progress Track --- */
+html.light-mode .progress-track {
+  background: #E8EEF8;
+}
+
+/* ============================================
+   LIGHT MODE — Leaflet Map Override
+   Remove dark-mode invert filter
+   ============================================ */
+html.light-mode .leaflet-tile {
+  filter: none !important;
+}
+
+html.light-mode .leaflet-container {
+  background: #E8EEF8 !important;
+}
+
+/* ============================================
+   LIGHT MODE — NavBar Overrides
+   ============================================ */
+html.light-mode .fixed.bottom-0.bg-\[\#0B1121\]\/95 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-top-color: #CBD5E8 !important;
+  box-shadow: 0 -4px 20px rgba(0, 30, 80, 0.06);
+}
+
+/* --- Active nav indicator keeps teal --- */
+/* .bg-\[\#00C9A7\] is NOT overridden */
+
+/* ============================================
+   LIGHT MODE — Easy Mode (60+) Adjustments
+   ============================================ */
+html.light-mode.easy-mode {
+  --text-secondary: #3D4F6F;
+  --text-tertiary: #5A6B8A;
+}
+
+/* ============================================
+   LIGHT MODE — Modal / Overlay
+   ============================================ */
+html.light-mode .modal-overlay {
+  background: rgba(240, 245, 255, 0.85);
+}
+
+html.light-mode .modal-sheet {
+  background: #FFFFFF;
+  border-top-color: #CBD5E8;
+}
+
+html.light-mode .modal-handle {
+  background: #CBD5E8;
+}
+
+/* ============================================
+   SMOOTH THEME TRANSITION
+   ============================================ */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+  transition-delay: 0s !important;
+}
+
+/* ============================================
    GLOBAL RESET
    ============================================ */
 @layer base {

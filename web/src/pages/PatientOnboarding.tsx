@@ -143,7 +143,7 @@ export default function PatientOnboarding() {
                         <label className="block text-sm font-medium text-slate-300 mb-1">Date of Birth</label>
                         <div className="relative">
                           <input type="date" name="dob" value={formData.dob} onChange={handleInputChange} 
-                            className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-all [color-scheme:dark]" />
+                            className="w-full bg-[#0B1121] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-all" />
                         </div>
                       </div>
                       <div>

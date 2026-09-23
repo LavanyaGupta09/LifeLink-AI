@@ -145,7 +145,7 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({ onComplete }) => 
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
-                className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all [color-scheme:dark]"
+                className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all"
                 required
               />
             </div>

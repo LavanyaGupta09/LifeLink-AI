@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, User, Phone, Calendar, AlertTriangle, LogOut, HeartPulse, Droplets } from 'lucide-react';
+import { ArrowLeft, Save, User, Phone, Calendar, AlertTriangle, LogOut, HeartPulse, Droplets, Sun, Moon } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { bloodAPI } from '../services/api';
 import { supabase } from '../lib/supabase';
 import { ScanFace } from 'lucide-react';
+import { useThemeStore } from '../store/themeStore';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, emergencyContacts, updateUser, updatePrimaryContact, toggleEasyMode, logout, healthProfile } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
   
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isDonor, setIsDonor] = useState(false);
@@ -474,7 +476,7 @@ const SettingsPage: React.FC = () => {
             name="dateOfBirth"
             value={formData.dateOfBirth} 
             onChange={handleChange}
-            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all [color-scheme:dark]"
+            className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl p-3.5 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-all"
           />
         </div>
 
@@ -541,6 +543,38 @@ const SettingsPage: React.FC = () => {
         </div>
 
         <h3 className="text-secondary text-sm font-semibold mb-4 mt-8 uppercase tracking-wider">Accessibility & Display</h3>
+
+        {/* Light / Dark Mode Toggle */}
+        <div className="flex items-center justify-between p-5 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl mb-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+              theme === 'light' 
+                ? 'bg-amber-100 text-amber-500' 
+                : 'bg-indigo-500/20 text-indigo-400'
+            }`}>
+              {theme === 'light' ? <Sun size={20} /> : <Moon size={20} />}
+            </div>
+            <div>
+              <h4 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+              </h4>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+                {theme === 'light' ? 'Clean white medical theme' : 'Dark blue medical-tech theme'}
+              </p>
+            </div>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input 
+              type="checkbox" 
+              className="sr-only peer" 
+              checked={theme === 'light'} 
+              onChange={() => {
+                toggleTheme();
+              }} 
+            />
+            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+          </label>
+        </div>
         
         <div className="flex items-center justify-between p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl mt-4">
           <div>

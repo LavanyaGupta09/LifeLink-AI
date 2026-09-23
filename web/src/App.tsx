@@ -93,6 +93,7 @@ import ScrollToTop from './components/ScrollToTop';
 import PowerButtonSOSListener from './components/PowerButtonSOSListener';
 import FloatingSOSTrigger from './components/FloatingSOSTrigger';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
 import { useNavigate } from 'react-router-dom';
 
 // Partner Portal Refactor Components
@@ -138,7 +139,7 @@ const LogoutRoute: React.FC = () => {
 };
 
 const ResponsiveLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="w-full h-[100dvh] bg-[#060B14] overflow-y-auto overflow-x-hidden relative">
+  <div className="w-full h-[100dvh] overflow-y-auto overflow-x-hidden relative" style={{ backgroundColor: 'var(--bg-base)' }}>
     <div className="pt-[env(safe-area-inset-top)] pb-[120px] min-h-full">
       {children}
     </div>
@@ -149,7 +150,7 @@ const ResponsiveLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 );
 
 const DesktopLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="w-full h-[100dvh] bg-[#0B1121] overflow-y-auto overflow-x-hidden relative">
+  <div className="w-full h-[100dvh] overflow-y-auto overflow-x-hidden relative" style={{ backgroundColor: 'var(--bg-base)' }}>
     {children}
     <UberRideFlow />
   </div>
@@ -157,6 +158,8 @@ const DesktopLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
 const App: React.FC = () => {
   const { user } = useAuthStore();
+  // Initialize theme store — restores saved theme from localStorage on mount
+  useThemeStore();
 
   React.useEffect(() => {
     // Ping backend to wake it up from sleep (Render free tier)
