@@ -215,7 +215,7 @@ export default function LifeLinkAIAssistant() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 bg-gradient-to-r from-[#3D91FF] to-blue-600 text-textPrimary w-14 h-14 rounded-full shadow-[0_0_20px_rgba(61,145,255,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all group"
+          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-500 dark:to-purple-600 text-white w-14 h-14 rounded-full shadow-[0_0_20px_rgba(147,51,234,0.4)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all group"
         >
           <Bot size={24} className="group-hover:animate-bounce" />
           <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse border-2 border-[#060B14]"></div>
@@ -229,12 +229,12 @@ export default function LifeLinkAIAssistant() {
           {/* Header */}
           <div className="bg-card border-b border-border p-4 pt-[env(safe-area-inset-top,16px)] flex items-center justify-between rounded-t-3xl">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#3D91FF] to-blue-600 flex items-center justify-center shadow-lg relative overflow-hidden">
-                <Bot size={20} className="text-textPrimary relative z-10" />
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-500 dark:to-purple-600 flex items-center justify-center shadow-lg relative overflow-hidden">
+                <Bot size={20} className="text-white relative z-10" />
                 <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
               </div>
               <div>
-                <h3 className="font-bold text-textPrimary leading-tight flex items-center gap-1">
+                <h3 className="font-bold text-purple-900 dark:text-purple-100 leading-tight flex items-center gap-1">
                   LifeLink AI <Sparkles size={12} className="text-amber-400" />
                 </h3>
                 <p className="text-[10px] text-emerald-400 font-medium">Your Health Companion</p>
@@ -253,10 +253,10 @@ export default function LifeLinkAIAssistant() {
             {messages.map((msg, i) => (
               <div key={i} className={`flex flex-col max-w-[90%] ${msg.role === 'user' ? 'self-end' : 'self-start'}`}>
                 <div className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-surface' : 'bg-[#3D91FF]/20 text-[#3D91FF]'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-surface text-textSecondary' : 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400'}`}>
                     {msg.role === 'user' ? <User size={14} /> : <Bot size={16} />}
                   </div>
-                  <div className={`p-3 text-sm ${msg.role === 'user' ? 'bg-[#3D91FF] text-textPrimary rounded-2xl rounded-tr-sm' : 'bg-card text-textPrimary border border-border rounded-2xl rounded-tl-sm'}`}>
+                  <div className={`p-3 text-sm ${msg.role === 'user' ? 'bg-purple-600 dark:bg-purple-600 text-white rounded-2xl rounded-tr-sm' : 'bg-card text-textPrimary border border-border rounded-2xl rounded-tl-sm'}`}>
                     
                     {msg.role === 'assistant' && (msg.urgency === 'critical' || msg.urgency === 'high') && (
                       <div className="mb-2 bg-red-500/10 border border-red-500/20 text-red-400 p-2 rounded-lg text-xs font-bold flex gap-2">
@@ -295,13 +295,13 @@ export default function LifeLinkAIAssistant() {
             
             {isTyping && (
               <div className="flex gap-2 max-w-[90%] self-start">
-                <div className="w-8 h-8 rounded-full bg-[#3D91FF]/20 text-[#3D91FF] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 flex items-center justify-center shrink-0">
                   <Bot size={16} />
                 </div>
                 <div className="p-4 bg-card border border-border rounded-2xl rounded-tl-sm flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-[#3D91FF] rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-[#3D91FF] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-1.5 h-1.5 bg-[#3D91FF] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-purple-600 dark:bg-purple-400 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-purple-600 dark:bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-1.5 h-1.5 bg-purple-600 dark:bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
               </div>
             )}
@@ -311,7 +311,7 @@ export default function LifeLinkAIAssistant() {
 
           {/* Input Area */}
           <div className="p-3 bg-card border-t border-border pb-[max(env(safe-area-inset-bottom,12px),12px)] md:rounded-b-3xl">
-            <div className="relative flex items-end bg-background border border-border rounded-2xl p-1 focus-within:border-[#3D91FF]/50 transition-colors">
+            <div className="relative flex items-end bg-background border border-border rounded-2xl p-1 focus-within:border-purple-400 dark:focus-within:border-purple-500/50 transition-colors">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -328,7 +328,7 @@ export default function LifeLinkAIAssistant() {
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
-                className="w-9 h-9 shrink-0 m-1 bg-[#3D91FF] text-white rounded-xl flex items-center justify-center disabled:opacity-50 disabled:bg-surface"
+                className="w-9 h-9 shrink-0 m-1 bg-purple-600 dark:bg-purple-600 text-white rounded-xl flex items-center justify-center disabled:opacity-50 disabled:bg-surface"
               >
                 <Send size={16} className="ml-1" />
               </button>

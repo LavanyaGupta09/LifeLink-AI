@@ -104,7 +104,7 @@ const CommunityPage: React.FC = () => {
     <div className="w-full bg-background text-textPrimary font-sans flex flex-col pb-[120px] md:pb-12 md:pl-28 relative min-h-screen px-6 py-6 ">
       
       {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#8B5CF6]/10 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-purple-500/10 dark:from-[#8B5CF6]/15 to-transparent pointer-events-none" />
       
       {/* HEADER */}
       <header className="w-full flex items-center gap-4 p-6 lg:px-10 lg:py-8 relative z-10">
@@ -116,7 +116,7 @@ const CommunityPage: React.FC = () => {
         </button>
         <div>
           <h1 className="text-2xl lg:text-4xl font-black tracking-tight flex items-center gap-3">
-            <MessageCircle size={32} className="text-[#8B5CF6]" />
+            <MessageCircle size={32} className="text-purple-600 dark:text-purple-400" />
             LifeLink Community
           </h1>
           <p className="text-textSecondary text-sm lg:text-base font-medium mt-1">Ask, Discuss, and Support</p>
@@ -130,14 +130,14 @@ const CommunityPage: React.FC = () => {
         <div className="bg-card border border-border rounded-2xl p-1 flex">
           <button 
             onClick={() => setActiveTab('community')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'community' ? 'bg-accent-purple text-textPrimary shadow-lg' : 'text-textSecondary hover:text-textPrimary'}`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'community' ? 'bg-purple-100 text-purple-900 border border-purple-200 dark:bg-[#3D256B] dark:text-white dark:border-purple-500/30 shadow-lg' : 'text-textSecondary hover:text-textPrimary'}`}
           >
             <MessageCircle size={18} />
             Community Forum
           </button>
           <button 
             onClick={() => setActiveTab('ai')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'ai' ? 'bg-accent-purple text-textPrimary shadow-lg' : 'text-textSecondary hover:text-textPrimary'}`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'ai' ? 'bg-purple-100 text-purple-900 border border-purple-200 dark:bg-[#3D256B] dark:text-white dark:border-purple-500/30 shadow-lg' : 'text-textSecondary hover:text-textPrimary'}`}
           >
             <Bot size={18} />
             Ask LifeLink AI <Sparkles size={14} className="text-amber-300" />
@@ -160,7 +160,7 @@ const CommunityPage: React.FC = () => {
               </div>
               <button 
                 onClick={() => setActiveTab('ai')}
-                className="bg-accent-purple hover:bg-purple-600 text-textPrimary px-6 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+                className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-500 text-white px-6 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
                 <Plus size={18} /> Ask AI
               </button>
             </div>
@@ -171,7 +171,7 @@ const CommunityPage: React.FC = () => {
                 <button 
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-all ${activeCategory === cat.id ? 'bg-accent-purple border-[#8B5CF6] text-[#8B5CF6]' : 'bg-card border-border text-textSecondary hover:bg-surface'}`}
+                  className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-all ${activeCategory === cat.id ? 'bg-purple-100 border-purple-300 text-purple-800 dark:bg-purple-900/40 dark:border-purple-500/50 dark:text-purple-300' : 'bg-card border-border text-textSecondary hover:bg-surface'}`}
                 >
                   {cat.icon} {cat.label}
                 </button>
@@ -218,7 +218,7 @@ const CommunityPage: React.FC = () => {
                     <div className="flex items-center gap-6 border-t border-border pt-4">
                       <button 
                         onClick={() => handleLike(post.id)}
-                        className={`flex items-center gap-2 text-xs font-bold transition-colors ${post.isLiked ? 'text-[#8B5CF6]' : 'text-textTertiary hover:text-textSecondary'}`}
+                        className={`flex items-center gap-2 text-xs font-bold transition-colors ${post.isLiked ? 'text-purple-600 dark:text-purple-400' : 'text-textTertiary hover:text-textSecondary'}`}
                       >
                         <ThumbsUp size={16} className={post.isLiked ? "fill-current" : ""} /> {post.likes}
                       </button>
