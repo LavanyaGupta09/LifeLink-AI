@@ -49,7 +49,7 @@ export default function DoctorScheduled() {
               <div className="w-20 text-right shrink-0 bg-card py-2 hidden md:block">
                 <span className="text-sm font-bold text-textPrimary">{apt.time}</span>
               </div>
-              <div className={`w-4 h-4 rounded-full shrink-0 hidden md:block ${apt.status === 'Completed' ? 'bg-slate-600 border-4 border-[#131F35]' : 'bg-blue-500 border-4 border-blue-900/50 shadow-[0_0_15px_rgba(59,130,246,0.6)]'}`}></div>
+              <div className={`w-4 h-4 rounded-full shrink-0 hidden md:block ${apt.status === 'Completed' ? 'bg-slate-600 border-4 border-border' : 'bg-blue-500 border-4 border-blue-900/50 shadow-[0_0_15px_rgba(59,130,246,0.6)]'}`}></div>
               
               <div className="flex items-center gap-3 md:gap-4 w-full">
                 <img src={`https://i.pravatar.cc/100?img=${i + 15}`} className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-border object-cover shrink-0" alt="patient"/>

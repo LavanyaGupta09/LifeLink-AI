@@ -119,7 +119,7 @@ const AdminProviders: React.FC = () => {
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#060b14]/50 border-b border-border">
+              <tr className="bg-background/50 border-b border-border">
                 <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Provider</th>
                 <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Type & Location</th>
                 <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase tracking-wider">Submitted</th>

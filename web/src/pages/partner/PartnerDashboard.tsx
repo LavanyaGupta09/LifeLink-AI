@@ -141,7 +141,7 @@ const PartnerDashboard: React.FC = () => {
           <div className="bg-background border border-border rounded-2xl overflow-hidden flex flex-col md:flex-row">
             
             {/* Chart Area */}
-            <div className="p-6 md:w-2/5 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-[#131b2f]/30 to-transparent flex flex-col">
+            <div className="p-6 md:w-2/5 border-b md:border-b-0 md:border-r border-border bg-gradient-to-br from-card/30 to-transparent flex flex-col">
               <h3 className="text-base font-bold text-textPrimary mb-6">Appointments Overview</h3>
               
               <div className="flex-1 flex items-center justify-center relative min-h-[160px]">
@@ -187,7 +187,7 @@ const PartnerDashboard: React.FC = () => {
 
               <div className="flex-1 flex flex-col gap-4">
                 {appointments.slice(0,4).map((apt, idx) => (
-                  <div key={apt.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-[#131b2f] transition-colors group">
+                  <div key={apt.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-card transition-colors group">
                     <div className="flex items-center gap-4">
                       <div className="w-12 text-center shrink-0">
                         <span className="text-xs font-bold text-textSecondary block">{apt.time.split(' ')[0]}</span>
@@ -329,7 +329,7 @@ const PartnerDashboard: React.FC = () => {
             </div>
             <div className="flex-1 p-3 overflow-y-auto max-h-[400px] lg:max-h-none space-y-2">
               {notifications.map(n => (
-                <div key={n.id} onClick={() => n.link && navigate(n.link)} className={`p-4 rounded-xl border ${n.read ? 'bg-transparent border-transparent' : 'bg-[#131b2f] border-border hover:border-border cursor-pointer'} transition-colors relative`}>
+                <div key={n.id} onClick={() => n.link && navigate(n.link)} className={`p-4 rounded-xl border ${n.read ? 'bg-transparent border-transparent' : 'bg-card border-border hover:border-border cursor-pointer'} transition-colors relative`}>
                   {!n.read && <div className={`absolute top-4 right-4 w-1.5 h-1.5 rounded-full ${n.type === 'critical' ? 'bg-red-500' : n.type === 'warning' ? 'bg-orange-500' : n.type === 'success' ? 'bg-emerald-500' : 'bg-[#3D91FF]'}`}></div>}
                   <h4 className={`text-sm font-bold ${n.type === 'critical' ? 'text-red-400' : 'text-textPrimary'} mb-1`}>{n.title}</h4>
                   <p className="text-[11px] text-textSecondary leading-relaxed mb-2 pr-4">{n.message}</p>

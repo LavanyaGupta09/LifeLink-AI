@@ -9,7 +9,7 @@ const PlaceholderPage: React.FC<{ title: string; mockData: any[] }> = ({ title, 
         </h2>
         <p className="text-sm text-textSecondary mt-1">Manage and view {title.toLowerCase()}</p>
       </div>
-      <button className="bg-[#131b2f] border border-border hover:bg-surface text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all w-full md:w-auto">
+      <button className="bg-card border border-border hover:bg-surface text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all w-full md:w-auto">
         + Add New
       </button>
     </div>
@@ -20,7 +20,7 @@ const PlaceholderPage: React.FC<{ title: string; mockData: any[] }> = ({ title, 
           <div className="font-bold text-textPrimary text-base">{item.title}</div>
           <div className="text-sm text-textSecondary">{item.desc}</div>
           {item.status && (
-            <div className="mt-2 inline-flex px-2 py-1 rounded bg-[#131b2f] text-xs font-bold text-textSecondary w-max border border-border">
+            <div className="mt-2 inline-flex px-2 py-1 rounded bg-card text-xs font-bold text-textSecondary w-max border border-border">
               {item.status}
             </div>
           )}

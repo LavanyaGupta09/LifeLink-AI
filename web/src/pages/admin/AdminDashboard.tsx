@@ -108,7 +108,7 @@ const AdminDashboard: React.FC = () => {
               {React.cloneElement(kpi.icon, { size: 80 })}
             </div>
             <div className="flex items-center justify-between mb-3 relative z-10">
-              <div className="p-2 bg-[#060b14]/50 rounded-lg backdrop-blur-sm">
+              <div className="p-2 bg-background/50 rounded-lg backdrop-blur-sm">
                 {kpi.icon}
               </div>
               <ArrowUpRight size={16} className="text-textTertiary group-hover:text-textPrimary transition-colors" />
@@ -141,7 +141,7 @@ const AdminDashboard: React.FC = () => {
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[600px]">
               <thead>
-                <tr className="bg-[#060b14]/50">
+                <tr className="bg-background/50">
                   <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider">Provider</th>
                   <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider">Type</th>
                   <th className="px-5 py-3 text-xs font-bold text-textSecondary uppercase tracking-wider">Status</th>

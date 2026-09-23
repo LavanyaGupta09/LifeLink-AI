@@ -58,7 +58,7 @@ export default function DoctorDashboard() {
         {/* Stat 2 */}
         <div 
           onClick={() => navigate('/doctor/on-call')}
-          className="bg-gradient-to-br from-[#1a1c3a] to-[#0f1123] border border-purple-500/30 rounded-2xl p-6 relative overflow-hidden group hover:border-purple-500 transition-all cursor-pointer shadow-lg shadow-purple-500/5"
+          className="bg-gradient-to-br from-surface to-background border border-purple-500/30 rounded-2xl p-6 relative overflow-hidden group hover:border-purple-500 transition-all cursor-pointer shadow-lg shadow-purple-500/5"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
           <p className="text-sm text-textSecondary font-medium mb-1 relative z-10">Pending Consultations</p>
@@ -191,7 +191,7 @@ export default function DoctorDashboard() {
                    <div className="w-12 text-right shrink-0 relative z-10 bg-card py-1">
                      <span className="text-xs font-bold text-textSecondary">{apt.time}</span>
                    </div>
-                   <div className={`w-3 h-3 rounded-full mt-1.5 shrink-0 relative z-10 ${apt.status === 'Completed' ? 'bg-slate-600 border-2 border-[#131F35]' : 'bg-blue-500 border-2 border-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.5)]'}`}></div>
+                   <div className={`w-3 h-3 rounded-full mt-1.5 shrink-0 relative z-10 ${apt.status === 'Completed' ? 'bg-slate-600 border-2 border-border' : 'bg-blue-500 border-2 border-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.5)]'}`}></div>
                    <div className="flex-1 bg-background p-3 rounded-xl border border-border">
                      <div className="flex justify-between items-start">
                        <h4 className="text-textPrimary font-bold text-sm">{apt.name}</h4>

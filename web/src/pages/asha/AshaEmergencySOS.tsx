@@ -73,7 +73,7 @@ const AshaEmergencySOS: React.FC = () => {
 
         <div className="px-4 py-6 max-w-lg mx-auto">
           {/* Warning Card */}
-          <div className="bg-gradient-to-br from-[#1A0B0B] to-[#0B1221] border border-[#FF4757]/30 rounded-3xl p-8 mb-6 text-center relative overflow-hidden">
+          <div className="bg-gradient-to-br from-surface to-background border border-[#FF4757]/30 rounded-3xl p-8 mb-6 text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-[#FF4757]/3 pointer-events-none" />
 
             <div className="w-24 h-24 mx-auto mb-5 bg-[#FF4757] rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(255,71,87,0.4)] relative z-10 animate-pulse">
@@ -149,7 +149,7 @@ const AshaEmergencySOS: React.FC = () => {
 
       <div className="px-4 py-6 max-w-lg mx-auto">
         {/* Alert Card */}
-        <div className="bg-gradient-to-br from-[#1A0B0B] to-[#0B1221] border border-[#FF4757]/30 rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-br from-surface to-background border border-[#FF4757]/30 rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
           <div className="w-20 h-20 mx-auto mb-4 bg-[#FF4757]/15 border-2 border-[#FF4757]/40 rounded-full flex items-center justify-center">
             <AlertTriangle size={36} className="text-[#FF4757]" />
           </div>

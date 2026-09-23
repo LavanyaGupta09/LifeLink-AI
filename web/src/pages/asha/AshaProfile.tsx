@@ -54,7 +54,7 @@ const AshaProfile: React.FC = () => {
 
       <div className="px-4 py-6 max-w-lg mx-auto">
         {/* Profile Card */}
-        <div className="bg-gradient-to-br from-[#0D1B2A] to-[#0B1221] border border-[#F97316]/20 rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-br from-surface to-background border border-[#F97316]/20 rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-40 h-40 bg-[#F97316]/5 rounded-full blur-[60px] pointer-events-none" />
           
           {/* Avatar */}

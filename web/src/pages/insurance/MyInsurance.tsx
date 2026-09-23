@@ -40,7 +40,7 @@ const MyInsurance: React.FC = () => {
               {activePolicies.map(policy => {
                 const planDetails = mockInsurancePlans.find(p => p.id === policy.planId);
                 return (
-                  <div key={policy.id} className="bg-gradient-to-br from-[#131F35] to-[#1E293B] border border-emerald-500/30 rounded-3xl p-6 shadow-lg relative overflow-hidden">
+                  <div key={policy.id} className="bg-gradient-to-br from-surface to-background border border-emerald-500/30 rounded-3xl p-6 shadow-lg relative overflow-hidden">
                     <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl" />
                     
                     <div className="flex justify-between items-start mb-6 relative z-10">

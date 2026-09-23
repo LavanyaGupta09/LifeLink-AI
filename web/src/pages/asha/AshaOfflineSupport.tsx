@@ -35,7 +35,7 @@ const AshaOfflineSupport: React.FC = () => {
 
       <div className="px-4 py-6 max-w-lg mx-auto">
         {/* Status Card */}
-        <div className="bg-gradient-to-br from-[#1A1505] to-[#0B1221] border border-[#F97316]/30 rounded-3xl p-8 mb-6 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-br from-surface to-background border border-[#F97316]/30 rounded-3xl p-8 mb-6 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[#F97316]/3 pointer-events-none" />
           
           <div className="w-24 h-24 mx-auto mb-5 relative z-10">
@@ -43,7 +43,7 @@ const AshaOfflineSupport: React.FC = () => {
               <WifiOff size={44} className="text-[#F97316]" />
             </div>
             {/* X badge */}
-            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#FF4757] rounded-full flex items-center justify-center border-2 border-[#040814]">
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#FF4757] rounded-full flex items-center justify-center border-2 border-background">
               <span className="text-textPrimary text-xs font-black">✕</span>
             </div>
           </div>

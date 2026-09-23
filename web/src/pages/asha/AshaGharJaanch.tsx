@@ -81,7 +81,7 @@ const AshaGharJaanch: React.FC = () => {
 
         <div className="px-4 py-6 max-w-lg mx-auto">
           {/* Hero */}
-          <div className="bg-gradient-to-br from-[#0B1525] to-[#0B1221] border border-[#3B82F6]/20 rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
+          <div className="bg-gradient-to-br from-surface to-background border border-[#3B82F6]/20 rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 bg-[#3B82F6]/5 rounded-full blur-[60px] pointer-events-none" />
             <div className="w-20 h-20 mx-auto mb-4 bg-[#3B82F6] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)]">
               <Activity size={36} className="text-textPrimary" />

@@ -31,7 +31,7 @@ const AshaPatientTriage: React.FC = () => {
 
       <div className="px-4 py-6 max-w-lg mx-auto">
         {/* Phone Call Card */}
-        <div className="bg-gradient-to-br from-[#0B1F14] to-[#0B1221] border border-[#2ED573]/30 rounded-3xl p-8 mb-6 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-br from-surface to-background border border-[#2ED573]/30 rounded-3xl p-8 mb-6 text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-[#2ED573]/3 pointer-events-none" />
           
           <div className="w-24 h-24 mx-auto mb-5 bg-[#2ED573] rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(46,213,115,0.35)] relative z-10">

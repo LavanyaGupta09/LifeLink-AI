@@ -186,7 +186,7 @@ const AdminProviderVerification: React.FC = () => {
             </div>
             <div className="p-5 flex flex-col gap-3">
               {docs.map((doc, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border bg-[#060b14]/50">
+                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border bg-background/50">
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${doc.status === 'verified' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-orange-500/10 text-orange-500'}`}>
                       <FileText size={16} />

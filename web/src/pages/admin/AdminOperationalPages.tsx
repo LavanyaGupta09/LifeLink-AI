@@ -204,7 +204,7 @@ export const AdminReports: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#060b14]/50 border-b border-border">
+              <tr className="bg-background/50 border-b border-border">
                 <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase">Report Info</th>
                 <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase">Entity Reported</th>
                 <th className="px-5 py-4 text-xs font-bold text-textSecondary uppercase">Priority</th>
@@ -386,7 +386,7 @@ export const AdminNotifications = () => {
         ) : (
           <div className="flex flex-col divide-y divide-slate-800/50">
             {notifications.map(notif => (
-              <div key={notif.id} className={`p-4 flex gap-4 transition-colors hover:bg-surface ${notif.read ? 'opacity-70' : 'bg-[#131b2f]'}`}>
+              <div key={notif.id} className={`p-4 flex gap-4 transition-colors hover:bg-surface ${notif.read ? 'opacity-70' : 'bg-card'}`}>
                 <div className="mt-1 shrink-0">
                   {notif.type === 'alert' && <div className="w-10 h-10 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center"><ShieldAlert size={18} /></div>}
                   {notif.type === 'info' && <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center"><Bell size={18} /></div>}
@@ -464,7 +464,7 @@ export const AdminProfile = () => {
 
       <h2 className="text-sm font-bold text-textPrimary uppercase tracking-wider mt-4">Active Sessions</h2>
       <div className="bg-background border border-border rounded-xl overflow-hidden divide-y divide-slate-800/50">
-        <div className="p-4 flex justify-between items-center bg-[#131b2f]">
+        <div className="p-4 flex justify-between items-center bg-card">
           <div>
             <div className="flex items-center gap-2">
               <p className="text-sm font-bold text-textPrimary">Windows • Chrome Browser</p>

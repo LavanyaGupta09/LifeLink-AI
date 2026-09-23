@@ -119,7 +119,7 @@ export default function DoctorOnCall() {
             
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-emerald-500/20 rounded-full animate-ping"></div>
-              <div className="w-24 h-24 bg-gradient-to-br from-[#00C9A7] to-[#009E83] rounded-full flex items-center justify-center shadow-lg relative z-10 border-4 border-[#131F35]">
+              <div className="w-24 h-24 bg-gradient-to-br from-[#00C9A7] to-[#009E83] rounded-full flex items-center justify-center shadow-lg relative z-10 border-4 border-border">
                 <PhoneIncoming size={40} className="text-textPrimary animate-bounce" />
               </div>
             </div>

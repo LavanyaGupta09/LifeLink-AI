@@ -225,7 +225,7 @@ const RuralDashboard: React.FC = () => {
         <div className="px-4 mb-4">
           <button
             onClick={handleSOS}
-            className="w-full bg-[#2C1215] border border-red-900/60 rounded-2xl px-4 py-4 flex items-center justify-between active:scale-[0.97] transition-transform"
+            className="w-full bg-card border border-red-900/60 rounded-2xl px-4 py-4 flex items-center justify-between active:scale-[0.97] transition-transform"
           >
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-[#DC2626] flex items-center justify-center shrink-0">
