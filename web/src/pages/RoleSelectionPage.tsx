@@ -196,7 +196,7 @@ const RoleSelectionPage: React.FC = () => {
               <span className="flex items-center gap-1.5 border border-[#A855F7]/30 text-[#A855F7] bg-accent-purple px-3 py-1.5 rounded-full text-xs font-semibold"><LayoutDashboard size={14}/> Dashboard</span>
               <span className="flex items-center gap-1.5 border border-[#A855F7]/30 text-[#A855F7] bg-accent-purple px-3 py-1.5 rounded-full text-xs font-semibold"><Package size={14}/> Inventory</span>
             </div>
-            <button className="w-full bg-accent-purple hover:bg-accent-purple text-textPrimary py-2.5 rounded-xl text-base font-bold flex items-center justify-center gap-2 transition-colors">
+            <button className="w-full bg-[#A855F7] hover:bg-[#9333EA] text-white py-2.5 rounded-xl text-base font-bold flex items-center justify-center gap-2 transition-colors">
               Enter as Facility Partner <ChevronRight size={18} />
             </button>
           </div>
@@ -246,7 +246,7 @@ const RoleSelectionPage: React.FC = () => {
               <span className="flex items-center gap-1.5 border border-[#8B5CF6]/30 text-[#8B5CF6] bg-accent-purple px-3 py-1.5 rounded-full text-xs font-semibold"><Users size={14}/> Users</span>
               <span className="flex items-center gap-1.5 border border-[#8B5CF6]/30 text-[#8B5CF6] bg-accent-purple px-3 py-1.5 rounded-full text-xs font-semibold"><Activity size={14}/> System</span>
             </div>
-            <button className="w-full bg-accent-purple hover:bg-accent-purple text-textPrimary py-2.5 rounded-xl text-base font-bold flex items-center justify-center gap-2 transition-colors">
+            <button className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white py-2.5 rounded-xl text-base font-bold flex items-center justify-center gap-2 transition-colors">
               Enter as Administrator <ChevronRight size={18} />
             </button>
           </div>
