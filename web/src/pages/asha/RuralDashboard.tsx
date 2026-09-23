@@ -13,6 +13,19 @@ const RuralDashboard: React.FC = () => {
   const { user } = useAuthStore();
   const { triggerSOS } = useSOSStore();
 
+  // Read actual rural user data saved during onboarding
+  const ruralUserData = React.useMemo(() => {
+    try {
+      const stored = localStorage.getItem('lifelink-rural-user');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return null;
+  }, []);
+
+  // Use rural onboarding data over auth store defaults
+  const displayName = ruralUserData?.name || user?.fullName;
+  const displayVillage = ruralUserData?.village || 'गाँव';
+
   const [aiQuery, setAiQuery] = useState('');
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -109,7 +122,7 @@ const RuralDashboard: React.FC = () => {
             {/* Location */}
             <div className="flex items-center gap-1.5 bg-[#0F1D32] px-3 py-1.5 rounded-full border border-slate-700/50">
               <MapPin size={12} className="text-[#00C9A7]" />
-              <span className="text-[11px] font-semibold text-slate-300">रामपुर गाँव</span>
+              <span className="text-[11px] font-semibold text-slate-300">{displayVillage}</span>
             </div>
           </div>
 
@@ -120,7 +133,7 @@ const RuralDashboard: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-white leading-tight">
-                नमस्ते, {formatName(user?.fullName)}! 👋
+                नमस्ते, {formatName(displayName)}! 👋
               </h2>
               <p className="text-[12px] text-slate-400 mt-0.5">आपका स्वास्थ्य, हमारी प्राथमिकता</p>
             </div>

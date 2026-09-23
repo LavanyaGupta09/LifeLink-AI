@@ -11,6 +11,21 @@ const RuralProfilePage: React.FC = () => {
   const { user, logout } = useAuthStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  // Read actual rural user data saved during onboarding
+  const ruralUserData = React.useMemo(() => {
+    try {
+      const stored = localStorage.getItem('lifelink-rural-user');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return null;
+  }, []);
+
+  const displayName = ruralUserData?.name || user?.fullName || 'यूज़र';
+  const displayVillage = ruralUserData?.village || 'गाँव';
+  const displayMobile = ruralUserData?.mobile || user?.phone || '';
+  const emergencyContactName = ruralUserData?.emergencyContact?.name || '';
+  const emergencyContactMobile = ruralUserData?.emergencyContact?.mobile || '';
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -31,11 +46,14 @@ const RuralProfilePage: React.FC = () => {
         
         <div className="bg-[#131F35] border border-slate-700 rounded-2xl p-5 flex items-center gap-4 shadow-md">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00C9A7] to-[#009E83] flex items-center justify-center font-black text-2xl shadow-[0_0_15px_rgba(0,201,167,0.3)] shrink-0">
-            {user?.fullName?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'यू'}
+            {displayName.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'यू'}
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">{user?.fullName || 'यूज़र'}</h2>
-            <p className="text-sm text-slate-300 mt-0.5">गाँव: रामपुर</p>
+            <h2 className="text-xl font-bold text-white">{displayName}</h2>
+            <p className="text-sm text-slate-300 mt-0.5">गाँव: {displayVillage}</p>
+            {displayMobile && (
+              <p className="text-xs text-slate-400 mt-0.5">📞 {displayMobile}</p>
+            )}
             <span className="inline-block mt-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
               क्षेत्र: ग्रामीण
             </span>
@@ -49,7 +67,7 @@ const RuralProfilePage: React.FC = () => {
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-base text-white">मेरी जानकारी</h3>
-            <p className="text-xs text-slate-400 mt-0.5">नाम, उम्र, गाँव</p>
+            <p className="text-xs text-slate-400 mt-0.5">{displayName} • {displayVillage}</p>
           </div>
         </button>
 
@@ -148,7 +166,9 @@ const RuralProfilePage: React.FC = () => {
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-base text-white">आपातकालीन नंबर</h3>
-            <p className="text-xs text-slate-400 mt-0.5">परिवार और आशा का नंबर</p>
+            <p className="text-xs text-slate-400 mt-0.5">
+              {emergencyContactName ? `${emergencyContactName} • ${emergencyContactMobile}` : 'परिवार और आशा का नंबर'}
+            </p>
           </div>
         </button>
 
