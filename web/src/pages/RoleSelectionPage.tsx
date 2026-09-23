@@ -185,7 +185,7 @@ const RoleSelectionPage: React.FC = () => {
             <img src="/images/role_facility.jpg" alt="Facility Partner" className="w-full h-full object-cover mix-blend-screen group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
           </div>
           <div className="relative z-20 w-3/5 flex-1">
-            <div className="w-14 h-14 bg-accent-purple rounded-full flex items-center justify-center text-textPrimary mb-3 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+            <div className="w-14 h-14 bg-[#A855F7] rounded-full flex items-center justify-center text-white mb-3 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
               <Building2 size={26} />
             </div>
             <h3 className="text-2xl font-bold text-[#A855F7] mb-1">Facility Partner</h3>
@@ -235,7 +235,7 @@ const RoleSelectionPage: React.FC = () => {
             <img src="/images/role_admin.jpg" alt="System Administrator" className="w-full h-full object-cover mix-blend-screen group-hover:scale-105 transition-transform duration-500 [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)]" />
           </div>
           <div className="relative z-20 w-3/5 flex-1">
-            <div className="w-14 h-14 bg-accent-purple rounded-full flex items-center justify-center text-textPrimary mb-3 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+            <div className="w-14 h-14 bg-[#8B5CF6] rounded-full flex items-center justify-center text-white mb-3 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
               <ShieldCheck size={26} />
             </div>
             <h3 className="text-2xl font-bold text-[#8B5CF6] mb-1">System Administrator</h3>
