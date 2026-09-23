@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HeartPulse, MapPin, User, Phone, Home, ShieldAlert, Globe, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { HeartPulse, MapPin, User, Phone, Home, ShieldAlert, Globe, ChevronRight, Loader2, AlertCircle, Mic } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAshaStore } from '../../store/ashaStore';
 
@@ -30,6 +30,72 @@ const RuralOnboarding: React.FC = () => {
   const [isLocating, setIsLocating] = useState(false);
   const [locationStatus, setLocationStatus] = useState<'idle' | 'success' | 'denied'>('idle');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Voice input state
+  const [activeVoiceField, setActiveVoiceField] = useState<string | null>(null);
+  const [speechError, setSpeechError] = useState<string | null>(null);
+  const speechSupported = typeof window !== 'undefined' &&
+    !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+
+  // Hindi numeral → ASCII digit conversion
+  const hindiToDigits = (text: string): string => {
+    const map: Record<string, string> = {
+      '०':'0','१':'1','२':'2','३':'3','४':'4',
+      '५':'5','६':'6','७':'7','८':'8','९':'9',
+    };
+    return text.split('').map(ch => map[ch] || ch).join('');
+  };
+
+  // ── Voice Input Handler ──
+  const startVoiceInput = (fieldName: string, setter: (val: string) => void, isNumeric = false) => {
+    if (!speechSupported) {
+      setSpeechError('आवाज़ से जानकारी भरना उपलब्ध नहीं है। कृपया टाइप करके भरें।');
+      setTimeout(() => setSpeechError(null), 5000);
+      return;
+    }
+
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SR();
+    recognition.continuous = false;
+    recognition.lang = 'hi-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    setActiveVoiceField(fieldName);
+    setSpeechError(null);
+
+    recognition.onresult = (e: any) => {
+      let text = e.results[0][0].transcript.trim();
+      if (isNumeric) {
+        text = hindiToDigits(text).replace(/\D/g, '').slice(0, 10);
+      }
+      setter(text);
+      clearError(fieldName as keyof FormErrors);
+      setActiveVoiceField(null);
+    };
+
+    recognition.onerror = (e: any) => {
+      setActiveVoiceField(null);
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        setSpeechError('आवाज़ से जानकारी भरना उपलब्ध नहीं है। कृपया टाइप करके भरें।');
+      } else {
+        setSpeechError('आवाज़ नहीं सुनाई दी। कृपया फिर से कोशिश करें।');
+      }
+      setTimeout(() => setSpeechError(null), 5000);
+    };
+
+    recognition.onend = () => {
+      setActiveVoiceField(null);
+    };
+
+    try {
+      recognition.start();
+    } catch {
+      setActiveVoiceField(null);
+      setSpeechError('आवाज़ से जानकारी भरना उपलब्ध नहीं है। कृपया टाइप करके भरें।');
+      setTimeout(() => setSpeechError(null), 5000);
+    }
+  };
 
   // ── Geolocation ──
   const handleGetLocation = () => {
@@ -181,6 +247,12 @@ const RuralOnboarding: React.FC = () => {
           <p className="ro-welcome-hint">कुछ आसान जानकारी भरें और आगे बढ़ें</p>
         </div>
 
+        {/* Voice hint */}
+        <p className="ro-voice-hint">टाइप नहीं करना चाहते? 🎙️ बोलकर जानकारी भरें</p>
+        {speechError && (
+          <p className="ro-speech-error">⚠️ {speechError}</p>
+        )}
+
         {/* ── Form ── */}
         <div className="ro-form">
 
@@ -190,14 +262,26 @@ const RuralOnboarding: React.FC = () => {
               <User size={20} className="ro-label-icon" />
               आपका नाम
             </label>
-            <input
-              type="text"
-              className={`ro-input ${errors.name ? 'ro-input-error' : ''}`}
-              placeholder="अपना नाम लिखें"
-              value={name}
-              onChange={(e) => { setName(e.target.value); clearError('name'); }}
-              autoComplete="name"
-            />
+            <div className="ro-input-wrap">
+              <input
+                type="text"
+                className={`ro-input ${errors.name ? 'ro-input-error' : ''}`}
+                placeholder={activeVoiceField === 'name' ? '🎙️ बोलिए...' : 'अपना नाम लिखें'}
+                value={name}
+                onChange={(e) => { setName(e.target.value); clearError('name'); }}
+                autoComplete="name"
+              />
+              <button
+                type="button"
+                className={`ro-mic-btn ${activeVoiceField === 'name' ? 'ro-mic-active' : ''}`}
+                onClick={() => startVoiceInput('name', setName)}
+                disabled={activeVoiceField !== null && activeVoiceField !== 'name'}
+                aria-label="आवाज़ से नाम भरें"
+              >
+                <Mic size={18} />
+              </button>
+            </div>
+            {activeVoiceField === 'name' && <p className="ro-listening-label">🎙️ बोलिए...</p>}
             {errors.name && (
               <p className="ro-error">
                 <AlertCircle size={14} /> {errors.name}
@@ -211,20 +295,32 @@ const RuralOnboarding: React.FC = () => {
               <Phone size={20} className="ro-label-icon" />
               मोबाइल नंबर
             </label>
-            <input
-              type="tel"
-              inputMode="numeric"
-              className={`ro-input ${errors.mobile ? 'ro-input-error' : ''}`}
-              placeholder="अपना मोबाइल नंबर लिखें"
-              value={mobile}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                setMobile(val);
-                clearError('mobile');
-              }}
-              maxLength={10}
-              autoComplete="tel"
-            />
+            <div className="ro-input-wrap">
+              <input
+                type="tel"
+                inputMode="numeric"
+                className={`ro-input ${errors.mobile ? 'ro-input-error' : ''}`}
+                placeholder={activeVoiceField === 'mobile' ? '🎙️ बोलिए...' : 'अपना मोबाइल नंबर लिखें'}
+                value={mobile}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setMobile(val);
+                  clearError('mobile');
+                }}
+                maxLength={10}
+                autoComplete="tel"
+              />
+              <button
+                type="button"
+                className={`ro-mic-btn ${activeVoiceField === 'mobile' ? 'ro-mic-active' : ''}`}
+                onClick={() => startVoiceInput('mobile', setMobile, true)}
+                disabled={activeVoiceField !== null && activeVoiceField !== 'mobile'}
+                aria-label="आवाज़ से नंबर भरें"
+              >
+                <Mic size={18} />
+              </button>
+            </div>
+            {activeVoiceField === 'mobile' && <p className="ro-listening-label">🎙️ बोलिए...</p>}
             {errors.mobile && (
               <p className="ro-error">
                 <AlertCircle size={14} /> {errors.mobile}
@@ -238,13 +334,25 @@ const RuralOnboarding: React.FC = () => {
               <Home size={20} className="ro-label-icon" />
               आपका गाँव
             </label>
-            <input
-              type="text"
-              className={`ro-input ${errors.village ? 'ro-input-error' : ''}`}
-              placeholder="अपने गाँव का नाम लिखें"
-              value={village}
-              onChange={(e) => { setVillage(e.target.value); clearError('village'); }}
-            />
+            <div className="ro-input-wrap">
+              <input
+                type="text"
+                className={`ro-input ${errors.village ? 'ro-input-error' : ''}`}
+                placeholder={activeVoiceField === 'village' ? '🎙️ बोलिए...' : 'अपने गाँव का नाम लिखें'}
+                value={village}
+                onChange={(e) => { setVillage(e.target.value); clearError('village'); }}
+              />
+              <button
+                type="button"
+                className={`ro-mic-btn ${activeVoiceField === 'village' ? 'ro-mic-active' : ''}`}
+                onClick={() => startVoiceInput('village', setVillage)}
+                disabled={activeVoiceField !== null && activeVoiceField !== 'village'}
+                aria-label="आवाज़ से गाँव का नाम भरें"
+              >
+                <Mic size={18} />
+              </button>
+            </div>
+            {activeVoiceField === 'village' && <p className="ro-listening-label">🎙️ बोलिए...</p>}
             {/* Location Button */}
             <button
               type="button"
@@ -286,32 +394,56 @@ const RuralOnboarding: React.FC = () => {
             <p className="ro-helper">मुसीबत में इस व्यक्ति से संपर्क किया जाएगा</p>
 
             <div className="ro-emergency-group">
-              <input
-                type="text"
-                className={`ro-input ${errors.emergencyName ? 'ro-input-error' : ''}`}
-                placeholder="नाम"
-                value={emergencyName}
-                onChange={(e) => { setEmergencyName(e.target.value); clearError('emergencyName'); }}
-              />
+              <div className="ro-input-wrap">
+                <input
+                  type="text"
+                  className={`ro-input ${errors.emergencyName ? 'ro-input-error' : ''}`}
+                  placeholder={activeVoiceField === 'emergencyName' ? '🎙️ बोलिए...' : 'नाम'}
+                  value={emergencyName}
+                  onChange={(e) => { setEmergencyName(e.target.value); clearError('emergencyName'); }}
+                />
+                <button
+                  type="button"
+                  className={`ro-mic-btn ${activeVoiceField === 'emergencyName' ? 'ro-mic-active' : ''}`}
+                  onClick={() => startVoiceInput('emergencyName', setEmergencyName)}
+                  disabled={activeVoiceField !== null && activeVoiceField !== 'emergencyName'}
+                  aria-label="आवाज़ से नाम भरें"
+                >
+                  <Mic size={18} />
+                </button>
+              </div>
+              {activeVoiceField === 'emergencyName' && <p className="ro-listening-label">🎙️ बोलिए...</p>}
               {errors.emergencyName && (
                 <p className="ro-error">
                   <AlertCircle size={14} /> {errors.emergencyName}
                 </p>
               )}
 
-              <input
-                type="tel"
-                inputMode="numeric"
-                className={`ro-input ${errors.emergencyMobile ? 'ro-input-error' : ''}`}
-                placeholder="मोबाइल नंबर"
-                value={emergencyMobile}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                  setEmergencyMobile(val);
-                  clearError('emergencyMobile');
-                }}
-                maxLength={10}
-              />
+              <div className="ro-input-wrap">
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  className={`ro-input ${errors.emergencyMobile ? 'ro-input-error' : ''}`}
+                  placeholder={activeVoiceField === 'emergencyMobile' ? '🎙️ बोलिए...' : 'मोबाइल नंबर'}
+                  value={emergencyMobile}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setEmergencyMobile(val);
+                    clearError('emergencyMobile');
+                  }}
+                  maxLength={10}
+                />
+                <button
+                  type="button"
+                  className={`ro-mic-btn ${activeVoiceField === 'emergencyMobile' ? 'ro-mic-active' : ''}`}
+                  onClick={() => startVoiceInput('emergencyMobile', setEmergencyMobile, true)}
+                  disabled={activeVoiceField !== null && activeVoiceField !== 'emergencyMobile'}
+                  aria-label="आवाज़ से नंबर भरें"
+                >
+                  <Mic size={18} />
+                </button>
+              </div>
+              {activeVoiceField === 'emergencyMobile' && <p className="ro-listening-label">🎙️ बोलिए...</p>}
               {errors.emergencyMobile && (
                 <p className="ro-error">
                   <AlertCircle size={14} /> {errors.emergencyMobile}
@@ -612,6 +744,94 @@ const RuralOnboarding: React.FC = () => {
           padding-bottom: 20px;
         }
 
+        /* ── Voice Input ── */
+        .ro-voice-hint {
+          text-align: center;
+          font-size: 0.88rem;
+          color: #64748b;
+          margin: 0 0 6px;
+          padding: 0 4px;
+          line-height: 1.5;
+        }
+        .ro-speech-error {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          font-size: 0.82rem;
+          color: #f59e0b;
+          background: rgba(245, 158, 11, 0.08);
+          border: 1px solid rgba(245, 158, 11, 0.2);
+          border-radius: 12px;
+          padding: 10px 14px;
+          margin: 0 0 8px;
+          text-align: center;
+          line-height: 1.5;
+        }
+        .ro-input-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .ro-input-wrap .ro-input {
+          padding-right: 54px;
+        }
+        .ro-mic-btn {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 40px;
+          height: 40px;
+          border-radius: 12px;
+          border: 1.5px solid rgba(0, 201, 167, 0.3);
+          background: rgba(0, 201, 167, 0.08);
+          color: #00C9A7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s;
+          padding: 0;
+          flex-shrink: 0;
+        }
+        .ro-mic-btn:hover:not(:disabled) {
+          background: rgba(0, 201, 167, 0.18);
+          border-color: rgba(0, 201, 167, 0.5);
+        }
+        .ro-mic-btn:active:not(:disabled) {
+          transform: translateY(-50%) scale(0.9);
+        }
+        .ro-mic-btn:disabled {
+          opacity: 0.25;
+          cursor: not-allowed;
+        }
+        .ro-mic-active {
+          background: rgba(239, 68, 68, 0.12) !important;
+          border-color: rgba(239, 68, 68, 0.5) !important;
+          color: #ef4444 !important;
+          animation: ro-mic-pulse 1.2s ease-in-out infinite;
+        }
+        @keyframes ro-mic-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.35); }
+          50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+        .ro-listening-label {
+          font-size: 0.82rem;
+          color: #ef4444;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin: 2px 0 0;
+          padding-left: 4px;
+          animation: ro-blink 1s step-end infinite;
+        }
+        @keyframes ro-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+
         /* ── Responsive adjustments ── */
         @media (max-width: 380px) {
           .ro-greeting {
@@ -623,6 +843,14 @@ const RuralOnboarding: React.FC = () => {
           .ro-input {
             padding: 14px 16px;
             font-size: 1rem;
+          }
+          .ro-input-wrap .ro-input {
+            padding-right: 50px;
+          }
+          .ro-mic-btn {
+            width: 36px;
+            height: 36px;
+            right: 6px;
           }
           .ro-submit-btn {
             padding: 16px 20px;
