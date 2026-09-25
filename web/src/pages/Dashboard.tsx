@@ -2,27 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, MessageCircle, Settings, Mic, Send, MapPin, Calendar, Activity, AlertTriangle,
-  Ambulance, Building2, UserRound, Pill, FlaskConical, Droplets, ChevronRight, Check,
-  Search, Heart, Moon, QrCode, Shield, HeartPulse, BadgeCheck, Stethoscope, Phone
+  Ambulance, Building2, UserRound, Pill, ChevronRight, Phone, Home, Briefcase, BadgeCheck, HeartPulse
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSOSStore } from '../store/sosStore';
-import { useAshaStore } from '../store/ashaStore';
-import { api } from '../services/api';
 import LifeLinkAIAssistant from '../components/LifeLinkAIAssistant';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { triggerSOS, isSOSActive, isCounting, countdown, decrementCountdown, startCountdown, stopCountdown } = useSOSStore();
-  const { areaType } = useAshaStore();
-  
-  const [sosTimeout, setSosTimeout] = useState<NodeJS.Timeout | null>(null);
-  
+  const { triggerSOS, isCounting, countdown, startCountdown, stopCountdown, decrementCountdown } = useSOSStore();
+
   const [aiQuery, setAiQuery] = useState('');
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
+  
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isCounting) {
+      interval = setInterval(() => decrementCountdown(), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isCounting, decrementCountdown]);
+
+  const handleSOSDown = () => {
+    startCountdown();
+    // Simulate long press for 3s
+    setTimeout(() => {
+       if(useSOSStore.getState().isCounting) {
+           stopCountdown();
+           triggerSOS('CRITICAL', 'MANUAL', 12.9716, 77.5946);
+           navigate('/sos');
+       }
+    }, 3000);
+  };
+
+  const handleSOSUp = () => {
+    stopCountdown();
+  };
 
   const formatName = (name: string | undefined) => {
     if (!name) return 'LifeLink User';
@@ -34,602 +49,218 @@ const Dashboard: React.FC = () => {
     return name;
   };
 
-  const handleAiSubmit = async () => {
-    if (!aiQuery.trim()) return;
-    setIsAiLoading(true);
-    setAiResponse(null);
-    try {
-      const res = await fetch(`${api.defaults.baseURL}/api/ai/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: aiQuery }] })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAiResponse(data.message);
-      } else {
-        setAiResponse("Sorry, I'm having trouble connecting right now.");
-      }
-    } catch (error) {
-      setAiResponse("Sorry, I'm having trouble connecting right now.");
-    } finally {
-      setIsAiLoading(false);
-      setAiQuery('');
-    }
-  };
-
-  const handleVoice = () => {
-    if (!isListening) {
-      setIsListening(true);
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.lang = 'en-US';
-        recognition.onresult = (e: any) => {
-          const text = e.results[0][0].transcript;
-          setAiQuery(text);
-          setIsListening(false);
-        };
-        recognition.onerror = () => setIsListening(false);
-        recognition.onend = () => setIsListening(false);
-        recognition.start();
-      } else {
-        setTimeout(() => setIsListening(false), 2000);
-      }
-    } else {
-      setIsListening(false);
-    }
-  };
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isCounting) {
-      interval = setInterval(() => decrementCountdown(), 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isCounting, decrementCountdown]);
-
-  useEffect(() => {
-    if (isCounting && countdown <= 0) {
-      if (sosTimeout) clearTimeout(sosTimeout);
-      stopCountdown();
-      triggerSOS('CRITICAL', 'MANUAL', 12.9716, 77.5946); // mock lat/lng
-      navigate('/sos');
-    }
-  }, [countdown, isCounting, sosTimeout, stopCountdown, triggerSOS, navigate]);
-
-  const handleSOSDown = () => {
-    startCountdown();
-    const timeout = setTimeout(() => {
-      stopCountdown();
-      triggerSOS('CRITICAL', 'MANUAL', 12.9716, 77.5946); // mock lat/lng
-      navigate('/sos');
-    }, 3000);
-    setSosTimeout(timeout);
-  };
-
-  const handleSOSUp = () => {
-    stopCountdown();
-    if (sosTimeout) clearTimeout(sosTimeout);
-  };
-
   return (
-    <div className="w-full flex justify-center pb-32">
-      <div className="flex flex-col gap-4 p-4 w-full max-w-[1400px] text-textPrimary">
-      
-        {/* 1. TOP HEADER */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-2">
-        <div className="flex items-center gap-3 self-start md:self-auto">
-          <div className="w-12 h-12 rounded-full bg-[#00C9A7] flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(0,201,167,0.4)]">
-            {formatName(user?.fullName).split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
-          </div>
-          <div>
-            <h2 className="font-bold text-lg leading-tight flex items-center gap-1">
-              {formatName(user?.fullName)} <BadgeCheck size={16} className="text-[#3D91FF]" />
-            </h2>
-            <p className="text-xs text-textSecondary">LifeLink Member</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <HeartPulse size={32} className="text-[#00C9A7]" />
-          <div>
-            <h1 className="text-2xl font-black tracking-tight leading-tight">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
-            <p className="text-[10px] text-textSecondary tracking-wider">Your Health. Our Priority.</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4 self-end md:self-auto">
-          <button 
-            className="relative text-textSecondary hover:text-textPrimary transition-colors p-2 bg-card rounded-full border border-border"
-            onClick={() => alert("You have 1 new system alert: Routine system maintenance scheduled for tonight.")}
-          >
-            <Bell size={20} />
-            <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#FF4757] rounded-full border-2 border-[#131F35]"></span>
-          </button>
-          <button 
-            className="text-textSecondary hover:text-textPrimary transition-colors p-2 bg-card rounded-full border border-border"
-            onClick={() => navigate('/community')}
-          >
-            <MessageCircle size={20} />
-          </button>
-          <button 
-            className="text-textSecondary hover:text-textPrimary transition-colors p-2 bg-card rounded-full border border-border"
-            onClick={() => navigate('/settings')}
-          >
-            <Settings size={20} />
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F4F9F9] font-sans pb-24 relative overflow-hidden">
+      {/* Top Background Pattern */}
+      <div className="absolute top-0 left-0 w-full h-72 bg-[url('/images/hospital.jpg')] bg-cover bg-center opacity-[0.05] pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-72 bg-gradient-to-b from-[#E8F5F3]/60 to-transparent pointer-events-none"></div>
 
-      {/* 2. AI ASSISTANT HERO CARD */}
-      <div className="bg-gradient-to-br from-surface to-background border border-border rounded-[24px] p-4 relative overflow-hidden flex flex-col lg:flex-row items-center gap-4 shadow-md">
-        {/* Background glow */}
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent-purple rounded-full blur-[80px] pointer-events-none opacity-50 dark:opacity-100" />
+      <div className="relative z-10 px-4 pt-6 pb-4 max-w-[600px] mx-auto">
         
-        <div className="flex items-center gap-4 flex-1 relative z-10 w-full">
-          <div className="w-24 h-24 md:w-32 md:h-32 shrink-0">
-            <img 
-              src="/images/robot_assistant.jpg" 
-              className="w-full h-full object-cover mix-blend-screen rounded-full drop-shadow-[0_0_20px_rgba(61,145,255,0.2)]" 
-              alt="AI Assistant" 
-            />
+        {/* 1. Header Row */}
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-[#00C9A7] flex items-center justify-center font-bold text-white text-xl shadow-sm">
+              {formatName(user?.fullName).split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <h2 className="font-bold text-[#1E293B] text-lg leading-tight flex items-center gap-1">
+                {formatName(user?.fullName)}
+                <BadgeCheck size={18} className="text-[#3B82F6]" strokeWidth={2} />
+              </h2>
+              <p className="text-sm text-[#64748B]">LifeLink Member</p>
+            </div>
           </div>
           
-          <div className="flex-1 flex flex-col justify-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-0.5">Hello, {formatName(user?.fullName).split(' ')[0]}! 👋</h2>
-            <p className="text-xs text-textSecondary mb-3">I'm your AI Health Assistant. How can I help you today?</p>
-            
-            <div className="relative w-full max-w-md">
-              <button 
-                onClick={handleVoice}
-                className={`absolute inset-y-0 left-0 pl-3 flex items-center ${isListening ? 'text-[#8B5CF6] animate-pulse' : 'text-textSecondary hover:text-textPrimary'} transition-colors`}
-              >
-                <Mic size={16} />
-              </button>
-              <input 
-                type="text"
-                value={aiQuery}
-                onChange={(e) => setAiQuery(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleAiSubmit(); }}
-                disabled={isAiLoading} 
-                className="w-full bg-card border border-border rounded-full py-2 pl-9 pr-10 text-xs text-textPrimary focus:outline-none focus:border-[#8B5CF6] transition-colors shadow-inner disabled:opacity-50"
-                placeholder="Ask anything..."
-              />
-              <button 
-                onClick={handleAiSubmit}
-                disabled={isAiLoading || !aiQuery.trim()}
-                className="absolute inset-y-1 right-1 w-7 h-7 rounded-full bg-accent-purple flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-[#8B5CF6]/30 disabled:opacity-50 disabled:hover:scale-100">
-                {isAiLoading ? (
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <Send size={12} className="text-textPrimary ml-0.5" />
-                )}
-              </button>
+          <div className="flex items-center gap-2">
+            <button className="relative w-10 h-10 bg-white rounded-full border border-[#E2E8F0] flex items-center justify-center text-[#64748B] shadow-sm">
+              <Bell size={18} />
+              <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-white"></span>
+            </button>
+            <button className="w-10 h-10 bg-white rounded-full border border-[#E2E8F0] flex items-center justify-center text-[#64748B] shadow-sm">
+              <MessageCircle size={18} />
+            </button>
+            <button className="w-10 h-10 bg-white rounded-full border border-[#E2E8F0] flex items-center justify-center text-[#64748B] shadow-sm">
+              <Settings size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* 2. Logo Area */}
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex items-center gap-2">
+            <div className="text-[#00C9A7]">
+              <HeartPulse size={36} strokeWidth={2.5} />
             </div>
-            
-            {aiResponse && (
-              <div className="mt-3 w-full max-w-md bg-card border border-[#8B5CF6]/30 rounded-xl p-3 relative animate-fade-in">
-                <button onClick={() => setAiResponse(null)} className="absolute top-2 right-2 text-textSecondary hover:text-textPrimary">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-                <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-accent-purple flex items-center justify-center shrink-0 mt-0.5">
-                    <HeartPulse size={12} className="text-[#8B5CF6]"/>
-                  </div>
-                  <p className="text-xs text-textPrimary leading-relaxed pr-4">{aiResponse}</p>
+            <h1 className="text-3xl font-black text-[#1E293B] tracking-tight">
+              LifeLink <span className="text-[#00C9A7]">AI</span>
+            </h1>
+          </div>
+          <p className="text-[#64748B] text-sm mt-1">Your Health. Our Priority.</p>
+        </div>
+
+        {/* 3. AI Assistant Hero Card */}
+        <div className="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#F1F5F9] mb-6">
+          <div className="flex gap-4 mb-4 items-center">
+            <div className="w-24 h-24 bg-[#E8F5F3] rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <img src="/images/robot_assistant.jpg" alt="AI Robot" className="w-full h-full object-cover mix-blend-multiply" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1E293B] mb-1">Hello, {formatName(user?.fullName).split(' ')[0]}! 👋</h3>
+              <p className="text-[#64748B] text-sm leading-snug mb-3">
+                I'm your AI Health Assistant. How can I help you today?
+              </p>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#94A3B8]">
+                  <Mic size={18} />
                 </div>
+                <input 
+                  type="text" 
+                  value={aiQuery}
+                  onChange={(e) => setAiQuery(e.target.value)}
+                  placeholder="Ask anything..." 
+                  className="w-full pl-12 pr-12 py-3 bg-white border border-[#BDE0D8] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#00C9A7]/20 placeholder:text-[#94A3B8] text-[#1E293B]"
+                />
+                <button className="absolute inset-y-1.5 right-1.5 w-9 h-9 bg-[#E8F5F3] rounded-full flex items-center justify-center text-[#00C9A7] hover:bg-[#D1ECE7] transition-colors">
+                  <Send size={16} className="ml-0.5" />
+                </button>
               </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4 relative z-10 w-full lg:w-auto">
-          <div className="flex flex-col gap-2 min-w-[180px]">
-            <button onClick={() => navigate('/hospitals')} className="bg-card border border-border rounded-full py-2 px-3 text-[10px] font-medium text-textSecondary hover:text-textPrimary hover:bg-card transition-colors flex items-center gap-2">
-              <MapPin size={12} className="text-textSecondary" /> Find nearest hospital
-            </button>
-            <button onClick={() => navigate('/doctor')} className="bg-card border border-border rounded-full py-2 px-3 text-[10px] font-medium text-textSecondary hover:text-textPrimary hover:bg-card transition-colors flex items-center gap-2">
-              <Calendar size={12} className="text-textSecondary" /> Book a doctor
-            </button>
-            <button onClick={() => navigate('/symptoms')} className="bg-card border border-border rounded-full py-2 px-3 text-[10px] font-medium text-textSecondary hover:text-textPrimary hover:bg-card transition-colors flex items-center gap-2">
-              <Activity size={12} className="text-textSecondary" /> Check my symptoms
-            </button>
+            </div>
           </div>
           
-          <div className="bg-background border border-[#FF4757]/20 rounded-[20px] p-3 flex flex-col items-center justify-center h-[120px] w-[140px] backdrop-blur-sm relative overflow-hidden">
-            <div className="text-center mb-2 relative z-10">
-              <p className="text-[#FF4757] text-[10px] font-bold">Emergency?</p>
+          <div className="flex gap-3">
+            {/* Action List */}
+            <div className="flex-1 flex flex-col gap-2">
+              <button className="flex items-center justify-between px-4 py-3.5 bg-white border border-[#BDE0D8] rounded-full w-full text-left active:bg-[#F8FAFC]" onClick={() => navigate('/hospitals')}>
+                <div className="flex items-center gap-3 text-[#1E293B] font-medium text-[13px]">
+                  <MapPin size={18} className="text-[#00C9A7]" />
+                  Find nearest hospital
+                </div>
+                <ChevronRight size={16} className="text-[#00C9A7]" />
+              </button>
+              <button className="flex items-center justify-between px-4 py-3.5 bg-white border border-[#BDE0D8] rounded-full w-full text-left active:bg-[#F8FAFC]" onClick={() => navigate('/doctor')}>
+                <div className="flex items-center gap-3 text-[#1E293B] font-medium text-[13px]">
+                  <Calendar size={18} className="text-[#00C9A7]" />
+                  Book a doctor
+                </div>
+                <ChevronRight size={16} className="text-[#00C9A7]" />
+              </button>
+              <button className="flex items-center justify-between px-4 py-3.5 bg-white border border-[#BDE0D8] rounded-full w-full text-left active:bg-[#F8FAFC]" onClick={() => navigate('/symptoms')}>
+                <div className="flex items-center gap-3 text-[#1E293B] font-medium text-[13px]">
+                  <Activity size={18} className="text-[#00C9A7]" />
+                  Check my symptoms
+                </div>
+                <ChevronRight size={16} className="text-[#00C9A7]" />
+              </button>
             </div>
             
-            <div className="relative w-16 h-16 flex items-center justify-center">
-              {/* Ripple Rings */}
-              {!isSOSActive && (
-                <>
-                  <div className={`absolute inset-0 rounded-full border-2 ${isCounting ? 'border-[#FF4757]' : 'border-[#FF4757]/40'} animate-[ping_2s_ease-out_infinite]`} style={{ animationDelay: '0s' }} />
-                  <div className={`absolute -inset-2 rounded-full border-2 ${isCounting ? 'border-[#FF4757]' : 'border-[#FF4757]/20'} animate-[ping_2s_ease-out_infinite]`} style={{ animationDelay: '0.6s' }} />
-                  <div className={`absolute -inset-4 rounded-full border-2 ${isCounting ? 'border-[#FF4757]' : 'border-[#FF4757]/10'} animate-[ping_2s_ease-out_infinite]`} style={{ animationDelay: '1.2s' }} />
-                </>
-              )}
-
+            {/* SOS Card */}
+            <div className="w-[145px] bg-[#FFF5F5] border border-[#FEE2E2] rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+              <div className="flex items-center gap-1.5 text-[#DC2626] font-bold text-sm mb-1">
+                <AlertTriangle size={16} fill="currentColor" className="text-[#DC2626]" /> Emergency?
+              </div>
+              <p className="text-[#64748B] text-[10px] mb-4 leading-tight">Tap for immediate help</p>
+              
               <button 
                 onMouseDown={handleSOSDown}
                 onMouseUp={handleSOSUp}
                 onMouseLeave={handleSOSUp}
                 onTouchStart={handleSOSDown}
                 onTouchEnd={handleSOSUp}
-                className={`w-14 h-14 rounded-full bg-gradient-to-br from-[#FF4757] to-[#D63031] shadow-md border-2 border-[#FF4757]/30 flex flex-col items-center justify-center relative z-10 transition-all duration-300 ${isCounting ? 'scale-90 animate-pulse' : 'hover:scale-105'} active:scale-95`}
+                className={`relative w-20 h-20 rounded-full bg-gradient-to-b from-[#EF4444] to-[#DC2626] flex flex-col items-center justify-center text-white shadow-[0_8px_16px_rgba(220,38,38,0.3)] transition-transform ${isCounting ? 'scale-95' : 'hover:scale-105'} select-none touch-none`}
               >
-                {isSOSActive ? (
-                  <div className="flex flex-col items-center animate-fade-in">
-                    <span className="text-xs font-black text-textPrimary">SOS</span>
-                  </div>
-                ) : isCounting ? (
-                  <span className="text-xl font-black text-textPrimary leading-none">{countdown}</span>
+                {/* Red pulse effect behind button when pressing */}
+                {isCounting && (
+                   <div className="absolute inset-0 rounded-full border-[3px] border-[#DC2626] animate-[ping_1.5s_ease-out_infinite]"></div>
+                )}
+                {isCounting ? (
+                  <span className="font-bold text-2xl tracking-wide">{countdown}</span>
                 ) : (
                   <>
-                    <AlertTriangle size={16} className="text-textPrimary mb-0.5" />
-                    <span className="text-textPrimary font-black text-[9px] tracking-widest leading-none">SOS</span>
+                    <Phone size={24} fill="currentColor" className="mb-1" />
+                    <span className="font-bold text-sm tracking-wide">SOS</span>
                   </>
                 )}
               </button>
-            </div>
-            
-            <div className="text-center mt-2 h-3 relative z-10">
-              {isSOSActive ? (
-                <span className="text-[#FF4757] font-bold text-[8px] animate-pulse">ACTIVATED</span>
-              ) : isCounting ? (
-                <span className="text-textPrimary font-bold text-[8px]">Release to cancel...</span>
-              ) : (
-                <span className="text-textSecondary text-[8px]">Hold <strong className="text-textPrimary">3s</strong></span>
-              )}
+              <p className="text-[#94A3B8] text-[10px] mt-3">Hold 3s</p>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 3. QUICK ACTIONS */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-bold text-xs flex items-center gap-1.5 text-textPrimary">
-            <span className="text-yellow-500">⚡</span> Quick Actions
-          </h2>
-          <button className="text-[10px] text-[#3D91FF] hover:underline">Edit</button>
-        </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar snap-x">
+        {/* 4. Quick Actions */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-[#1E293B] text-lg flex items-center gap-2">
+              <span className="text-[#00C9A7] text-xl">⚡</span> Quick Actions
+            </h3>
+            <button className="text-[#00C9A7] font-medium text-sm hover:underline">Edit</button>
+          </div>
           
-          <button onClick={() => navigate('/ambulance')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 relative hover:border-border transition-colors group">
-            <div className="absolute top-1 left-1 bg-[#FF4757] text-white text-[7px] font-bold px-1 py-0.5 rounded-full">24/7</div>
-            <div className="w-8 h-8 rounded-full bg-[#FF4757]/10 flex items-center justify-center text-[#FF4757] group-hover:scale-110 transition-transform">
-              <Ambulance size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-textSecondary">Ambulance</span>
-          </button>
-
-          <button onClick={() => navigate('/hospitals')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
-            <div className="w-8 h-8 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7] group-hover:scale-110 transition-transform">
-              <Building2 size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-textSecondary">Hospitals</span>
-          </button>
-
-          <button onClick={() => navigate('/doctor')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
-            <div className="w-8 h-8 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF] group-hover:scale-110 transition-transform">
-              <UserRound size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-textSecondary">Doctors</span>
-          </button>
-
-          {areaType !== 'rural' && (
-            <>
-              <button onClick={() => navigate('/pharmacy')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
-                <div className="w-8 h-8 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573] group-hover:scale-110 transition-transform">
-                  <Pill size={16} />
-                </div>
-                <span className="text-[10px] font-semibold text-textSecondary">Pharmacy</span>
-              </button>
-
-              <button onClick={() => navigate('/lab')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
-                <div className="w-8 h-8 rounded-full bg-accent-purple flex items-center justify-center text-[#8B5CF6] group-hover:scale-110 transition-transform">
-                  <FlaskConical size={16} />
-                </div>
-                <span className="text-[10px] font-semibold text-textSecondary">Lab Tests</span>
-              </button>
-
-              <button onClick={() => navigate('/blood')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
-                <div className="w-8 h-8 rounded-full bg-[#FF6B81]/10 flex items-center justify-center text-[#FF6B81] group-hover:scale-110 transition-transform">
-                  <Droplets size={16} />
-                </div>
-                <span className="text-[10px] font-semibold text-textSecondary">Blood Bank</span>
-              </button>
-            </>
-          )}
-
-          <button onClick={() => navigate('/symptoms')} className="snap-start shrink-0 w-20 h-20 bg-card border border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-border transition-colors group">
-            <div className="w-8 h-8 rounded-full bg-[#38ADA9]/10 flex items-center justify-center text-[#38ADA9] group-hover:scale-110 transition-transform">
-              <HeartPulse size={16} />
-            </div>
-            <span className="text-[10px] font-semibold text-textSecondary">Symptoms</span>
-          </button>
-          
-        </div>
-      </div>
-
-      {/* 4. 3-COLUMN GRID (Hidden for Rural) */}
-      {areaType !== 'rural' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          
-          {/* Appointments */}
-          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-xs flex items-center gap-1.5"><Calendar size={14} className="text-[#3D91FF]"/> Appointments</h3>
-              <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/doctor')}>View all</button>
-            </div>
-            
-            <div className="flex flex-col gap-2 mb-3">
-              <div className="bg-card rounded-xl p-2.5 flex items-center gap-2 border border-border">
-                <div className="w-8 h-8 rounded-full bg-surface overflow-hidden shrink-0">
-                  <img src="https://i.pravatar.cc/150?u=dr_ananya" alt="Dr. Ananya" className="w-full h-full object-cover"/>
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-textPrimary">Dr. Ananya Sharma</h4>
-                  <div className="flex items-center justify-between mt-1">
-                    <p className="text-[8px] text-textSecondary flex items-center gap-1"><Calendar size={8}/> 18 May • 11:00 AM</p>
-                    <span className="text-[8px] font-bold bg-[#3D91FF]/10 text-[#3D91FF] px-1.5 py-0.5 rounded">Confirmed</span>
-                  </div>
-                </div>
+          <div className="flex justify-between gap-3 overflow-x-auto pb-2 hide-scrollbar">
+            <button className="flex flex-col items-center justify-center bg-white border border-[#FEE2E2] rounded-2xl p-4 w-full min-w-[80px] relative shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:scale-95 transition-transform" onClick={() => navigate('/ambulance')}>
+              <div className="absolute -top-2 left-2 bg-[#EF4444] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">24/7</div>
+              <div className="w-12 h-12 bg-[#FEF2F2] rounded-full flex items-center justify-center text-[#EF4444] mb-2">
+                <Ambulance size={22} />
               </div>
-              
-              <div className="bg-card rounded-xl p-2.5 flex items-center gap-2 border border-border">
-                <div className="w-8 h-8 rounded-full bg-surface overflow-hidden shrink-0">
-                  <img src="https://i.pravatar.cc/150?u=dr_rahul" alt="Dr. Rahul" className="w-full h-full object-cover"/>
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-textPrimary">Dr. Rahul Verma</h4>
-                  <div className="flex items-center justify-between mt-1">
-                    <p className="text-[8px] text-textSecondary flex items-center gap-1"><Calendar size={8}/> 21 May • 04:30 PM</p>
-                    <span className="text-[8px] font-bold bg-accent-purple text-[#8B5CF6] px-1.5 py-0.5 rounded">Scheduled</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <span className="text-[#1E293B] text-sm font-semibold">Ambulance</span>
+            </button>
             
-            <button className="mt-auto w-full py-2 bg-card border border-border hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5" onClick={() => navigate('/doctor')}>
-              <Calendar size={12} /> Book New <ChevronRight size={12}/>
+            <button className="flex flex-col items-center justify-center bg-white border border-[#E0F2F1] rounded-2xl p-4 w-full min-w-[80px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:scale-95 transition-transform" onClick={() => navigate('/hospitals')}>
+              <div className="w-12 h-12 bg-[#E6F8F5] rounded-full flex items-center justify-center text-[#00C9A7] mb-2">
+                <Building2 size={22} />
+              </div>
+              <span className="text-[#1E293B] text-sm font-semibold">Hospitals</span>
+            </button>
+            
+            <button className="flex flex-col items-center justify-center bg-white border border-[#E0E7FF] rounded-2xl p-4 w-full min-w-[80px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:scale-95 transition-transform" onClick={() => navigate('/doctor')}>
+              <div className="w-12 h-12 bg-[#EEF2FF] rounded-full flex items-center justify-center text-[#3B82F6] mb-2">
+                <UserRound size={22} />
+              </div>
+              <span className="text-[#1E293B] text-sm font-semibold">Doctors</span>
+            </button>
+            
+            <button className="flex flex-col items-center justify-center bg-white border border-[#E0E7FF] rounded-2xl p-4 w-full min-w-[80px] shadow-[0_2px_10px_rgba(0,0,0,0.02)] active:scale-95 transition-transform" onClick={() => navigate('/pharmacy')}>
+              <div className="w-12 h-12 bg-[#EEF2FF] rounded-full flex items-center justify-center text-[#3B82F6] mb-2">
+                <Pill size={22} />
+              </div>
+              <span className="text-[#1E293B] text-sm font-semibold">Pharmacy</span>
             </button>
           </div>
+        </div>
 
-          {/* Health Overview */}
-          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-xs flex items-center gap-1.5"><Heart size={14} className="text-[#FF4757]"/> Health Overview</h3>
-              <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/audit')}>View all</button>
-            </div>
-            
-            <div className="flex flex-col gap-4 flex-1 justify-center">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7]"><Activity size={10}/></div>
-                  <div>
-                    <p className="text-[8px] text-textSecondary">Steps</p>
-                    <p className="text-xs font-bold">7,245 <span className="text-[8px] font-normal text-textTertiary">/10k</span></p>
-                  </div>
-                </div>
-                <div className="w-full bg-card rounded-full h-1 overflow-hidden">
-                  <div className="bg-[#00C9A7] h-full rounded-full" style={{ width: '72%' }}></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Droplets size={10}/></div>
-                  <div>
-                    <p className="text-[8px] text-textSecondary">Water</p>
-                    <p className="text-xs font-bold">6 <span className="text-[8px] font-normal text-textTertiary">/ 8</span></p>
-                  </div>
-                </div>
-                <div className="w-full bg-card rounded-full h-1 overflow-hidden">
-                  <div className="bg-[#3D91FF] h-full rounded-full" style={{ width: '75%' }}></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-full bg-accent-purple flex items-center justify-center text-[#8B5CF6]"><Moon size={10}/></div>
-                  <div>
-                    <p className="text-[8px] text-textSecondary">Sleep</p>
-                    <p className="text-xs font-bold">7h 15m</p>
-                  </div>
-                </div>
-                <div className="w-full bg-card rounded-full h-1 overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] h-full rounded-full" style={{ width: '85%' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Reminders */}
-          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-xs flex items-center gap-1.5"><Bell size={14} className="text-[#A78BFA]"/> Reminders</h3>
-              <button className="text-[9px] font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/reminders')}>View all</button>
-            </div>
-            
-            <div className="flex flex-col gap-3 mb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573]"><Pill size={10}/></div>
-                  <div>
-                    <h4 className="text-[10px] font-bold text-textPrimary">Vitamin D3</h4>
-                    <p className="text-[8px] text-textSecondary">1 Tab • Breakfast (08:00 AM)</p>
-                  </div>
-                </div>
-                <div className="w-4 h-4 rounded-full bg-[#00C9A7] flex items-center justify-center shadow-[0_0_10px_rgba(0,201,167,0.3)]">
-                  <Check size={8} className="text-textPrimary" />
-                </div>
-              </div>
-              
-              <div className="h-[1px] w-full bg-surface"></div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Pill size={10}/></div>
-                  <div>
-                    <h4 className="text-[10px] font-bold text-textPrimary">Calcium</h4>
-                    <p className="text-[8px] text-textSecondary">1 Tab • Dinner (08:00 PM)</p>
-                  </div>
-                </div>
-                <div className="w-4 h-4 rounded-full border border-slate-500"></div>
-              </div>
-            </div>
-            
-            <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-2 bg-card border border-border hover:border-slate-500 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1.5">
-              <Bell size={12} /> All Reminders <ChevronRight size={12}/>
+        {/* 5. Appointments */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-[#1E293B] text-lg flex items-center gap-2">
+              <Calendar size={20} className="text-[#00C9A7]" /> Appointments
+            </h3>
+            <button className="text-[#00C9A7] font-medium text-sm flex items-center gap-1 hover:underline">
+              View all <ChevronRight size={16} />
             </button>
           </div>
-
-        </div>
-      )}
-
-      {/* 5. 2-COLUMN INSURANCE & VAULT (Hidden for Rural) */}
-      {areaType !== 'rural' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
-          {/* Insurance Banner */}
-          <div className="bg-card border border-border rounded-2xl relative overflow-hidden shadow-md flex items-center min-h-[120px] group cursor-pointer" onClick={() => navigate('/insurance')}>
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-30 dark:opacity-50 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-r from-card via-card/80 to-transparent" />
+          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden">
+                <img src="https://i.pravatar.cc/150?u=dr_ananya" alt="Dr. Ananya Sharma" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h4 className="font-bold text-[#1E293B] text-base mb-0.5">Dr. Ananya Sharma</h4>
+                <div className="flex flex-col gap-1">
+                  <span className="text-[#64748B] text-xs flex items-center gap-1.5"><UserRound size={12}/> General Physician</span>
+                  <span className="text-[#64748B] text-xs flex items-center gap-1.5"><Calendar size={12}/> Today, 10:30 AM</span>
+                </div>
+              </div>
             </div>
             
-            <div className="relative z-10 p-5 w-full md:w-3/4 flex flex-col justify-center text-left">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
-                <p className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase">Active Coverage</p>
-              </div>
-              <h3 className="text-base font-black text-textPrimary mb-1 leading-tight">Health Insurance</h3>
-              <p className="text-xs text-textSecondary mb-3 max-w-[200px] leading-snug">Protect your family with comprehensive health plans.</p>
-              <button className="bg-surface hover:bg-background border border-border text-textPrimary text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-all flex items-center gap-1.5 backdrop-blur-sm">
-                Explore Plans <ChevronRight size={12} />
-              </button>
+            <div className="flex items-center gap-1 bg-[#E6F8F5] text-[#00C9A7] px-3 py-1.5 rounded-full text-xs font-bold self-start mt-1 cursor-pointer hover:bg-[#D1ECE7] transition-colors">
+              Confirmed <ChevronRight size={14} />
             </div>
-          </div>
-
-          {/* Health ID Locker */}
-          <div className="bg-card border border-border rounded-2xl p-4 shadow-md flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/passport')}>
-            <div className="w-16 h-16 shrink-0 bg-[#00C9A7]/10 rounded-xl border border-[#00C9A7]/30 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/20 transition-colors">
-              <QrCode size={32} className="text-[#00C9A7]" />
-              <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
-            </div>
-            
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm font-bold">Health Locker</h3>
-                <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">B+</span>
-              </div>
-              <p className="text-[10px] text-[#00C9A7] font-bold mb-1">ID Verified</p>
-              <p className="text-[9px] text-textSecondary mb-2">Keep your records safe.</p>
-              
-              <button className="bg-surface hover:bg-background border border-border text-[#3D91FF] text-[10px] font-bold py-1.5 px-4 rounded-lg w-max transition-colors flex items-center gap-1.5">
-                View ID <ChevronRight size={12} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 6. HEALTHCARE SERVICES GRID */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-bold text-xs flex items-center gap-1.5 text-textPrimary">
-            <Heart size={14} className="text-[#3D91FF]" /> Services
-          </h2>
-        </div>
-        
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {areaType !== 'rural' && (
-            <>
-              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/physiotherapy')}>
-                <div className="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <UserRound size={14} className="text-indigo-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Physiotherapy</h4>
-                </div>
-              </div>
-              
-              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/homecare')}>
-                <div className="w-8 h-8 bg-amber-900/40 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <HeartPulse size={14} className="text-amber-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Home Care</h4>
-                </div>
-              </div>
-              
-              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/equipment')}>
-                <div className="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Stethoscope size={14} className="text-blue-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Equipment</h4>
-                </div>
-              </div>
-              
-              <div className="bg-card border border-border rounded-xl p-3 flex gap-2 items-center hover:border-border cursor-pointer transition-colors group" onClick={() => navigate('/insurance')}>
-                <div className="w-8 h-8 bg-accent-blue rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Shield size={14} className="text-indigo-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-[10px] font-bold text-textPrimary mb-0.5">Insurance</h4>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ASHA Worker - Only for Rural Users */}
-          {areaType === 'rural' && (
-            <div className="bg-card border border-[#F97316]/30 rounded-xl p-3 flex gap-2 items-center hover:border-[#F97316]/60 cursor-pointer transition-colors group" onClick={() => navigate('/asha')}>
-              <div className="w-8 h-8 bg-[#F97316]/15 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <HeartPulse size={14} className="text-[#F97316]" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-[10px] font-bold text-[#F97316] mb-0.5">ASHA Seva</h4>
-                <p className="text-[8px] text-textTertiary">Gaon mein madad</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 7. COMMUNITY BANNER */}
-      <div className="bg-gradient-to-r from-surface to-background border border-border rounded-xl p-3 flex flex-row items-center justify-between gap-2 cursor-pointer hover:border-slate-500 transition-colors" onClick={() => navigate('/community')}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-accent-purple rounded-lg flex items-center justify-center shrink-0">
-            <HeartPulse size={16} className="text-[#8B5CF6]" />
-          </div>
-          <div>
-            <h3 className="font-bold text-xs text-textPrimary mb-0.5">LifeLink Community</h3>
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          <div className="flex -space-x-1.5 hidden sm:flex">
-            <img src="https://i.pravatar.cc/100?u=1" className="w-6 h-6 rounded-full border border-background" alt="User"/>
-            <img src="https://i.pravatar.cc/100?u=2" className="w-6 h-6 rounded-full border border-background" alt="User"/>
-            <div className="w-6 h-6 rounded-full border border-background bg-accent-purple text-textPrimary flex items-center justify-center text-[7px] font-bold z-10">
-              +1k
-            </div>
-          </div>
-          
-          <button className="bg-accent-purple hover:bg-accent-purple px-3 py-1.5 rounded-md text-[10px] font-bold transition-colors flex items-center gap-1">
-            Explore <ChevronRight size={12} />
-          </button>
-        </div>
       </div>
-
-      </div>
+      
       <LifeLinkAIAssistant />
     </div>
   );
