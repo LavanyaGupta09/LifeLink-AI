@@ -445,6 +445,44 @@ html.light-mode .fixed.bottom-0.bg-\[\#0B1121\]\/95 {
 /* .bg-\[\#00C9A7\] is NOT overridden */
 
 /* ============================================
+   LIGHT MODE — Insurance & Health Locker Cards
+   Swap dark navy overlays to white-based ones
+   ============================================ */
+html.light-mode .insurance-light-overlay,
+html.light-mode .locker-light-overlay {
+  display: block !important;
+}
+
+html.light-mode .insurance-light-overlay {
+  background: linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.80) 40%, rgba(255,255,255,0.55) 100%) !important;
+}
+
+html.light-mode .locker-light-overlay {
+  background: linear-gradient(to right, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.75) 40%, rgba(255,255,255,0.50) 100%) !important;
+}
+
+/* Hide the dark-mode overlay divs in light mode */
+html.light-mode .bg-gradient-to-r.from-\[\#0B1121\]\/90,
+html.light-mode .bg-gradient-to-r.from-\[\#0B1121\]\/85,
+html.light-mode .bg-gradient-to-t.from-\[\#0B1121\]\/60,
+html.light-mode .bg-gradient-to-t.from-\[\#0B1121\]\/50 {
+  opacity: 0 !important;
+}
+
+/* Light mode button adjustments for these cards */
+html.light-mode .insurance-light-overlay ~ div button,
+html.light-mode .locker-light-overlay ~ div button {
+  background: rgba(0, 30, 80, 0.06) !important;
+  border-color: rgba(0, 30, 80, 0.12) !important;
+  backdrop-filter: none !important;
+}
+
+html.light-mode .insurance-light-overlay ~ div button:hover,
+html.light-mode .locker-light-overlay ~ div button:hover {
+  background: rgba(0, 30, 80, 0.10) !important;
+}
+
+/* ============================================
    LIGHT MODE — Easy Mode (60+) Adjustments
    ============================================ */
 html.light-mode.easy-mode {

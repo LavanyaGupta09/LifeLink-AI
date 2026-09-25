@@ -415,11 +415,16 @@ const Dashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Insurance Banner */}
-            <div className="bg-card border border-border rounded-3xl relative overflow-hidden shadow-sm flex items-center min-h-[140px] group cursor-pointer" onClick={() => navigate('/insurance')}>
+            <div className="bg-card border border-border rounded-3xl relative overflow-hidden shadow-sm flex items-center min-h-[160px] group cursor-pointer" onClick={() => navigate('/insurance')}>
+              {/* Background Image */}
               <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover opacity-20 dark:opacity-40 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-r from-card via-card/90 to-transparent" />
+                <img src="/images/health_insurance.jpg" alt="Health Insurance" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                {/* Dark mode overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0B1121]/90 via-[#0B1121]/75 to-[#0B1121]/40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1121]/60 to-transparent" />
               </div>
+              {/* Light mode overlay - applied via CSS class */}
+              <div className="absolute inset-0 pointer-events-none insurance-light-overlay hidden" />
               
               <div className="relative z-10 p-6 w-full flex flex-col justify-center text-left">
                 <div className="flex items-center gap-2 mb-2">
@@ -428,30 +433,42 @@ const Dashboard: React.FC = () => {
                 </div>
                 <h3 className="text-lg font-black text-textPrimary mb-1 leading-tight">Health Insurance Hub</h3>
                 <p className="text-sm text-textSecondary mb-4 max-w-[280px] leading-snug">Protect your family with comprehensive health plans.</p>
-                <button className="bg-surface hover:bg-background border border-border text-textPrimary text-xs font-bold py-2 px-5 rounded-xl w-max transition-all flex items-center gap-2 shadow-sm">
+                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-textPrimary text-xs font-bold py-2 px-5 rounded-xl w-max transition-all flex items-center gap-2 shadow-sm">
                   Explore Plans <ChevronRight size={14} />
                 </button>
               </div>
             </div>
 
             {/* Health ID Locker */}
-            <div className="bg-card border border-border rounded-3xl p-6 shadow-sm flex items-center gap-5 group cursor-pointer" onClick={() => navigate('/passport')}>
-              <div className="w-20 h-20 shrink-0 bg-[#00C9A7]/10 rounded-2xl border border-[#00C9A7]/30 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/20 transition-colors">
-                <QrCode size={40} className="text-[#00C9A7]" />
-                <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
+            <div className="bg-card border border-border rounded-3xl relative overflow-hidden shadow-sm flex items-center gap-5 min-h-[160px] group cursor-pointer" onClick={() => navigate('/passport')}>
+              {/* Background Image */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img src="/images/health_locker_bg.jpg" alt="Health Locker" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                {/* Dark mode overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0B1121]/85 via-[#0B1121]/70 to-[#0B1121]/50" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1121]/50 to-transparent" />
               </div>
+              {/* Light mode overlay */}
+              <div className="absolute inset-0 pointer-events-none locker-light-overlay hidden" />
               
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-1.5">
-                  <h3 className="text-base font-bold text-textPrimary">Health Locker</h3>
-                  <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">B+</span>
+              <div className="relative z-10 p-6 flex items-center gap-5 w-full">
+                <div className="w-20 h-20 shrink-0 bg-[#00C9A7]/15 backdrop-blur-sm rounded-2xl border border-[#00C9A7]/40 flex items-center justify-center relative overflow-hidden group-hover:bg-[#00C9A7]/25 transition-colors">
+                  <QrCode size={40} className="text-[#00C9A7] drop-shadow-[0_0_8px_rgba(0,201,167,0.4)]" />
+                  <div className="absolute top-0 w-full h-[2px] bg-[#00C9A7] shadow-[0_0_10px_#00C9A7] animate-waveform"></div>
                 </div>
-                <p className="text-xs text-[#00C9A7] font-bold mb-1">ID Verified & Protected</p>
-                <p className="text-xs text-textSecondary mb-3">Keep your medical records safe.</p>
                 
-                <button className="bg-surface hover:bg-background border border-border text-[#3D91FF] text-xs font-bold py-2 px-5 rounded-xl w-max transition-colors flex items-center gap-2 shadow-sm">
-                  View Medical ID <ChevronRight size={14} />
-                </button>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-1.5">
+                    <h3 className="text-base font-bold text-textPrimary">Health Locker</h3>
+                    <span className="bg-emerald-900/60 border border-emerald-700 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">B+</span>
+                  </div>
+                  <p className="text-xs text-[#00C9A7] font-bold mb-1">ID Verified & Protected</p>
+                  <p className="text-xs text-textSecondary mb-3">Keep your medical records safe.</p>
+                  
+                  <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-[#3D91FF] text-xs font-bold py-2 px-5 rounded-xl w-max transition-colors flex items-center gap-2 shadow-sm">
+                    View Medical ID <ChevronRight size={14} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
