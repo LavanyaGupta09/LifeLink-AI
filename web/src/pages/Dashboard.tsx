@@ -143,10 +143,9 @@ const Dashboard: React.FC = () => {
           </div>
           
           <div className="flex items-center justify-end relative max-[699px]:row-start-1 max-[699px]:col-start-2">
-            {/* Desktop (Always visible) & Mobile Expanded Container */}
-            <div className={`flex items-center gap-3 transition-all duration-300 ease-out origin-right
-              max-[699px]:absolute max-[699px]:right-[48px] max-[699px]:top-0 max-[699px]:bg-background/80 max-[699px]:backdrop-blur-md max-[699px]:p-1 max-[699px]:rounded-full max-[699px]:shadow-lg
-              ${isHeaderMenuOpen ? 'max-[699px]:opacity-100 max-[699px]:scale-100 max-[699px]:pointer-events-auto' : 'max-[699px]:opacity-0 max-[699px]:scale-95 max-[699px]:pointer-events-none'}`}>
+            {/* Expanded Menu Container */}
+            <div className={`flex items-center gap-3 transition-all duration-300 ease-out origin-right absolute right-[48px] top-0 bg-background/80 backdrop-blur-md p-1 rounded-full shadow-lg z-10
+              ${isHeaderMenuOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <button className="relative w-10 h-10 shrink-0 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => alert("You have 1 new system alert: Routine system maintenance scheduled for tonight.")}>
                 <Bell size={18} />
                 <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-card"></span>
@@ -159,13 +158,18 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
             
-            {/* Mobile Toggle Button */}
+            {/* Toggle Button */}
             <button 
-              className="w-10 h-10 shrink-0 bg-card rounded-full border border-border flex min-[700px]:hidden items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm z-10 relative"
+              className="w-10 h-10 shrink-0 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm z-20 relative overflow-hidden"
               onClick={() => setIsHeaderMenuOpen(!isHeaderMenuOpen)}
             >
-              {isHeaderMenuOpen ? <X size={18} /> : <MoreVertical size={18} />}
-              {!isHeaderMenuOpen && <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-card"></span>}
+              <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isHeaderMenuOpen ? 'rotate-90 opacity-0 scale-50' : 'rotate-0 opacity-100 scale-100'}`}>
+                <MoreVertical size={18} />
+              </div>
+              <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isHeaderMenuOpen ? 'rotate-0 opacity-100 scale-100' : '-rotate-90 opacity-0 scale-50'}`}>
+                <X size={18} />
+              </div>
+              {!isHeaderMenuOpen && <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-card z-10 transition-opacity duration-300"></span>}
             </button>
           </div>
         </div>
