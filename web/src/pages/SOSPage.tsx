@@ -9,7 +9,7 @@ import { MOCK_EMERGENCY_CONTACTS, MOCK_AMBULANCES } from '../data/mockData';
 import { bloodAPI } from '../services/api';
 import FreeMap from '../components/FreeMap';
 import { fetchRoute, searchAddress, useDebounce } from '../utils/mapUtils';
-import JitsiVideoCall from '../components/telemedicine/JitsiVideoCall';
+import AgoraVideoCall from '../components/telemedicine/AgoraVideoCall';
 
 const SOSPage: React.FC = () => {
   const navigate = useNavigate();
@@ -38,8 +38,34 @@ const SOSPage: React.FC = () => {
   };
   
   const [activeEmergencyRoom, setActiveEmergencyRoom] = useState<string | null>(null);
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
+  const [agoraError, setAgoraError] = useState<string | null>(null);
+  
   const [chatProvider, setChatProvider] = useState<{name: string, eta: number | string} | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  
+  const joinAgoraRoom = async (channelId: string) => {
+    setActiveEmergencyRoom(channelId);
+    setAgoraError(null);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/agora/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_name: channelId })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAgoraConfig({ token: data.token, appId: data.app_id, channel: channelId });
+        if (!import.meta.env.VITE_AGORA_APP_ID && !data.app_id) {
+          setAgoraError("Agora App ID is missing.");
+        }
+      } else {
+        setAgoraError(data.detail || "Failed to fetch Agora token.");
+      }
+    } catch (err) {
+      setAgoraError("Network error while connecting to video server.");
+    }
+  };
 
   // Address Search and Map State
   const [manualAddress, setManualAddress] = useState('');
@@ -172,15 +198,33 @@ const SOSPage: React.FC = () => {
     );
   }
 
-  // LIVE JITSI EMERGENCY CALL OVERLAY
+  // LIVE AGORA EMERGENCY CALL OVERLAY
   if (activeEmergencyRoom) {
     return (
       <div className="fixed inset-0 bg-black z-50 flex flex-col justify-between overflow-hidden">
-        <JitsiVideoCall 
-          roomName={activeEmergencyRoom}
-          displayName="Emergency Patient"
-          onReadyToClose={() => setActiveEmergencyRoom(null)}
-        />
+        {agoraConfig ? (
+          <AgoraVideoCall 
+            channelName={agoraConfig.channel}
+            token={agoraConfig.token}
+            appId={agoraConfig.appId}
+            onReadyToClose={() => {
+              setActiveEmergencyRoom(null);
+              setAgoraConfig(null);
+            }}
+          />
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-white">
+            <div className="w-12 h-12 border-4 border-t-[#00C9A7] border-white/20 rounded-full animate-spin mb-4"></div>
+            <p className="animate-pulse">Connecting to emergency video feed...</p>
+            {agoraError && <p className="text-rose-500 mt-2 text-sm">{agoraError}</p>}
+            <button 
+              onClick={() => { setActiveEmergencyRoom(null); setAgoraConfig(null); }}
+              className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -339,7 +383,7 @@ const SOSPage: React.FC = () => {
                   <span className="text-xs text-success">Connected</span>
                 </div>
               </div>
-              <button className="btn btn-primary btn-sm" onClick={() => setActiveEmergencyRoom(`LifeLink_SOS_DOC_Arjun`)}>
+              <button className="btn btn-primary btn-sm" onClick={() => joinAgoraRoom(`LifeLink_SOS_DOC_Arjun`)}>
                 <Phone size={14} />
                 Join Call
               </button>
@@ -369,7 +413,7 @@ const SOSPage: React.FC = () => {
                 <div className="flex flex-col items-end gap-1">
                   <div className="flex gap-2">
                     <button 
-                      onClick={() => setActiveEmergencyRoom(`LifeLink_SOS_FAM_${c.name.replace(/\\s/g,'_')}`)}
+                      onClick={() => joinAgoraRoom(`LifeLink_SOS_FAM_${c.name.replace(/\\s/g,'_')}`)}
                       className="bg-[#3D91FF]/10 text-[#3D91FF] border border-[#3D91FF]/30 p-1 rounded-full"
                     >
                       <Phone size={12} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, MessageSquare, X, CheckCircle2, Activity, Package, FlaskConical, Ambulance } from 'lucide-react';
-import JitsiVideoCall from '../components/telemedicine/JitsiVideoCall';
+import AgoraVideoCall from '../components/telemedicine/AgoraVideoCall';
 
 type ServiceType = 'ambulance' | 'medicine' | 'lab' | 'physio' | 'equipment';
 
@@ -84,7 +84,29 @@ const LiveTrackingPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isArrived, setIsArrived] = useState(false);
   const [activeCall, setActiveCall] = useState<string | null>(null);
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
+  const [agoraError, setAgoraError] = useState<string | null>(null);
   const [activeChat, setActiveChat] = useState(false);
+
+  const joinAgoraRoom = async (channelId: string) => {
+    setActiveCall(channelId);
+    setAgoraError(null);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/agora/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_name: channelId })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAgoraConfig({ token: data.token, appId: data.app_id, channel: channelId });
+      } else {
+        setAgoraError(data.detail || "Failed to fetch Agora token.");
+      }
+    } catch (err) {
+      setAgoraError("Network error while connecting to video server.");
+    }
+  };
 
   // Simulation Timer
   useEffect(() => {
@@ -243,7 +265,7 @@ const LiveTrackingPage: React.FC = () => {
           
           <div className="grid grid-cols-2 gap-3">
             <button 
-              onClick={() => setActiveCall(`LifeLink_TrackCall_${type}_${Date.now()}`)}
+              onClick={() => joinAgoraRoom(`LifeLink_TrackCall_${type}_${Date.now()}`)}
               className="flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 py-3 rounded-xl font-bold active:scale-95 transition-transform"
             >
               <Phone size={18} /> Call
@@ -321,12 +343,24 @@ const LiveTrackingPage: React.FC = () => {
               <ArrowLeft size={18} />
             </button>
           </div>
-        <div className="flex-1 w-full bg-black">
-            <JitsiVideoCall 
-              roomName={activeCall} 
-              displayName="LifeLink Member"
-              onReadyToClose={() => setActiveCall(null)} 
-            />
+          <div className="flex-1 w-full bg-black relative">
+            {agoraConfig ? (
+              <AgoraVideoCall 
+                channelName={agoraConfig.channel}
+                token={agoraConfig.token}
+                appId={agoraConfig.appId}
+                onReadyToClose={() => {
+                  setActiveCall(null);
+                  setAgoraConfig(null);
+                }}
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                <div className="w-12 h-12 border-4 border-t-emerald-500 border-white/20 rounded-full animate-spin mb-4"></div>
+                <p className="animate-pulse">Connecting to live feed...</p>
+                {agoraError && <p className="text-rose-500 mt-2 text-sm">{agoraError}</p>}
+              </div>
+            )}
           </div>
         </div>
       )}
