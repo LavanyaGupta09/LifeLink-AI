@@ -121,8 +121,8 @@ const Dashboard: React.FC = () => {
       <div className="flex flex-col gap-6 p-4 md:p-6 w-full max-w-[1400px] text-textPrimary">
       
         {/* 1. TOP HEADER */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 self-start md:self-auto">
+        <div className="grid max-[699px]:grid-cols-[1fr_auto] min-[700px]:grid-cols-3 items-center gap-4 w-full">
+          <div className="flex items-center gap-3 justify-start">
             <div className="w-12 h-12 rounded-full bg-[#00C9A7] flex items-center justify-center font-bold text-white text-xl shadow-sm">
               {formatName(user?.fullName).split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center max-[699px]:col-span-2 max-[699px]:row-start-2 min-[700px]:col-start-2">
             <div className="flex items-center gap-2">
               <HeartPulse size={36} className="text-[#00C9A7]" strokeWidth={2.5} />
               <h1 className="text-3xl font-black tracking-tight text-textPrimary">LifeLink <span className="text-[#00C9A7]">AI</span></h1>
@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
             <p className="text-xs text-textSecondary tracking-wide mt-1">Your Health. Our Priority.</p>
           </div>
           
-          <div className="flex items-center self-end md:self-auto relative">
+          <div className="flex items-center justify-end relative max-[699px]:row-start-1 max-[699px]:col-start-2">
             {/* Desktop (Always visible) & Mobile Expanded Container */}
             <div className={`flex items-center gap-3 transition-all duration-300 ease-out origin-right
               max-[699px]:absolute max-[699px]:right-[48px] max-[699px]:top-0 max-[699px]:bg-background/80 max-[699px]:backdrop-blur-md max-[699px]:p-1 max-[699px]:rounded-full max-[699px]:shadow-lg
