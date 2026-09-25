@@ -1442,35 +1442,34 @@ html.easy-mode .skeleton {
   white-space: nowrap;
 }
  
- / *   - - -   P r i m a r y   A c c e n t s   - - -   * / 
- h t m l . l i g h t - m o d e   . b g - b l u e - 6 0 0 , 
- h t m l . l i g h t - m o d e   . b g - [ # 3 B 8 2 F 6 ] , 
- h t m l . l i g h t - m o d e   . b g - i n d i g o - 6 0 0 , 
- h t m l . l i g h t - m o d e   . b g - i n d i g o - 5 0 0   { 
-     b a c k g r o u n d - c o l o r :   # 0 F A F 9 D   ! i m p o r t a n t ; 
-     c o l o r :   # F F F F F F   ! i m p o r t a n t ; 
- } 
- 
- h t m l . l i g h t - m o d e   . b g - b l u e - 6 0 0 / 2 0 , 
- h t m l . l i g h t - m o d e   . b g - i n d i g o - 5 0 0 / 2 0   { 
-     b a c k g r o u n d - c o l o r :   r g b a ( 1 5 ,   1 7 5 ,   1 5 7 ,   0 . 1 5 )   ! i m p o r t a n t ; 
-     c o l o r :   # 0 8 7 F 7 A   ! i m p o r t a n t ; 
- } 
- 
- h t m l . l i g h t - m o d e   . t e x t - b l u e - 5 0 0 , 
- h t m l . l i g h t - m o d e   . t e x t - b l u e - 4 0 0 , 
- h t m l . l i g h t - m o d e   . t e x t - i n d i g o - 4 0 0   { 
-     c o l o r :   # 0 8 7 F 7 A   ! i m p o r t a n t ; 
- } 
- 
- h t m l . l i g h t - m o d e   . b o r d e r - b l u e - 5 0 0 / 3 0 , 
- h t m l . l i g h t - m o d e   . b o r d e r - b l u e - 5 0 0 , 
- h t m l . l i g h t - m o d e   . b o r d e r - i n d i g o - 5 0 0 / 5 0   { 
-     b o r d e r - c o l o r :   r g b a ( 1 5 ,   1 7 5 ,   1 5 7 ,   0 . 4 )   ! i m p o r t a n t ; 
- } 
- 
- h t m l . l i g h t - m o d e   . s h a d o w - b l u e - 5 0 0 / 2 0   { 
-     b o x - s h a d o w :   0   8 p x   2 4 p x   r g b a ( 1 5 ,   1 7 5 ,   1 5 7 ,   0 . 2 )   ! i m p o r t a n t ; 
- } 
-  
- 
+
+/* --- Primary Accents --- */
+html.light-mode .bg-blue-600,
+html.light-mode .bg-\[\#3B82F6\],
+html.light-mode .bg-indigo-600,
+html.light-mode .bg-indigo-500 {
+    background-color: #0FAF9D !important;
+    color: #FFFFFF !important;
+}
+
+html.light-mode .bg-blue-600\/20,
+html.light-mode .bg-indigo-500\/20 {
+    background-color: rgba(15, 175, 157, 0.15) !important;
+    color: #087F7A !important;
+}
+
+html.light-mode .text-blue-500,
+html.light-mode .text-blue-400,
+html.light-mode .text-indigo-400 {
+    color: #087F7A !important;
+}
+
+html.light-mode .border-blue-500\/30,
+html.light-mode .border-blue-500,
+html.light-mode .border-indigo-500\/50 {
+    border-color: rgba(15, 175, 157, 0.4) !important;
+}
+
+html.light-mode .shadow-blue-500\/20 {
+    box-shadow: 0 8px 24px rgba(15, 175, 157, 0.2) !important;
+}

@@ -37,6 +37,7 @@ const CATEGORIES = [
   { id: 'insurance', label: 'Insurance', icon: <ShieldCheck size={14} /> }
 ];
 
+const INITIAL_POSTS = [
   {
     id: 'p1',
     author: 'Rajiv Sharma',
