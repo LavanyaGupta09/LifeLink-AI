@@ -100,8 +100,7 @@ const AmbulancePage: React.FC = () => {
 
   const handleDispatch = (hospital: any) => {
     setSelectedHospital(hospital);
-    setDispatched(true);
-    setTimeout(() => navigate('/tracking/ambulance'), 1500);
+    setTimeout(() => navigate('/tracking/ambulance', { state: { hospital, patientLocation: location } }), 500);
   };
 
   const bedPercent = (h: any) => Math.round((h.erBedsAvailable / h.erBedsTotal) * 100);
@@ -173,83 +172,109 @@ const AmbulancePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Hospital list */}
-        <p className="section-title mb-3 animate-fade-in delay-300">Nearby Hospitals — ER Status</p>
+        {/* Dispatch Flow */}
+        {!dispatched ? (
+          <div className="flex flex-col gap-4 animate-fade-in delay-300">
+            <button 
+              className="w-full bg-[#FF4757] hover:bg-[#ff6b77] text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2"
+              onClick={() => setDispatched(true)}
+            >
+              <Ambulance size={20} /> Request Emergency Ambulance
+            </button>
+            <p className="text-center text-xs text-secondary mt-1">
+              Select an ambulance first, then choose a destination hospital.
+            </p>
+          </div>
+        ) : (
+          <div className="animate-fade-in">
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shrink-0">
+                <Ambulance size={20} className="text-white" />
+              </div>
+              <div>
+                <h4 className="font-bold text-emerald-500">Ambulance Dispatched</h4>
+                <p className="text-xs text-secondary">Unit A-12 (ALS) • {distKm} km • ETA {etaMin} min</p>
+              </div>
+            </div>
 
-        {hospitals.length > 0 && hospitals[0].isDemo && (
-          <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-3 self-start inline-flex items-center gap-1.5">
-            <AlertCircle size={12} />
-            Prototype Nearby Data
+            <p className="section-title mb-3">Choose Destination Hospital</p>
+
+            <button 
+              className="w-full bg-surface border border-border hover:border-primary text-textPrimary font-bold py-3 rounded-xl mb-4 flex items-center justify-center gap-2 transition-colors"
+              onClick={() => handleDispatch(hospitals[0] || { name: 'Auto Selected Hospital' })}
+            >
+              Let LifeLink Choose Automatically
+            </button>
+
+            {hospitals.length > 0 && hospitals[0].isDemo && (
+              <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg mb-3 self-start inline-flex items-center gap-1.5">
+                <AlertCircle size={12} />
+                Prototype Nearby Data
+              </div>
+            )}
+            
+            {hospitals.length === 0 ? (
+              <div className="animate-pulse">
+                {[1,2,3].map(i => <div key={i} className="card mb-3" style={{ height: 140, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
+              </div>
+            ) : hospitals.map((h, i) => {
+              const pct = bedPercent(h);
+              const col = bedColor(pct);
+              return (
+                <div
+                  key={h.id}
+                  className={`card hospital-card animate-fade-in ${selectedHospital?.id === h.id ? 'selected' : ''}`}
+                  style={{ animationDelay: `${i * 50}ms` }}
+                  onClick={() => setSelectedHospital(h)}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-display">{h.name}</h4>
+                        {h.isPartner && <span className="badge badge-primary">Partner</span>}
+                      </div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <MapPin size={12} color="var(--text-tertiary)" />
+                        <span className="text-xs text-secondary">{h.distanceKm} km · {(h.address || '').split(',')[0]}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Star size={11} color="#FFA502" fill="#FFA502" />
+                        <span className="text-xs font-semibold">{h.rating}</span>
+                      </div>
+                    </div>
+                    <ChevronRight size={18} color="var(--text-tertiary)" />
+                  </div>
+
+                  {/* ER beds */}
+                  <div className="beds-row">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-secondary">ER Beds Available</span>
+                      <span className="text-xs font-bold" style={{ color: col }}>{h.erBedsAvailable}/{h.erBedsTotal}</span>
+                    </div>
+                    <div className="progress-track">
+                      <div className="progress-fill" style={{ width: `${pct}%`, background: col }} />
+                    </div>
+                  </div>
+
+                  {/* Specialists */}
+                  <div className="specialist-tags">
+                    {h.activeSpecialists.slice(0, 3).map((s: string, si: number) => (
+                      <span key={si} className="badge badge-info">{s}</span>
+                    ))}
+                  </div>
+
+                  {selectedHospital?.id === h.id && (
+                    <div className="hospital-actions animate-fade-in">
+                      <button className="btn btn-danger btn-block" onClick={(e) => { e.stopPropagation(); handleDispatch(h); }} id={`dispatch-amb-${h.id}`}>
+                        🏥 Confirm Hospital Destination
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
-        {hospitals.length === 0 ? (
-          <div className="animate-pulse">
-            {[1,2,3].map(i => <div key={i} className="card mb-3" style={{ height: 140, background: 'var(--bg-elevated)', borderRadius: 16 }}></div>)}
-          </div>
-        ) : hospitals.map((h, i) => {
-          const pct = bedPercent(h);
-          const col = bedColor(pct);
-          return (
-            <div
-              key={h.id}
-              className={`card hospital-card animate-fade-in ${selectedHospital?.id === h.id ? 'selected' : ''}`}
-              style={{ animationDelay: `${300 + i * 80}ms` }}
-              onClick={() => setSelectedHospital(h)}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-display">{h.name}</h4>
-                    {h.isPartner && <span className="badge badge-primary">Partner</span>}
-                  </div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <MapPin size={12} color="var(--text-tertiary)" />
-                    <span className="text-xs text-secondary">{h.distanceKm} km · {(h.address || '').split(',')[0]}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star size={11} color="#FFA502" fill="#FFA502" />
-                    <span className="text-xs font-semibold">{h.rating}</span>
-                  </div>
-                </div>
-                <ChevronRight size={18} color="var(--text-tertiary)" />
-              </div>
-
-              {/* ER beds */}
-              <div className="beds-row">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-secondary">ER Beds Available</span>
-                  <span className="text-xs font-bold" style={{ color: col }}>{h.erBedsAvailable}/{h.erBedsTotal}</span>
-                </div>
-                <div className="progress-track">
-                  <div className="progress-fill" style={{ width: `${pct}%`, background: col }} />
-                </div>
-              </div>
-
-              {/* Specialists */}
-              <div className="specialist-tags">
-                {h.activeSpecialists.slice(0, 3).map((s: string, si: number) => (
-                  <span key={si} className="badge badge-info">{s}</span>
-                ))}
-              </div>
-
-              {selectedHospital?.id === h.id && (
-                <div className="hospital-actions animate-fade-in">
-                  <button className="btn btn-danger btn-block" onClick={() => handleDispatch(h)} id={`dispatch-amb-${h.id}`}>
-                    🚑 Dispatch Ambulance Here
-                  </button>
-                  <div className="flex gap-2 mt-2">
-                    <button className="btn btn-ghost flex-1 btn-sm">
-                      <Phone size={14} /> Call ER
-                    </button>
-                    <button className="btn btn-ghost flex-1 btn-sm">
-                      <Navigation size={14} /> Navigate
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
           </>
         )}
       </div>

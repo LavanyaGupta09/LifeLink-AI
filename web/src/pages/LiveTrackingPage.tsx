@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, MessageSquare, X, CheckCircle2, Activity, Package, FlaskConical, Ambulance } from 'lucide-react';
 import AgoraVideoCall from '../components/telemedicine/AgoraVideoCall';
 
@@ -23,7 +23,7 @@ const CONFIG_MAP: Record<ServiceType, TrackingConfig> = {
     providerName: 'Apollo Rescue Unit',
     providerRole: 'Paramedic Team',
     providerRating: '⭐ 4.9 (Critical Care)',
-    steps: ['Request Broadcast', 'Ambulance Dispatched', 'En Route', 'Arrived at Location'],
+    steps: ['Emergency Requested', 'Ambulance Assigned', 'Ambulance Dispatched', 'Ambulance Reaching Patient', 'Patient Picked Up', 'Hospital Selected', 'Hospital Notified', 'En Route to Hospital', 'Arriving at Hospital', 'Patient Reached Hospital'],
     initialDistance: 3.2,
     initialEta: 9,
   },
@@ -87,6 +87,11 @@ const LiveTrackingPage: React.FC = () => {
   const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
   const [agoraError, setAgoraError] = useState<string | null>(null);
   const [activeChat, setActiveChat] = useState(false);
+  const locationState = useLocation().state as any;
+  const destinationHospital = locationState?.hospital;
+  
+  const [journeyStage, setJourneyStage] = useState<1 | 2>(1);
+  const [isArrivedAtHospital, setIsArrivedAtHospital] = useState(false);
 
   const joinAgoraRoom = async (channelId: string) => {
     setActiveCall(channelId);
@@ -110,46 +115,62 @@ const LiveTrackingPage: React.FC = () => {
 
   // Simulation Timer
   useEffect(() => {
-    if (isArrived) return;
+    if (type !== 'ambulance' && isArrived) return;
+    if (type === 'ambulance' && isArrivedAtHospital) return;
 
     const interval = setInterval(() => {
       setDistance(prev => {
         const next = Math.max(0, prev - 0.4);
         if (next === 0) {
-          setIsArrived(true);
-          setEta(0);
-          // Advance stepper to the final few steps rapidly
-          setCurrentStep(config.steps.length - 1);
+          if (type === 'ambulance' && journeyStage === 1) {
+            setIsArrived(true);
+            setJourneyStage(2);
+            setEta(15);
+            return 5.0; // Distance to hospital
+          } else {
+            if (type === 'ambulance') {
+              setIsArrivedAtHospital(true);
+            } else {
+              setIsArrived(true);
+            }
+            setEta(0);
+            setCurrentStep(config.steps.length - 1);
+          }
         }
         return Number(next.toFixed(1));
       });
       
       setEta(prev => {
-        const next = Math.max(0, prev - 1);
-        return next;
+        if (prev === 0) return 0;
+        return Math.max(0, prev - 1);
       });
 
     }, 3000); // Update every 3 seconds for demo speed
 
     return () => clearInterval(interval);
-  }, [isArrived, config.steps.length]);
+  }, [isArrived, isArrivedAtHospital, journeyStage, config.steps.length, type]);
 
   // Stepper logic progression mapping
   useEffect(() => {
-    if (isArrived) return;
+    if (type !== 'ambulance' && isArrived) return;
+    if (type === 'ambulance' && isArrivedAtHospital) return;
     
-    // Map distance progress to step index roughly
-    const progress = 1 - (distance / config.initialDistance);
-    
-    // For ambulance: 4 steps (0: Broadcast, 1: Dispatched, 2: En Route, 3: Arrived)
-    // For medicine: 5 steps (0: Confirmed, 1: Preparing, 2: Packed, 3: Out, 4: Delivered)
-    // For lab: 7 steps
     let targetStep = 1;
     
     if (type === 'ambulance') {
-      if (progress > 0.1) targetStep = 1; // Dispatched
-      if (progress > 0.3) targetStep = 2; // En Route
-      if (progress >= 1.0) targetStep = 3; // Arrived
+      if (journeyStage === 1) {
+        const progress = 1 - (distance / config.initialDistance);
+        if (progress > 0.0) targetStep = 2; // Dispatched
+        if (progress > 0.3) targetStep = 3; // Reaching
+        if (progress >= 1.0) targetStep = 4; // Picked up
+      } else {
+        const progress = 1 - (distance / 5.0);
+        targetStep = 5; // Hospital Selected
+        if (progress > 0.1) targetStep = 6; // Notified
+        if (progress > 0.3) targetStep = 7; // En route
+        if (progress > 0.8) targetStep = 8; // Arriving
+        if (progress >= 1.0) targetStep = 9; // Reached
+      }
     } else if (type === 'medicine') {
       if (progress > 0.1) targetStep = 1; // Preparing
       if (progress > 0.3) targetStep = 2; // Packed
@@ -168,7 +189,7 @@ const LiveTrackingPage: React.FC = () => {
     }
 
     setCurrentStep(Math.max(currentStep, targetStep));
-  }, [distance, config.initialDistance, type, currentStep, isArrived]);
+  }, [distance, config.initialDistance, type, currentStep, isArrived, isArrivedAtHospital, journeyStage]);
 
   const handleCancel = () => {
     const confirm = window.confirm("Are you sure you want to cancel this request?");
@@ -212,8 +233,8 @@ const LiveTrackingPage: React.FC = () => {
               className="absolute bg-background border-2 border-border p-3 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-all duration-[3000ms] ease-linear z-20"
               style={{
                 // Mock coordinate logic: moving from top-left to center
-                top: isArrived ? '50%' : `${10 + (1 - distance / config.initialDistance) * 40}%`,
-                left: isArrived ? '50%' : `${10 + (1 - distance / config.initialDistance) * 40}%`,
+                top: (type === 'ambulance' ? isArrivedAtHospital : isArrived) ? '50%' : `${10 + (1 - distance / (journeyStage === 2 ? 5.0 : config.initialDistance)) * 40}%`,
+                left: (type === 'ambulance' ? isArrivedAtHospital : isArrived) ? '50%' : `${10 + (1 - distance / (journeyStage === 2 ? 5.0 : config.initialDistance)) * 40}%`,
                 transform: 'translate(-50%, -50%)'
               }}
             >
@@ -222,7 +243,7 @@ const LiveTrackingPage: React.FC = () => {
 
             {/* User Pin (Center) */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center">
-              <div className="bg-[#3D91FF] text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1 border border-[#3D91FF]/50 shadow-[0_0_15px_rgba(61,145,255,0.5)]">YOU</div>
+              <div className="bg-[#3D91FF] text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1 border border-[#3D91FF]/50 shadow-[0_0_15px_rgba(61,145,255,0.5)]">{type === 'ambulance' && journeyStage === 2 ? 'HOSPITAL' : 'YOU'}</div>
               <MapPin size={24} className="text-[#3D91FF] drop-shadow-lg" fill="#3D91FF" />
               <div className="w-2 h-1 bg-black/50 rounded-full mt-1 blur-sm"></div>
             </div>
@@ -235,14 +256,14 @@ const LiveTrackingPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <div className={`w-2.5 h-2.5 rounded-full ${isArrived ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`}></div>
                 <span className="font-black text-lg text-textPrimary">
-                  {isArrived ? 'Arrived' : `${distance} km away`}
+                  {(type === 'ambulance' ? isArrivedAtHospital : isArrived) ? 'Arrived' : `${distance} km away`}
                 </span>
               </div>
             </div>
             <div className="text-right">
               <p className="text-xs text-textSecondary font-bold uppercase tracking-wider mb-1">ETA</p>
               <span className={`font-black text-xl ${isArrived ? 'text-emerald-400' : 'text-[#3D91FF]'}`}>
-                {isArrived ? 'Now' : `${eta} min`}
+                {(type === 'ambulance' ? isArrivedAtHospital : isArrived) ? 'Now' : `${eta} min`}
               </span>
             </div>
           </div>

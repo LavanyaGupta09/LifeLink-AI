@@ -94,34 +94,79 @@ export default function B2BHospitalDashboard() {
           </div>
         )}
 
-        {/* RADAR TAB */}
-        {activeTab === 'radar' && (
-          <div className="w-full max-w-2xl bg-card border border-border rounded-3xl p-12 lg:p-20 flex flex-col items-center justify-center relative overflow-hidden shadow-xl min-h-[500px] animate-fade-in">
-             {isScanning && (
-               <>
-                 <div className="absolute w-96 h-96 border border-red-500/20 rounded-full animate-ping opacity-50"></div>
-                 <div className="absolute w-72 h-72 border border-red-500/40 rounded-full animate-pulse opacity-75"></div>
-               </>
-             )}
-             
-             <button 
-               onClick={handleRadarClick}
-               className={`relative z-10 w-40 h-40 lg:w-48 lg:h-48 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all active:scale-95 ${isScanning ? 'bg-red-600 shadow-[0_0_80px_rgba(220,38,38,0.6)]' : 'bg-surface shadow-none'}`}
-             >
-                <span className="text-textPrimary font-extrabold tracking-widest text-xl lg:text-2xl">
-                  {isScanning ? 'RADAR' : 'OFFLINE'}
-                </span>
-             </button>
-             <div className="mt-16 text-center z-10">
-               <p className="text-textSecondary font-medium text-xl">
-                 {isScanning ? 'Monitoring trauma alerts...' : 'Radar is currently offline.'}
-               </p>
-               <p className={`text-2xl font-black mt-2 ${isScanning ? 'text-red-500 animate-pulse' : 'text-textTertiary'}`}>
-                 {isScanning ? '1 ACTIVE SOS' : '0 ACTIVE'}
-               </p>
+          <div className="w-full max-w-2xl bg-card border border-border rounded-3xl p-8 flex flex-col items-center justify-start relative overflow-hidden shadow-xl min-h-[500px] animate-fade-in">
+             <div className="flex w-full justify-between items-center mb-8 z-10">
+               <h3 className="text-xl font-bold">Emergency Radar</h3>
+               <div className="flex items-center gap-2">
+                 <div className={`w-3 h-3 rounded-full ${isScanning ? 'bg-red-500 animate-pulse' : 'bg-textTertiary'}`}></div>
+                 <span className="text-sm font-bold text-textSecondary">{isScanning ? 'ACTIVE' : 'OFFLINE'}</span>
+               </div>
              </div>
+
+             {isScanning ? (
+               <div className="w-full flex flex-col gap-4 z-10">
+                 {/* PROTOTYPE INCOMING AMBULANCE */}
+                 <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 shadow-lg shadow-red-500/5">
+                   <div className="flex items-center justify-between mb-4">
+                     <div className="flex items-center gap-3">
+                       <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
+                         <Truck size={24} className="text-white" />
+                       </div>
+                       <div>
+                         <h4 className="text-red-500 font-black text-xl">🚨 Incoming Ambulance</h4>
+                         <p className="text-textSecondary text-sm">PROTOTYPE DATA</p>
+                       </div>
+                     </div>
+                     <div className="text-right">
+                       <p className="text-2xl font-black text-emerald-400">7 min</p>
+                       <p className="text-textSecondary text-xs font-bold">ETA</p>
+                     </div>
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-4 mb-6">
+                     <div className="bg-background border border-border rounded-xl p-3">
+                       <p className="text-xs text-textSecondary mb-1">Ambulance ID</p>
+                       <p className="font-bold">Unit A-12 (ALS)</p>
+                     </div>
+                     <div className="bg-background border border-border rounded-xl p-3">
+                       <p className="text-xs text-textSecondary mb-1">Patient</p>
+                       <p className="font-bold">Unknown (Trauma)</p>
+                     </div>
+                     <div className="bg-background border border-border rounded-xl p-3">
+                       <p className="text-xs text-textSecondary mb-1">Status</p>
+                       <p className="font-bold text-[#3D91FF]">En Route</p>
+                     </div>
+                     <div className="bg-background border border-border rounded-xl p-3">
+                       <p className="text-xs text-textSecondary mb-1">Distance</p>
+                       <p className="font-bold">3.2 km</p>
+                     </div>
+                   </div>
+
+                   {/* Mock Acceptance Flow */}
+                   <div className="flex gap-3">
+                     <button className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-emerald-500/20 active:scale-95" onClick={(e) => {
+                       e.currentTarget.innerText = "✓ Accepted (Prep ICU)";
+                       e.currentTarget.classList.replace("bg-emerald-500", "bg-emerald-600");
+                     }}>
+                       Accept Request
+                     </button>
+                     <button className="px-6 bg-surface border border-border hover:bg-card font-bold py-3 rounded-xl transition-colors active:scale-95 text-textSecondary">
+                       Details
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             ) : (
+               <div className="flex-1 flex flex-col items-center justify-center z-10">
+                 <button 
+                   onClick={handleRadarClick}
+                   className="w-40 h-40 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all active:scale-95 bg-surface"
+                 >
+                    <span className="text-textPrimary font-extrabold tracking-widest text-xl">OFFLINE</span>
+                 </button>
+               </div>
+             )}
           </div>
-        )}
 
         {/* BEDS TAB */}
         {activeTab === 'beds' && (
