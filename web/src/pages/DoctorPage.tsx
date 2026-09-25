@@ -22,7 +22,7 @@ export default function DoctorPage() {
   const [activeCall, setActiveCall] = useState<Doctor | null>(null);
   const [callElapsed, setCallElapsed] = useState(0);
 
-  const [agoraConfig, setAgoraConfig] = useState<{ token: string; appId: string; channel: string } | null>(null);
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
   const [callLoading, setCallLoading] = useState(false);
   const [agoraError, setAgoraError] = useState<string | null>(null);
 

@@ -7,6 +7,13 @@ import {
 } from 'lucide-react';
 import { simulateRAGPipeline, type RAGStep, type RAGResponse } from '../services/aiKnowledgeEngine';
 
+type Comment = {
+  id: string;
+  author: string;
+  content: string;
+  timeAgo: string;
+};
+
 type Post = {
   id: string;
   author: string;
@@ -18,6 +25,7 @@ type Post = {
   likes: number;
   comments: number;
   isLiked?: boolean;
+  commentsList?: Comment[];
 };
 
 const CATEGORIES = [
@@ -29,7 +37,6 @@ const CATEGORIES = [
   { id: 'insurance', label: 'Insurance', icon: <ShieldCheck size={14} /> }
 ];
 
-const MOCK_POSTS: Post[] = [
   {
     id: 'p1',
     author: 'Rajiv Sharma',
@@ -39,7 +46,10 @@ const MOCK_POSTS: Post[] = [
     content: 'Has anyone visited Apollo Hospital in Jubilee Hills recently? Looking for reviews on their Cardiology department and wait times. My father needs an angioplasty soon.',
     timeAgo: '2h ago',
     likes: 24,
-    comments: 8,
+    comments: 1,
+    commentsList: [
+      { id: 'c1', author: 'Suresh Patel', content: 'Yes, we went there last month. The doctors are excellent, but expect a bit of waiting.', timeAgo: '1h ago' }
+    ]
   },
   {
     id: 'p2',
@@ -50,7 +60,8 @@ const MOCK_POSTS: Post[] = [
     content: 'With the sudden drop in temperature, Im seeing a 40% spike in viral fever cases. Remember to stay hydrated, avoid crowded places, and consult a doctor if fever persists over 48 hours.',
     timeAgo: '5h ago',
     likes: 156,
-    comments: 42,
+    comments: 0,
+    commentsList: []
   },
   {
     id: 'p3',
@@ -61,7 +72,8 @@ const MOCK_POSTS: Post[] = [
     content: 'Does anyone know if generic alternatives for Rosuvastatin 10mg are as effective? The branded ones are getting quite expensive for a monthly prescription.',
     timeAgo: '1d ago',
     likes: 12,
-    comments: 15,
+    comments: 0,
+    commentsList: []
   }
 ];
 
@@ -74,6 +86,42 @@ const CommunityPage: React.FC = () => {
   // AI Chat State
   // Local state for interactive mock posts
   const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
+  
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+  const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
+
+  const handleCommentChange = (postId: string, value: string) => {
+    setCommentInputs(prev => ({ ...prev, [postId]: value }));
+  };
+
+  const handlePostComment = (postId: string) => {
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
+    
+    setPosts(prev => prev.map(p => {
+      if (p.id === postId) {
+        const newComment: Comment = {
+          id: `c_${Date.now()}`,
+          author: 'You',
+          content,
+          timeAgo: 'Just now'
+        };
+        return {
+          ...p,
+          comments: p.comments + 1,
+          commentsList: [...(p.commentsList || []), newComment]
+        };
+      }
+      return p;
+    }));
+    
+    setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+    setExpandedComments(prev => ({ ...prev, [postId]: true }));
+  };
+
+  const toggleComments = (postId: string) => {
+    setExpandedComments(prev => ({ ...prev, [postId]: !prev[postId] }));
+  };
 
   const handleLike = (id: string) => {
     setPosts(prev => prev.map(p => {
@@ -222,13 +270,56 @@ const CommunityPage: React.FC = () => {
                       >
                         <ThumbsUp size={16} className={post.isLiked ? "fill-current" : ""} /> {post.likes}
                       </button>
-                      <button className="flex items-center gap-2 text-xs font-bold text-textTertiary hover:text-textSecondary transition-colors">
+                      <button 
+                        onClick={() => toggleComments(post.id)}
+                        className={`flex items-center gap-2 text-xs font-bold transition-colors ${expandedComments[post.id] ? 'text-purple-600 dark:text-purple-400' : 'text-textTertiary hover:text-textSecondary'}`}
+                      >
                         <MessageSquare size={16} /> {post.comments}
                       </button>
                       <button className="flex items-center gap-2 text-xs font-bold text-textTertiary hover:text-textSecondary transition-colors ml-auto">
                         <Share2 size={16} /> Share
                       </button>
                     </div>
+
+                    {/* Comments Section */}
+                    {expandedComments[post.id] && (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <div className="space-y-3 mb-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                          {(post.commentsList || []).length === 0 ? (
+                            <p className="text-xs text-textTertiary text-center italic">No comments yet. Be the first to share your thoughts!</p>
+                          ) : (
+                            (post.commentsList || []).map(comment => (
+                              <div key={comment.id} className="bg-surface rounded-xl p-3 border border-border">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="font-bold text-xs text-textPrimary">{comment.author}</span>
+                                  <span className="text-[10px] text-textTertiary">{comment.timeAgo}</span>
+                                </div>
+                                <p className="text-xs text-textSecondary">{comment.content}</p>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        
+                        {/* Write a comment */}
+                        <div className="flex gap-2">
+                          <input 
+                            type="text"
+                            value={commentInputs[post.id] || ''}
+                            onChange={(e) => handleCommentChange(post.id, e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handlePostComment(post.id)}
+                            placeholder="Share your thoughts..."
+                            className="flex-1 bg-surface border border-border rounded-xl px-3 py-2 text-sm text-textPrimary focus:outline-none focus:border-purple-500 transition-colors"
+                          />
+                          <button 
+                            onClick={() => handlePostComment(post.id)}
+                            disabled={!(commentInputs[post.id] || '').trim()}
+                            className="bg-purple-600 hover:bg-purple-700 disabled:bg-surface disabled:text-textTertiary text-white px-4 rounded-xl font-bold text-sm transition-all shadow-sm"
+                          >
+                            Post
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               )}

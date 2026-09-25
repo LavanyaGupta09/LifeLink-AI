@@ -23,7 +23,7 @@ export default function ConsultationRoom() {
     channel_id: 'consult_demo_channel'
   });
 
-  const [agoraConfig, setAgoraConfig] = useState<{ token: string; appId: string; channel: string } | null>(null);
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
   const [callLoading, setCallLoading] = useState(true);
   const [agoraError, setAgoraError] = useState<string | null>(null);
 

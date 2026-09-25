@@ -25,13 +25,23 @@ async def generate_agora_token(request: AgoraTokenRequest):
     app_id = os.getenv("AGORA_APP_ID", "")
     app_certificate = os.getenv("AGORA_APP_CERTIFICATE", "")
 
-    if not app_id or not app_certificate:
+    if not app_id:
         # In a real app, you shouldn't expose that credentials are missing in the frontend response,
-        # but for this demo/setup we return a clear error or a dummy token
+        # but for this demo/setup we return a clear error
         raise HTTPException(
             status_code=500, 
-            detail="Agora credentials not configured on the server."
+            detail="Agora APP ID not configured on the server."
         )
+
+    if not app_certificate:
+        # Testing mode: no certificate, so we don't need a token
+        return {
+            "token": None,
+            "app_id": app_id,
+            "channel_name": request.channel_name,
+            "uid": request.uid,
+            "expires_in": 3600
+        }
 
     if RtcTokenBuilder is None:
         raise HTTPException(

@@ -14,13 +14,13 @@ import { Video, VideoOff, Mic, MicOff, PhoneOff, Users } from 'lucide-react';
 
 interface AgoraVideoCallProps {
   channelName: string;
-  token: string;
+  token: string | null;
   appId: string;
   onReadyToClose: () => void;
   height?: string;
 }
 
-const CallUI: React.FC<{ channelName: string; token: string; appId: string; onReadyToClose: () => void }> = ({ channelName, token, appId, onReadyToClose }) => {
+const CallUI: React.FC<{ channelName: string; token: string | null; appId: string; onReadyToClose: () => void }> = ({ channelName, token, appId, onReadyToClose }) => {
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
 

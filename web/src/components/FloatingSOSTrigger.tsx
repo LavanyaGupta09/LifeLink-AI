@@ -34,7 +34,7 @@ const FloatingSOSTrigger: React.FC = () => {
   const WINDOW_MS = 3000;
 
   // ─── Hide on certain routes ───
-  const hiddenRoutes = ['/', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review'];
+  const hiddenRoutes = ['/', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review'];
   const shouldHide =
     hiddenRoutes.some((r) => location.pathname === r) ||
     location.pathname.startsWith('/b2b/') ||

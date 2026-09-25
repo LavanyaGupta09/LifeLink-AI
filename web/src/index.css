@@ -107,38 +107,38 @@
    ============================================ */
 html.light-mode {
   /* === Background System === */
-  --bg-base: #F5F8FC;
-  --bg-surface: #E8EEF8;
+  --bg-base: #F0F9F8;
+  --bg-surface: #E3F2F0;
   --bg-elevated: #FFFFFF;
   --bg-card: #FFFFFF;
-  --bg-card-hover: #EDF2FC;
-  --bg-overlay: rgba(240, 245, 255, 0.85);
+  --bg-card-hover: #EBF7F5;
+  --bg-overlay: rgba(240, 249, 248, 0.85);
   --bg-input: #FFFFFF;
   --bg-accent-purple: #F3E8FF;
   --bg-accent-blue: #E0F2FE;
 
   /* === Border System === */
-  --border: rgba(0, 30, 80, 0.10);
-  --border-light: rgba(0, 30, 80, 0.18);
-  --border-primary: rgba(0, 201, 167, 0.35);
+  --border: rgba(0, 163, 136, 0.15);
+  --border-light: rgba(0, 163, 136, 0.25);
+  --border-primary: rgba(0, 201, 167, 0.4);
   --border-danger: rgba(255, 71, 87, 0.35);
 
   /* === Text System === */
-  --text-primary: #0D1B3E;
-  --text-secondary: #5A6B8A;
-  --text-tertiary: #8B9CC5;
+  --text-primary: #0A2622;
+  --text-secondary: #3B665E;
+  --text-tertiary: #6E9B93;
   --text-inverse: #FFFFFF;
 
   /* === Shadows (lighter for light mode) === */
-  --shadow-sm: 0 2px 8px rgba(0, 30, 80, 0.06);
-  --shadow-md: 0 4px 24px rgba(0, 30, 80, 0.08);
-  --shadow-lg: 0 8px 40px rgba(0, 30, 80, 0.10);
-  --shadow-primary: 0 0 30px rgba(0, 201, 167, 0.12);
+  --shadow-sm: 0 2px 8px rgba(0, 163, 136, 0.08);
+  --shadow-md: 0 4px 24px rgba(0, 163, 136, 0.10);
+  --shadow-lg: 0 8px 40px rgba(0, 163, 136, 0.12);
+  --shadow-primary: 0 0 30px rgba(0, 201, 167, 0.15);
   --shadow-danger: 0 0 40px rgba(255, 71, 87, 0.15);
 
   /* === Glassmorphism (light version) === */
-  --glass-bg: rgba(255, 255, 255, 0.80);
-  --glass-border: rgba(0, 30, 80, 0.10);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 163, 136, 0.15);
   --glass-blur: blur(20px);
 }
 
@@ -166,19 +166,19 @@ html.light-mode .bg-\[\#120F26\],
 html.light-mode .bg-\[\#190F24\],
 html.light-mode .bg-\[\#1e102e\],
 html.light-mode .bg-\[\#0B1121\]\/95 {
-  background-color: #F0F5FF !important;
+  background-color: #F0F9F8 !important;
 }
 
 html.light-mode .bg-slate-950 {
-  background-color: #F0F5FF !important;
+  background-color: #F0F9F8 !important;
 }
 
 html.light-mode .bg-slate-900 {
-  background-color: #F5F8FF !important;
+  background-color: #EBF7F5 !important;
 }
 
 html.light-mode .bg-slate-50 {
-  background-color: #F8FAFC !important;
+  background-color: #F5FAFA !important;
 }
 
 /* --- Card / Section Backgrounds --- */
@@ -187,7 +187,7 @@ html.light-mode .bg-\[\#131B31\],
 html.light-mode .bg-\[\#131F35\],
 html.light-mode .bg-\[\#142640\] {
   background-color: #FFFFFF !important;
-  box-shadow: 0 1px 4px rgba(0, 30, 80, 0.06);
+  box-shadow: 0 1px 4px rgba(0, 163, 136, 0.08);
 }
 
 html.light-mode .bg-\[\#172236\] {
