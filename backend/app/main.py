@@ -22,6 +22,7 @@ from app.routers.ecosystem import (
 from app.routers.b2b import router as b2b_router
 from app.routers.reminders import router as reminders_router
 from app.routers.admin import router as admin_router
+from app.routers.medicines import router as medicines_router
 from app.routers.verification import router as verification_router
 from app.routers.voice import router as voice_router
 from app.routers.proxy import router as proxy_router
@@ -125,6 +126,7 @@ app.include_router(b2b_router)
 app.include_router(reminders_router)
 app.include_router(vault.router)
 app.include_router(admin_router)
+app.include_router(medicines_router)
 app.include_router(verification_router)
 app.include_router(voice_router, prefix="/api/v1/voice", tags=["Voice AI"])
 app.include_router(proxy_router)

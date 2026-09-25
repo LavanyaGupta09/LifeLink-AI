@@ -6,6 +6,7 @@ import { useGeolocation } from '../hooks/useGeolocation';
 import LocationFallback from '../components/LocationFallback';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
+import { medicinesAPI } from '../services/api';
 
 // Deterministic hash for consistent simulated data per pharmacy
 function simHash(str: string): number {
@@ -27,6 +28,12 @@ const PharmacyPage: React.FC = () => {
   const [pharmacies, setPharmacies] = useState<any[]>([]);
   const [loadingPharmacies, setLoadingPharmacies] = useState(true);
   const [cart, setCart] = useState<any[]>([]);
+  
+  // DrugSetu API States
+  const [drugSetuResults, setDrugSetuResults] = useState<any[]>([]);
+  const [loadingDrugSetu, setLoadingDrugSetu] = useState(false);
+  const [drugSetuError, setDrugSetuError] = useState<string | null>(null);
+  const [selectedMedicine, setSelectedMedicine] = useState<any | null>(null);
   
   const [rxUploaded, setRxUploaded] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -111,9 +118,38 @@ const PharmacyPage: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query.trim().length >= 3 ? query : '');
-    }, 300);
+    }, 500);
     return () => clearTimeout(timer);
   }, [query]);
+
+  // Query DrugSetu whenever debouncedQuery changes
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setDrugSetuResults([]);
+      setSelectedMedicine(null);
+      return;
+    }
+    
+    const searchMedicines = async () => {
+      setLoadingDrugSetu(true);
+      setDrugSetuError(null);
+      setSelectedMedicine(null);
+      try {
+        const response = await medicinesAPI.search(debouncedQuery);
+        if (response.data && response.data.data) {
+          setDrugSetuResults(response.data.data);
+        } else {
+          setDrugSetuResults([]);
+        }
+      } catch (e: any) {
+        setDrugSetuError(e.response?.data?.detail || "Medicine service is temporarily unavailable. Please try again.");
+      } finally {
+        setLoadingDrugSetu(false);
+      }
+    };
+    
+    searchMedicines();
+  }, [debouncedQuery]);
 
   const genericSuggestion = debouncedQuery ? GENERIC_MAP[debouncedQuery.toLowerCase().trim()] : null;
 
@@ -183,6 +219,119 @@ const PharmacyPage: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* WIDGET 1.5: DRUGSETU MEDICINE SEARCH RESULTS */}
+            {debouncedQuery && (
+              <div className="animate-fade-in-up mt-2">
+                <h3 className="text-lg font-bold text-textPrimary mb-4">Medicine Information</h3>
+                
+                {loadingDrugSetu ? (
+                  <div className="bg-card border border-border rounded-3xl p-5 text-center flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+                    <p className="text-textSecondary text-sm font-bold">Searching medicines...</p>
+                  </div>
+                ) : drugSetuError ? (
+                  <div className="bg-rose-500/10 border border-rose-500/20 rounded-3xl p-5 text-center flex flex-col items-center gap-3">
+                    <AlertCircle className="text-rose-500" size={24} />
+                    <p className="text-rose-500 text-sm font-bold">{drugSetuError}</p>
+                  </div>
+                ) : drugSetuResults.length > 0 && !selectedMedicine ? (
+                  <div className="flex flex-col gap-3">
+                    {drugSetuResults.slice(0, 5).map((med, idx) => (
+                      <div 
+                        key={idx} 
+                        onClick={() => setSelectedMedicine(med)}
+                        className="bg-card hover:bg-surface border border-border hover:border-[#3D91FF]/50 rounded-2xl p-4 cursor-pointer transition-colors flex items-center justify-between"
+                      >
+                        <div>
+                          <h4 className="font-bold text-textPrimary capitalize">{med.medicineName || med.name || 'Unknown Medicine'}</h4>
+                          <p className="text-xs text-textSecondary mt-1">{med.dosageForm || 'Tablet'} • {med.strength || 'N/A'}</p>
+                        </div>
+                        <ChevronRight className="text-textTertiary" size={16} />
+                      </div>
+                    ))}
+                  </div>
+                ) : drugSetuResults.length === 0 ? (
+                  <div className="bg-card border border-border rounded-3xl p-5 text-center">
+                    <p className="text-textSecondary text-sm">No medicines found. Try another medicine name.</p>
+                  </div>
+                ) : null}
+
+                {/* Selected Medicine Details */}
+                {selectedMedicine && (
+                  <div className="bg-card border border-border rounded-3xl p-5 relative overflow-hidden animate-fade-in mt-4">
+                    <button 
+                      onClick={() => setSelectedMedicine(null)}
+                      className="absolute top-4 right-4 w-8 h-8 bg-surface rounded-full flex items-center justify-center text-textSecondary hover:text-textPrimary"
+                    >
+                      <ArrowLeft size={16} />
+                    </button>
+                    
+                    <div className="flex items-start gap-4 mb-4">
+                      {selectedMedicine.imageUrl ? (
+                        <div className="w-16 h-16 bg-white rounded-xl p-1 shrink-0 border border-border flex items-center justify-center">
+                          <img 
+                            src={selectedMedicine.imageUrl} 
+                            alt={selectedMedicine.medicineName || selectedMedicine.name} 
+                            className="max-w-full max-h-full object-contain"
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 bg-[#3D91FF]/10 text-[#3D91FF] rounded-xl shrink-0 flex items-center justify-center border border-[#3D91FF]/20">
+                          <Tag size={24} />
+                        </div>
+                      )}
+                      
+                      <div className="pr-10">
+                        <h3 className="text-xl font-bold text-textPrimary capitalize">{selectedMedicine.medicineName || selectedMedicine.name || 'Unknown Medicine'}</h3>
+                        <p className="text-sm font-medium text-textSecondary mt-1">{selectedMedicine.manufacturer || 'Information not available'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="bg-surface rounded-xl p-3 border border-border">
+                        <span className="text-[10px] uppercase font-bold text-textTertiary block mb-1">Composition</span>
+                        <p className="text-sm font-bold text-textPrimary">{selectedMedicine.genericName || selectedMedicine.composition || 'Information not available'}</p>
+                      </div>
+                      <div className="bg-surface rounded-xl p-3 border border-border">
+                        <span className="text-[10px] uppercase font-bold text-textTertiary block mb-1">Price</span>
+                        <p className="text-sm font-bold text-emerald-400">{selectedMedicine.price ? `₹${selectedMedicine.price}` : 'Information not available'}</p>
+                      </div>
+                    </div>
+                    
+                    {selectedMedicine.uses && selectedMedicine.uses.length > 0 && (
+                      <div className="mb-4">
+                        <span className="text-[10px] uppercase font-bold text-textTertiary block mb-2">Uses / Indications</span>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedMedicine.uses.map((use: string, i: number) => (
+                            <span key={i} className="text-xs bg-[#3D91FF]/10 text-[#3D91FF] px-2.5 py-1 rounded-lg font-medium">{use}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedMedicine.alternatives && selectedMedicine.alternatives.length > 0 && (
+                      <div className="mb-4">
+                        <span className="text-[10px] uppercase font-bold text-textTertiary block mb-2">Generic / Alternative Options</span>
+                        <div className="flex flex-col gap-2">
+                          {selectedMedicine.alternatives.map((alt: string, i: number) => (
+                            <div key={i} className="text-xs bg-emerald-500/10 text-emerald-400 px-3 py-2 rounded-lg font-medium border border-emerald-500/20">{alt}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 flex items-start gap-3 mt-4">
+                      <AlertCircle className="text-yellow-500 shrink-0 mt-0.5" size={16} />
+                      <p className="text-xs text-yellow-500/90 font-medium leading-relaxed">
+                        Medicine information is for reference. Always confirm the appropriate medicine and dosage with a qualified doctor or pharmacist.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* WIDGET 2: GENERIC COMPARISON ENGINE (Visible if substitute found) */}
             {genericSuggestion && (

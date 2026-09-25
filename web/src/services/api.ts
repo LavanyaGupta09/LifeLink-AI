@@ -144,6 +144,13 @@ export const pharmacyAPI = {
 };
 
 // ─────────────────────────────────────────────
+// MEDICINES API (DRUGSETU INTEGRATION)
+// ─────────────────────────────────────────────
+export const medicinesAPI = {
+  search: (query: string) => api.get(`/api/medicines/search?q=${encodeURIComponent(query)}`),
+};
+
+// ─────────────────────────────────────────────
 // LAB API
 // ─────────────────────────────────────────────
 export const labAPI = {
