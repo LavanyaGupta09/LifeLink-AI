@@ -63,6 +63,9 @@ class Settings(BaseSettings):
     # Encryption
     ENCRYPTION_KEY: str = "lifelink-aes-key-32-bytes-padding!"
 
+    # Medicine APIs
+    DRUGSETU_API_KEY: str = ""
+
     # CORS
     CORS_ORIGINS: str = '*'
 

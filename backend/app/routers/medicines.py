@@ -2,20 +2,18 @@ from fastapi import APIRouter, Query, HTTPException, Header
 import httpx
 from pydantic import BaseModel
 from typing import List, Optional, Any
-import os
 import asyncio
+from app.config import settings
 
 router = APIRouter(prefix="/api/medicines", tags=["Medicines"])
 
-DRUGSETU_API_KEY = os.getenv("DRUGSETU_API_KEY")
-
 @router.get("/search")
 async def search_medicines(q: str = Query(..., min_length=2)):
-    if not DRUGSETU_API_KEY:
+    if not settings.DRUGSETU_API_KEY:
         raise HTTPException(status_code=500, detail="Medicine service is temporarily unavailable. Please try again. (Missing API Key)")
     
     url = f"https://api.drugsetu.in/v1/medicines/search"
-    headers = {"X-API-Key": DRUGSETU_API_KEY}
+    headers = {"X-API-Key": settings.DRUGSETU_API_KEY}
     
     async with httpx.AsyncClient(timeout=10.0) as client:
         try:
