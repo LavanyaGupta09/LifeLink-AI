@@ -340,20 +340,57 @@ async def analyze_medical_report(file_bytes: bytes, filename: str) -> dict:
         elif ext == ".png":
             mime_type = "image/png"
             
-        files = {"file": (filename, file_bytes, mime_type)}
-        data = {
-            "apikey": "K83549329788957",
-            "language": "eng",
-            "isOverlayRequired": "false"
-        }
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post("https://api.ocr.space/parse/image", data=data, files=files)
-            resp.raise_for_status()
-            ocr_res = resp.json()
-            if ocr_res.get("ParsedResults"):
-                extracted_text = " ".join([page.get("ParsedText", "") for page in ocr_res["ParsedResults"]]).strip()
+        # 1. Try Groq Vision API if available and file is an image
+        if settings.GROQ_API_KEY and mime_type in ["image/jpeg", "image/png"]:
+            try:
+                import base64
+                encoded_image = base64.b64encode(file_bytes).decode("utf-8")
+                groq_url = "https://api.groq.com/openai/v1/chat/completions"
+                headers = {
+                    "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                    "Content-Type": "application/json"
+                }
+                payload = {
+                    "model": "llama-3.2-11b-vision-preview",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": "Extract all the text from this medical report. Output only the exact extracted text without any commentary."},
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:{mime_type};base64,{encoded_image}"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "temperature": 0.1,
+                }
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    resp = await client.post(groq_url, json=payload, headers=headers)
+                    resp.raise_for_status()
+                    extracted_text = resp.json()["choices"][0]["message"]["content"].strip()
+            except Exception as groq_err:
+                print(f"Groq Vision API Error: {groq_err}")
+
+        # 2. Try OCR.space API as fallback or for PDFs
+        if not extracted_text:
+            files = {"file": (filename, file_bytes, mime_type)}
+            data = {
+                "apikey": "K83549329788957",
+                "language": "eng",
+                "isOverlayRequired": "false"
+            }
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post("https://api.ocr.space/parse/image", data=data, files=files)
+                resp.raise_for_status()
+                ocr_res = resp.json()
+                if ocr_res.get("ParsedResults"):
+                    extracted_text = " ".join([page.get("ParsedText", "") for page in ocr_res["ParsedResults"]]).strip()
     except Exception as e:
-        print(f"OCR.space API Error: {e}")
+        print(f"OCR Error: {e}")
 
     # Fallback to mock data if OCR fails or returns empty
     if not extracted_text:
