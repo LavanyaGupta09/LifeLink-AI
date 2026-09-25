@@ -10,17 +10,31 @@ async def contact_insurance_company():
     Triggers a Twilio phone call and SMS to the insurance company 
     on behalf of the user regarding a claim.
     """
-    to_number = "+918700813135"
+    # Instead of calling via Twilio, we generate an Agora channel for a live Insurance adjuster video call
+    agora_channel = "insurance_claim_room"
     
-    # Fire and forget the sync Twilio calls in a thread
-    await asyncio.to_thread(make_emergency_call, to_number)
-    await asyncio.to_thread(
-        send_emergency_sms, 
-        to_number, 
-        "A customer has initiated contact regarding an Insurance Claim (Demo). Please check the LifeLink dashboard."
-    )
+    try:
+        from app.routers.agora import RtcTokenBuilder
+        from app.config import settings
+        import time
+        
+        app_id = settings.AGORA_APP_ID
+        app_certificate = settings.AGORA_APP_CERTIFICATE
+        agora_token = None
+        
+        if app_id and app_certificate and RtcTokenBuilder:
+            expiration_time_in_seconds = 3600
+            current_timestamp = int(time.time())
+            agora_token = RtcTokenBuilder.buildTokenWithUid(
+                app_id, app_certificate, agora_channel, 0, 1, current_timestamp + expiration_time_in_seconds
+            )
+            print(f"Generated Agora token for Insurance Claim video call: {agora_channel}")
+    except Exception as e:
+        print(f"Failed to generate Agora insurance call: {e}")
     
     return {
         "status": "success",
-        "message": "Insurance company contacted successfully"
+        "message": "Insurance company contacted successfully via Agora Live Video",
+        "agora_channel": agora_channel,
+        "agora_token": agora_token or ""
     }

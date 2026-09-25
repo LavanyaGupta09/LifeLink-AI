@@ -87,13 +87,45 @@ async def create_sos_event(
         data={"sos_id": event.id, "lat": lat, "lng": lng}
     )
 
-    # Trigger Twilio Emergency Call and SMS
-    from app.services.twilio_service import make_emergency_call, send_emergency_sms
-    import asyncio
-    
-    # Fire and forget the sync Twilio calls in a thread
-    await asyncio.to_thread(make_emergency_call, "+918700813135")
-    await asyncio.to_thread(send_emergency_sms, "+918700813135", f"🚨 URGENT: LifeLink SOS Triggered! A {triage_level.upper()} emergency alert has been activated. Please check the app for location and details.")
+    # Trigger Agora Live Video Emergency Call Room instead of Twilio
+    agora_channel = f"sos_{event.id}"
+    try:
+        from app.routers.agora import RtcTokenBuilder
+        from app.config import settings
+        import time
+        
+        app_id = settings.AGORA_APP_ID
+        app_certificate = settings.AGORA_APP_CERTIFICATE
+        
+        agora_token = None
+        if app_id and app_certificate and RtcTokenBuilder:
+            expiration_time_in_seconds = 3600
+            current_timestamp = int(time.time())
+            privilege_expired_ts = current_timestamp + expiration_time_in_seconds
+            
+            agora_token = RtcTokenBuilder.buildTokenWithUid(
+                app_id, 
+                app_certificate, 
+                agora_channel, 
+                0, 
+                1, # Publisher role
+                privilege_expired_ts
+            )
+            print(f"Generated Agora token for emergency SOS channel: {agora_channel}")
+        
+        # Broadcast the Agora call link to family members so they can join immediately
+        await send_push_notification(
+            device_tokens=mock_family_tokens,
+            title="📞 URGENT: Live Emergency Video Call",
+            body=f"SOS active! Tap to join the live emergency video stream.",
+            data={
+                "sos_id": event.id, 
+                "agora_channel": agora_channel,
+                "agora_token": agora_token or ""
+            }
+        )
+    except Exception as e:
+        print(f"Failed to generate Agora emergency call: {e}")
 
     return event
 
