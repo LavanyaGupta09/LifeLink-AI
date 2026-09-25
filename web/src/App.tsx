@@ -88,6 +88,7 @@ import ConsultationRoom from './pages/doctor/ConsultationRoom';
 import FirstResponderDashboard from './pages/FirstResponderDashboard';
 import NavBar from './components/NavBar';
 import ReminderOverlay from './components/ReminderOverlay';
+import AlarmManager from './components/AlarmManager';
 import AuthGuard from './components/AuthGuard';
 import ScrollToTop from './components/ScrollToTop';
 import PowerButtonSOSListener from './components/PowerButtonSOSListener';
@@ -145,6 +146,7 @@ const ResponsiveLayout: React.FC<{ children: React.ReactNode }> = ({ children })
     </div>
     <NavBar />
     <ReminderOverlay />
+    <AlarmManager />
     <UberRideFlow />
   </div>
 );
@@ -152,6 +154,8 @@ const ResponsiveLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 const DesktopLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="w-full h-[100dvh] overflow-y-auto overflow-x-hidden relative" style={{ backgroundColor: 'var(--bg-base)' }}>
     {children}
+    <ReminderOverlay />
+    <AlarmManager />
     <UberRideFlow />
   </div>
 );

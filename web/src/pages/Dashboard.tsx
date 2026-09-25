@@ -9,6 +9,7 @@ import {
 import { useAuthStore } from '../store/authStore';
 import { useSOSStore } from '../store/sosStore';
 import { useAshaStore } from '../store/ashaStore';
+import { useReminderStore } from '../store/reminderStore';
 import { api } from '../services/api';
 import LifeLinkAIAssistant from '../components/LifeLinkAIAssistant';
 
@@ -17,6 +18,7 @@ const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
   const { triggerSOS, isSOSActive, isCounting, countdown, decrementCountdown, startCountdown, stopCountdown } = useSOSStore();
   const { areaType } = useAshaStore();
+  const { reminders, logs } = useReminderStore();
   
   const [sosTimeout, setSosTimeout] = useState<NodeJS.Timeout | null>(null);
   
@@ -396,30 +398,39 @@ const Dashboard: React.FC = () => {
                 <button className="text-xs font-bold text-[#8B5CF6] hover:underline" onClick={() => navigate('/reminders')}>View all</button>
               </div>
               
-              <div className="flex flex-col gap-4 mb-4">
-                <div className="flex items-center justify-between bg-surface p-3 rounded-2xl border border-border">
-                  <div className="flex gap-3 items-center">
-                    <div className="w-10 h-10 rounded-full bg-[#2ED573]/10 flex items-center justify-center text-[#2ED573]"><Pill size={18}/></div>
-                    <div>
-                      <h4 className="text-sm font-bold text-textPrimary">Vitamin D3</h4>
-                      <p className="text-xs text-textSecondary mt-0.5">1 Tab • Breakfast (08:00 AM)</p>
-                    </div>
-                  </div>
-                  <div className="w-6 h-6 rounded-full bg-[#00C9A7] flex items-center justify-center shadow-sm">
-                    <Check size={14} className="text-white" />
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between bg-surface p-3 rounded-2xl border border-border">
-                  <div className="flex gap-3 items-center">
-                    <div className="w-10 h-10 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF]"><Pill size={18}/></div>
-                    <div>
-                      <h4 className="text-sm font-bold text-textPrimary">Calcium</h4>
-                      <p className="text-xs text-textSecondary mt-0.5">1 Tab • Dinner (08:00 PM)</p>
-                    </div>
-                  </div>
-                  <div className="w-6 h-6 rounded-full border-2 border-textTertiary flex items-center justify-center"></div>
-                </div>
+              <div className="flex flex-col gap-4 mb-4 flex-1 overflow-y-auto max-h-[160px] pr-1">
+                {reminders.filter(r => r.active).length === 0 && (
+                  <div className="text-center text-textSecondary text-sm my-auto">No reminders scheduled for today</div>
+                )}
+                {reminders.filter(r => r.active).map(reminder => (
+                  reminder.timeSlots.map(slot => {
+                    // Check if taken today
+                    const today = new Date().toISOString().split('T')[0];
+                    const log = logs.find(l => l.reminderId === reminder.id && l.scheduledTime === slot.time && l.loggedAt.startsWith(today));
+                    
+                    const isTaken = log?.status === 'taken';
+                    const isSkipped = log?.status === 'skipped';
+                    const statusColor = isTaken ? '#00C9A7' : isSkipped ? '#FF4757' : '#3D91FF';
+                    const StatusIcon = isTaken ? Check : isSkipped ? X : Pill;
+
+                    return (
+                      <div key={`${reminder.id}-${slot.time}`} className="flex items-center justify-between bg-surface p-3 rounded-2xl border border-border">
+                        <div className="flex gap-3 items-center">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center`} style={{ backgroundColor: `${statusColor}1A`, color: statusColor }}>
+                            <StatusIcon size={18}/>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-textPrimary">{reminder.medicineName}</h4>
+                            <p className="text-xs text-textSecondary mt-0.5">{reminder.dosage} • {slot.time}</p>
+                          </div>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isTaken ? 'bg-[#00C9A7] shadow-sm' : isSkipped ? 'bg-[#FF4757] shadow-sm' : 'border-2 border-textTertiary'}`}>
+                          {(isTaken || isSkipped) && <StatusIcon size={14} className="text-white" />}
+                        </div>
+                      </div>
+                    );
+                  })
+                ))}
               </div>
               
               <button onClick={() => navigate('/reminders')} className="mt-auto w-full py-3 bg-surface border border-border hover:border-primary/50 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">

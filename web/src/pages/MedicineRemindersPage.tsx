@@ -51,7 +51,7 @@ const whenToTime = (when: string): string => {
 
 const MedicineRemindersPage: React.FC = () => {
   const navigate = useNavigate();
-  const { reminders, addReminder, removeReminder, getAdherenceRate, triggerAlarm } = useReminderStore();
+  const { reminders, logs, addReminder, removeReminder, getAdherenceRate, triggerAlarm } = useReminderStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* ─── Scan RX State ─── */
@@ -69,6 +69,9 @@ const MedicineRemindersPage: React.FC = () => {
     whenToTake: 'Morning',
     reminderTime: '08:00',
     isCritical: false,
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: '',
+    ringtone: '',
   });
 
   /* ─── Hydration State ─── */
@@ -207,6 +210,9 @@ const MedicineRemindersPage: React.FC = () => {
       whenToTake: 'Morning',
       reminderTime: '08:00',
       isCritical: false,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+      ringtone: '',
     });
     setShowManualForm(true);
   };
@@ -232,6 +238,9 @@ const MedicineRemindersPage: React.FC = () => {
       isCritical: manualForm.isCritical,
       currentStock: 30,
       active: true,
+      startDate: manualForm.startDate,
+      endDate: manualForm.endDate,
+      ringtone: manualForm.ringtone,
     };
     addReminder(reminder);
 
@@ -243,6 +252,9 @@ const MedicineRemindersPage: React.FC = () => {
       whenToTake: 'Morning',
       reminderTime: '08:00',
       isCritical: false,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+      ringtone: '',
     });
   };
 
@@ -261,15 +273,20 @@ const MedicineRemindersPage: React.FC = () => {
   const timelineItems = useMemo(() => {
     const items: TimelineItem[] = [];
 
+    const today = new Date().toISOString().split('T')[0];
+    
     reminders.forEach(rem => {
       rem.timeSlots.forEach((slot, index) => {
+        const log = logs.find(l => l.reminderId === rem.id && l.scheduledTime === slot.time && l.loggedAt.startsWith(today));
+        const isTaken = log?.status === 'taken';
+
         items.push({
           id: `${rem.id}_${index}`,
           type: 'pill',
           time: slot.time,
           title: rem.medicineName,
           subtitle: `${rem.dosage} • ${slot.timing}`,
-          completed: false,
+          completed: isTaken,
           data: rem,
         });
       });
@@ -787,6 +804,52 @@ const MedicineRemindersPage: React.FC = () => {
                     onChange={e => setManualForm(prev => ({ ...prev, reminderTime: e.target.value }))}
                     className="flex-1 bg-surface border border-border rounded-xl px-4 py-3 text-sm text-textPrimary focus:outline-none focus:border-[#3D91FF] focus:ring-1 focus:ring-[#3D91FF]/30 transition-all"
                   />
+                </div>
+              </div>
+
+              {/* Start & End Date */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-textSecondary uppercase tracking-widest mb-2 block">Start Date</label>
+                  <input 
+                    type="date"
+                    value={manualForm.startDate}
+                    onChange={e => setManualForm(prev => ({ ...prev, startDate: e.target.value }))}
+                    className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-textPrimary focus:outline-none focus:border-[#3D91FF] focus:ring-1 focus:ring-[#3D91FF]/30 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-textSecondary uppercase tracking-widest mb-2 block">End Date (Optional)</label>
+                  <input 
+                    type="date"
+                    value={manualForm.endDate}
+                    onChange={e => setManualForm(prev => ({ ...prev, endDate: e.target.value }))}
+                    className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-sm text-textPrimary focus:outline-none focus:border-[#3D91FF] focus:ring-1 focus:ring-[#3D91FF]/30 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Ringtone Selection */}
+              <div>
+                <label className="text-xs font-bold text-textSecondary uppercase tracking-widest mb-2 block">Custom Alarm Ringtone</label>
+                <div className="flex items-center gap-3">
+                  <select 
+                    value={manualForm.ringtone}
+                    onChange={e => setManualForm(prev => ({ ...prev, ringtone: e.target.value }))}
+                    className="flex-1 bg-surface border border-border rounded-xl px-4 py-3 text-sm text-textPrimary focus:outline-none focus:border-[#3D91FF] focus:ring-1 focus:ring-[#3D91FF]/30 transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="">Default (Speech Synthesis)</option>
+                    <option value="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3">Gentle Bell</option>
+                    <option value="https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3">Digital Chime</option>
+                    <option value="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3">Urgent Alert</option>
+                  </select>
+                  <button 
+                    onClick={() => { if (manualForm.ringtone) new Audio(manualForm.ringtone).play(); }}
+                    disabled={!manualForm.ringtone}
+                    className="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center text-[#3D91FF] hover:bg-[#3D91FF]/10 transition-colors disabled:opacity-50"
+                  >
+                    ▶
+                  </button>
                 </div>
               </div>
 

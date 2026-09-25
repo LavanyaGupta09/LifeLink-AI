@@ -289,13 +289,16 @@ export interface MedicineReminder {
   isCritical: boolean;
   currentStock: number;
   active: boolean;
+  startDate?: string;
+  endDate?: string;
+  ringtone?: string;
 }
 
 export interface AdherenceLog {
   id: string;
   reminderId: string;
   medicineName: string;
-  status: 'taken' | 'snoozed' | 'missed';
+  status: 'taken' | 'snoozed' | 'missed' | 'skipped';
   loggedAt: string;
   scheduledTime: string;
 }

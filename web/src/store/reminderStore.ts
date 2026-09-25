@@ -10,7 +10,7 @@ interface ReminderState {
   setReminders: (reminders: MedicineReminder[]) => void;
   addReminder: (reminder: MedicineReminder) => void;
   removeReminder: (reminderId: string) => void;
-  logAdherence: (reminderId: string, status: 'taken' | 'snoozed' | 'missed', time: string) => void;
+  logAdherence: (reminderId: string, status: 'taken' | 'snoozed' | 'missed' | 'skipped', time: string) => void;
   triggerAlarm: (reminder: MedicineReminder, time: string) => void;
   dismissAlarm: () => void;
   getAdherenceRate: () => number;
