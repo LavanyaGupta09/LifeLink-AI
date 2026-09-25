@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Bell, MessageCircle, Settings, Mic, Send, MapPin, Calendar, Activity, AlertTriangle,
   Ambulance, Building2, UserRound, Pill, FlaskConical, Droplets, ChevronRight, Check,
-  Search, Heart, Moon, QrCode, Shield, HeartPulse, BadgeCheck, Stethoscope, Phone
+  Search, Heart, Moon, QrCode, Shield, HeartPulse, BadgeCheck, Stethoscope, Phone,
+  MoreVertical, X
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useSOSStore } from '../store/sosStore';
@@ -23,6 +24,7 @@ const Dashboard: React.FC = () => {
   const [aiResponse, setAiResponse] = useState<string | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
 
   const formatName = (name: string | undefined) => {
     if (!name) return 'LifeLink User';
@@ -140,16 +142,30 @@ const Dashboard: React.FC = () => {
             <p className="text-xs text-textSecondary tracking-wide mt-1">Your Health. Our Priority.</p>
           </div>
           
-          <div className="flex items-center gap-3 self-end md:self-auto">
-            <button className="relative w-10 h-10 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => alert("You have 1 new system alert: Routine system maintenance scheduled for tonight.")}>
-              <Bell size={18} />
-              <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-card"></span>
-            </button>
-            <button className="w-10 h-10 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => navigate('/community')}>
-              <MessageCircle size={18} />
-            </button>
-            <button className="w-10 h-10 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => navigate('/settings')}>
-              <Settings size={18} />
+          <div className="flex items-center self-end md:self-auto relative">
+            {/* Desktop (Always visible) & Mobile Expanded Container */}
+            <div className={`flex items-center gap-3 transition-all duration-300 ease-out origin-right
+              max-[699px]:absolute max-[699px]:right-[48px] max-[699px]:top-0 max-[699px]:bg-background/80 max-[699px]:backdrop-blur-md max-[699px]:p-1 max-[699px]:rounded-full max-[699px]:shadow-lg
+              ${isHeaderMenuOpen ? 'max-[699px]:opacity-100 max-[699px]:scale-100 max-[699px]:pointer-events-auto' : 'max-[699px]:opacity-0 max-[699px]:scale-95 max-[699px]:pointer-events-none'}`}>
+              <button className="relative w-10 h-10 shrink-0 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => alert("You have 1 new system alert: Routine system maintenance scheduled for tonight.")}>
+                <Bell size={18} />
+                <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-card"></span>
+              </button>
+              <button className="w-10 h-10 shrink-0 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => navigate('/profile')}>
+                <UserRound size={18} />
+              </button>
+              <button className="w-10 h-10 shrink-0 bg-card rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm" onClick={() => navigate('/settings')}>
+                <Settings size={18} />
+              </button>
+            </div>
+            
+            {/* Mobile Toggle Button */}
+            <button 
+              className="w-10 h-10 shrink-0 bg-card rounded-full border border-border flex min-[700px]:hidden items-center justify-center text-textSecondary hover:text-textPrimary hover:bg-surface transition-colors shadow-sm z-10 relative"
+              onClick={() => setIsHeaderMenuOpen(!isHeaderMenuOpen)}
+            >
+              {isHeaderMenuOpen ? <X size={18} /> : <MoreVertical size={18} />}
+              {!isHeaderMenuOpen && <span className="absolute top-0 right-0 w-3 h-3 bg-[#FF4757] rounded-full border-2 border-card"></span>}
             </button>
           </div>
         </div>
