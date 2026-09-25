@@ -31,7 +31,7 @@ const NavBar: React.FC = () => {
 
   const { areaType } = useAshaStore();
 
-  const hiddenRoutes = ['/', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review', '/area-select'];
+  const hiddenRoutes = ['/', '/dashboard', '/onboarding', '/sos', '/login', '/role-select', '/b2b/auth', '/b2b/pending-review', '/area-select'];
   // Keep NavBar on /asha if rural, otherwise hide it. 
   // Wait, if we use /asha for rural, maybe we WANT the NavBar on /asha?
   // Yes, because ASHA is a tab. So remove /asha from hidden routes if areaType === 'rural'

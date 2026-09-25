@@ -261,6 +261,35 @@ const Dashboard: React.FC = () => {
         
       </div>
       
+      {/* 6. Bottom Navigation (Fixed) */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-[#F1F5F9] pb-safe pt-2 px-6 flex justify-between shadow-[0_-10px_30px_rgba(0,0,0,0.03)] z-50">
+        <button className="flex flex-col items-center gap-1 relative w-12" onClick={() => navigate('/dashboard')}>
+          <div className="absolute -top-2 w-8 h-1 bg-[#00C9A7] rounded-b-md"></div>
+          <Home size={24} className="text-[#00C9A7]" fill="currentColor" />
+          <span className="text-[#00C9A7] text-[10px] font-bold">Home</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 w-12 opacity-60 hover:opacity-100 transition-opacity" onClick={() => navigate('/symptoms')}>
+          <Activity size={24} className="text-[#64748B]" />
+          <span className="text-[#64748B] text-[10px] font-medium">Symptoms</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 w-12 opacity-60 hover:opacity-100 transition-opacity" onClick={() => navigate('/hospitals')}>
+          <Building2 size={24} className="text-[#64748B]" />
+          <span className="text-[#64748B] text-[10px] font-medium">Hospitals</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 w-12 opacity-60 hover:opacity-100 transition-opacity" onClick={() => navigate('/ambulance')}>
+          <Ambulance size={24} className="text-[#64748B]" />
+          <span className="text-[#64748B] text-[10px] font-medium">Ambulance</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 w-12 opacity-60 hover:opacity-100 transition-opacity" onClick={() => navigate('/partner')}>
+          <UserRound size={24} className="text-[#64748B]" />
+          <span className="text-[#64748B] text-[10px] font-medium">Partner</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 w-12 opacity-60 hover:opacity-100 transition-opacity" onClick={() => navigate('/profile')}>
+          <UserRound size={24} className="text-[#64748B]" />
+          <span className="text-[#64748B] text-[10px] font-medium">Profile</span>
+        </button>
+      </div>
+      
       <LifeLinkAIAssistant />
     </div>
   );
