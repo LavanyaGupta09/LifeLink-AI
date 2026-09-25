@@ -130,6 +130,10 @@ app.include_router(voice_router, prefix="/api/v1/voice", tags=["Voice AI"])
 app.include_router(proxy_router)
 app.include_router(agora_router)
 
+# Import and include insurance router inline to avoid circular imports at top
+from app.routers.insurance import router as insurance_router
+app.include_router(insurance_router)
+
 # Mount static files (React Frontend Build)
 frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "web", "dist")
 if os.path.exists(frontend_path):

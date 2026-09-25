@@ -7,10 +7,12 @@ import {
 import { mockInsurancePlans } from '../data/insurancePlans';
 import PlanCard from '../components/insurance/PlanCard';
 import CompareTray from '../components/insurance/CompareTray';
+import ClaimModal from '../components/insurance/ClaimModal';
 import { useInsuranceStore } from '../store/insuranceStore';
 
 const InsuranceHub: React.FC = () => {
   const navigate = useNavigate();
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const { savedPlans, activePolicies, comparePlans } = useInsuranceStore();
   const selectedComparePlans = comparePlans.map(id => mockInsurancePlans.find(p => p.id === id)).filter(Boolean) as typeof mockInsurancePlans;
 
@@ -151,6 +153,7 @@ const InsuranceHub: React.FC = () => {
         
         {/* Quick Nav Links */}
         <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
+          <button onClick={() => setIsClaimModalOpen(true)} className="bg-rose-500 text-white hover:bg-rose-600 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap flex items-center gap-1.5 shadow-[0_0_15px_rgba(244,63,94,0.3)] transition-colors">📑 File a Claim</button>
           <button onClick={() => navigate('/insurance')} className="bg-[#3D91FF] text-white px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(61,145,255,0.3)]">Find Insurance</button>
           <button onClick={() => navigate('/insurance/schemes')} className="bg-card border border-indigo-500/30 text-indigo-400 hover:border-indigo-500 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap flex items-center gap-1.5 transition-colors">🏛️ Govt Schemes</button>
           <button onClick={() => navigate('/insurance/compare')} className="bg-card border border-border text-textSecondary px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap">Compare Plans</button>
@@ -398,6 +401,7 @@ const InsuranceHub: React.FC = () => {
       </div>
 
       <CompareTray />
+      <ClaimModal isOpen={isClaimModalOpen} onClose={() => setIsClaimModalOpen(false)} />
     </div>
   );
 };

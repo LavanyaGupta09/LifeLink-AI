@@ -87,6 +87,14 @@ async def create_sos_event(
         data={"sos_id": event.id, "lat": lat, "lng": lng}
     )
 
+    # Trigger Twilio Emergency Call and SMS
+    from app.services.twilio_service import make_emergency_call, send_emergency_sms
+    import asyncio
+    
+    # Fire and forget the sync Twilio calls in a thread
+    await asyncio.to_thread(make_emergency_call, "+918700813135")
+    await asyncio.to_thread(send_emergency_sms, "+918700813135", f"🚨 URGENT: LifeLink SOS Triggered! A {triage_level.upper()} emergency alert has been activated. Please check the app for location and details.")
+
     return event
 
 
