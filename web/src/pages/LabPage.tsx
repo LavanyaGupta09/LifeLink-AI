@@ -1,75 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Search, MapPin, Calendar, Clock, ChevronRight, Activity, 
-  Droplets, Heart, FileText, CheckCircle2, Home, Building2, Download,
-  UploadCloud, CheckSquare, Square, Package, ShieldCheck
+  ArrowLeft, Search, MapPin, Activity, 
+  UploadCloud, CheckSquare, Square, ShieldCheck,
+  ExternalLink, Trophy, AlertCircle, ChevronRight
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../store/authStore';
 import { useGeolocation } from '../hooks/useGeolocation';
 
-const HEALTH_PACKAGES = [
-  { id: 'pkg_1', name: 'Full Body Checkup', tests: 84, fasting: '10-12 hrs', price: 1299, originalPrice: 2499, icon: <Activity size={20} className="text-emerald-400" /> },
-  { id: 'pkg_2', name: 'Advanced Heart Care', tests: 12, fasting: '10-12 hrs', price: 1499, originalPrice: 2000, icon: <Heart size={20} className="text-rose-400" /> },
-  { id: 'pkg_3', name: 'Women\'s Wellness', tests: 45, fasting: 'Not required', price: 999, originalPrice: 1500, icon: <Droplets size={20} className="text-[#3D91FF]" /> },
+const DIAGNOSTIC_PROVIDERS = [
+  { id: 'p_1', name: 'Tata 1mg', url: 'https://1mg.com' },
+  { id: 'p_2', name: 'PharmEasy', url: 'https://pharmeasy.in' },
+  { id: 'p_3', name: 'Thyrocare', url: 'https://thyrocare.com' },
+  { id: 'p_4', name: 'Apollo 24|7', url: 'https://apollo247.com' },
+  { id: 'p_5', name: 'Dr Lal PathLabs', url: 'https://lalpathlabs.com' },
+  { id: 'p_6', name: 'Metropolis Healthcare', url: 'https://metropolisindia.com' }
 ];
 
-const INDIVIDUAL_TESTS = [
-  { id: 't_1', name: 'Complete Blood Count (CBC)', category: 'Hematology', price: 450 },
-  { id: 't_2', name: 'Lipid Profile', category: 'Biochemistry', price: 800 },
-  { id: 't_3', name: 'Thyroid Panel (T3, T4, TSH)', category: 'Hormones', price: 650 },
-  { id: 't_4', name: 'HbA1c', category: 'Diabetology', price: 500 },
-  { id: 't_5', name: 'Vitamin D (25-OH)', category: 'Vitamins', price: 1200 },
-];
-
-const DATES = Array.from({ length: 5 }).map((_, i) => {
-  const d = new Date();
-  d.setDate(d.getDate() + i);
-  return {
-    date: d,
-    dayStr: d.toLocaleDateString('en-US', { weekday: 'short' }),
-    dateStr: d.getDate().toString()
-  };
-});
-
-const TIME_SLOTS = [
-  '07:00 AM - 08:00 AM',
-  '08:00 AM - 09:00 AM',
-  '09:00 AM - 10:00 AM',
-  '10:00 AM - 11:00 AM',
+const AVAILABLE_TESTS = [
+  { id: 't_1', name: 'Complete Blood Count (CBC)', category: 'Hematology' },
+  { id: 't_2', name: 'HbA1c', category: 'Diabetology' },
+  { id: 't_3', name: 'Vitamin B12', category: 'Vitamins' },
+  { id: 't_4', name: 'Lipid Profile', category: 'Biochemistry' },
+  { id: 't_5', name: 'Thyroid Profile', category: 'Hormones' },
+  { id: 't_6', name: 'Liver Function Test', category: 'Biochemistry' },
+  { id: 't_7', name: 'Kidney Function Test', category: 'Biochemistry' }
 ];
 
 const LabPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
   const { location } = useGeolocation();
   
   const [query, setQuery] = useState('');
   
-  // Booking Modal State
-  const [bookingItem, setBookingItem] = useState<any | null>(null);
-  const [collectionType, setCollectionType] = useState<'home' | 'lab'>('home');
-  const [selectedDate, setSelectedDate] = useState<Date>(DATES[0].date);
-  const [selectedTime, setSelectedTime] = useState<string>(TIME_SLOTS[0]);
-  const [isBooking, setIsBooking] = useState(false);
-  
-  // Vault State
-  const [myBookings, setMyBookings] = useState<any[]>([
-    { id: 'b_old1', itemName: 'Lipid Profile', date: 'Oct 12, 2023', status: 'Completed', reportUrl: '#' }
-  ]);
-
   // OCR & Comparison State
   const [ocrState, setOcrState] = useState<'idle' | 'uploading' | 'detected'>('idle');
   const [detectedTests, setDetectedTests] = useState([
-    { id: 't_1', name: 'Complete Blood Count (CBC)', selected: true, price: 450 },
-    { id: 't_4', name: 'HbA1c', selected: true, price: 500 },
-    { id: 't_2', name: 'Lipid Profile', selected: true, price: 800 },
-    { id: 't_5', name: 'Vitamin B12', selected: true, price: 1200 }
+    { ...AVAILABLE_TESTS[0], selected: true },
+    { ...AVAILABLE_TESTS[1], selected: true },
+    { ...AVAILABLE_TESTS[3], selected: true }
   ]);
+  
+  const [selectedTests, setSelectedTests] = useState<typeof AVAILABLE_TESTS>([]);
   const [showComparison, setShowComparison] = useState(false);
 
-  const toggleTest = (id: string) => {
+  const toggleDetectedTest = (id: string) => {
     setDetectedTests(tests => tests.map(t => t.id === id ? { ...t, selected: !t.selected } : t));
   };
 
@@ -80,59 +54,47 @@ const LabPage: React.FC = () => {
     }, 2000);
   };
 
-  const handleCompareTests = () => {
+  const handleCompareOCR = () => {
+    const testsToCompare = detectedTests.filter(t => t.selected).map(t => ({ id: t.id, name: t.name, category: t.category }));
+    setSelectedTests(testsToCompare);
     setShowComparison(true);
     setOcrState('idle');
   };
 
-  const totalIndividualPrice = detectedTests.filter(t => t.selected).reduce((acc, t) => acc + t.price, 0);
-  const bestPackagePrice = 1299; // Mock package price for "Full Body Checkup"
-  const savings = totalIndividualPrice - bestPackagePrice;
-
-  const handleBook = async () => {
-    if (!bookingItem) return;
-    setIsBooking(true);
-    
-    const payload = {
-      id: `lab_ord_${Date.now()}`,
-      patient_id: user?.id || `anon_${Date.now()}`,
-      patient_name: user?.fullName || 'Guest Patient',
-      test_name: bookingItem.name,
-      collection_type: collectionType,
-      appointment_date: selectedDate.toISOString(),
-      appointment_time: selectedTime,
-      status: 'pending',
-      created_at: new Date().toISOString()
-    };
-    
-    try {
-      await supabase.channel('lab_orders').send({
-        type: 'broadcast',
-        event: 'incoming_order',
-        payload: payload
-      });
-      
-      setTimeout(() => {
-        setMyBookings(prev => [{
-          id: payload.id,
-          itemName: payload.test_name,
-          date: `${selectedDate.toLocaleDateString()} at ${selectedTime}`,
-          status: 'Phlebotomist Assigned',
-          isNew: true
-        }, ...prev]);
-        setBookingItem(null);
-        setIsBooking(false);
-        navigate('/tracking/lab');
-      }, 800);
-      
-    } catch (e) {
-      console.error(e);
-      setIsBooking(false);
-      alert('Failed to book test. Please try again.');
-    }
+  const handleSelectIndividualTest = (test: typeof AVAILABLE_TESTS[0]) => {
+    setSelectedTests([test]);
+    setShowComparison(true);
+    setQuery('');
   };
 
-  const filteredTests = INDIVIDUAL_TESTS.filter(t => t.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredTests = AVAILABLE_TESTS.filter(t => t.name.toLowerCase().includes(query.toLowerCase()));
+
+  // Generate prototype prices dynamically
+  const generateComparisonData = () => {
+    if (selectedTests.length === 0) return [];
+    
+    return DIAGNOSTIC_PROVIDERS.map(provider => {
+      let totalPrice = 0;
+      selectedTests.forEach(test => {
+        // Deterministic price calculation for demo purposes
+        const basePrice = test.name.length * 25; 
+        const variation = ((provider.name.length * test.id.length * 17) % 40) - 15; // -15% to +25%
+        totalPrice += Math.round(basePrice * (1 + variation/100));
+      });
+      return {
+        providerName: provider.name,
+        price: totalPrice,
+        currency: '₹',
+        providerUrl: provider.url,
+        lastUpdated: new Date().toISOString()
+      };
+    }).sort((a, b) => a.price - b.price);
+  };
+
+  const comparisonData = generateComparisonData();
+  const lowestOption = comparisonData[0];
+  const highestPrice = comparisonData.length > 0 ? comparisonData[comparisonData.length - 1].price : 0;
+  const savings = lowestOption ? highestPrice - lowestOption.price : 0;
 
   return (
     <div className="w-full min-h-screen bg-background text-textPrimary font-sans flex flex-col pb-24 relative px-6 py-6 ">
@@ -142,81 +104,91 @@ const LabPage: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         <div className="flex-1">
-          <h1 className="text-xl font-bold tracking-tight text-textPrimary">Diagnostics</h1>
-          <p className="text-xs text-emerald-400 font-medium flex items-center gap-1">
-            <MapPin size={10} /> {location ? 'Apollo Labs Near You' : 'Locating...'}
+          <h1 className="text-xl font-bold tracking-tight text-textPrimary">Compare Lab Tests</h1>
+          <p className="text-xs text-[#3D91FF] font-medium flex items-center gap-1">
+            <MapPin size={10} /> {location ? 'Finding best prices near you' : 'Locating...'}
           </p>
         </div>
       </header>
 
       <div className="flex-1 p-4 flex flex-col gap-6">
         
-        {/* WIDGET 1: SEARCH & POPULAR PACKAGES */}
+        {/* MAIN SECTION */}
         <section>
-          {showComparison ? (
-            <div className="bg-card border border-border rounded-3xl p-5 shadow-2xl animate-fade-in relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#3D91FF]/10 rounded-full blur-2xl" />
-              <button onClick={() => setShowComparison(false)} className="text-textSecondary hover:text-textPrimary mb-4 flex items-center gap-1 text-sm font-bold">
-                <ArrowLeft size={16} /> Back
+          {showComparison && comparisonData.length > 0 ? (
+            <div className="animate-fade-in relative">
+              <button onClick={() => setShowComparison(false)} className="text-textSecondary hover:text-textPrimary mb-4 flex items-center gap-1 text-sm font-bold bg-surface px-4 py-2 rounded-xl active:scale-95 transition-transform w-fit">
+                <ArrowLeft size={16} /> Back to Search
               </button>
               
-              <h2 className="text-xl font-black text-textPrimary mb-2">Bundle Optimization</h2>
-              <p className="text-sm text-textSecondary mb-6">We analyzed your {detectedTests.filter(t=>t.selected).length} required tests to find the best value.</p>
+              <div className="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold px-3 py-2 rounded-lg mb-4 flex items-center gap-2">
+                <AlertCircle size={14} />
+                Prices shown are prototype/demo prices.
+              </div>
+
+              <div className="mb-6">
+                <h2 className="text-xl font-black text-textPrimary mb-1">Price Comparison</h2>
+                <p className="text-sm text-textSecondary">
+                  Comparing prices for: <span className="font-bold text-textPrimary">{selectedTests.map(t => t.name).join(', ')}</span>
+                </p>
+              </div>
               
               <div className="flex flex-col gap-4">
-                {/* OPTION A: BEST VALUE */}
-                <div className="bg-gradient-to-br from-emerald-500/10 to-background border border-emerald-500/30 rounded-2xl p-5 relative">
-                  <div className="absolute -top-3 right-4 bg-emerald-500 text-black text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg shadow-emerald-500/20">
-                    ⭐ BEST VALUE
+                {/* LOWEST PRICE HIGHLIGHT */}
+                <div className="bg-gradient-to-br from-emerald-500/10 to-background border border-emerald-500/50 rounded-3xl p-6 relative shadow-[0_0_30px_rgba(16,185,129,0.15)]">
+                  <div className="absolute -top-4 right-6 bg-emerald-500 text-black text-[10px] font-black px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 uppercase tracking-wider">
+                    <Trophy size={12} /> Best Available Price
                   </div>
-                  <div className="flex justify-between items-start mb-2">
+                  
+                  <div className="flex justify-between items-end mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-textPrimary flex items-center gap-2">
-                        <Package size={18} className="text-emerald-400" />
-                        Full Body Checkup
-                      </h3>
-                      <p className="text-xs text-emerald-400 mt-1 font-bold">Includes ALL required tests + 80 more</p>
+                      <h3 className="text-2xl font-black text-textPrimary">{lowestOption.providerName}</h3>
+                      <p className="text-emerald-400 text-sm font-bold flex items-center gap-1 mt-1">
+                        <CheckSquare size={14} /> Lowest price found
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-black text-textPrimary">₹{bestPackagePrice}</p>
+                      <p className="text-3xl font-black text-textPrimary">₹{lowestOption.price}</p>
                     </div>
                   </div>
-                  <div className="bg-emerald-500/20 text-emerald-400 text-xs font-bold p-2 rounded-lg mt-3 inline-block">
-                    💰 You save ₹{savings}
+                  
+                  <div className="bg-emerald-500/20 text-emerald-400 text-xs font-bold p-3 rounded-xl mb-6 flex items-center gap-2">
+                    <span>💰</span> You can save ₹{savings} compared with the highest listed price.
                   </div>
-                  <button onClick={() => setBookingItem(HEALTH_PACKAGES[0])} className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black py-3 rounded-xl transition-colors">
-                    Choose Best Value
+                  
+                  <button 
+                    onClick={() => window.open(lowestOption.providerUrl, '_blank')}
+                    className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-4 rounded-xl transition-transform active:scale-95 flex items-center justify-center gap-2 text-lg shadow-lg shadow-emerald-500/20"
+                  >
+                    Visit Provider <ExternalLink size={18} />
                   </button>
                 </div>
 
-                <div className="text-center text-xs font-bold text-textTertiary my-1">OR</div>
-
-                {/* OPTION B: INDIVIDUAL */}
-                <div className="bg-background border border-border rounded-2xl p-4 flex justify-between items-center opacity-80">
-                  <div>
-                    <h3 className="font-bold text-textPrimary text-sm">Individual Tests</h3>
-                    <p className="text-[10px] text-textSecondary">Book exactly what's on prescription</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <p className="font-bold text-textPrimary">₹{totalIndividualPrice}</p>
-                    <button onClick={() => setBookingItem({ name: 'Prescription Tests', price: totalIndividualPrice })} className="text-xs font-bold text-textSecondary border border-border px-4 py-1.5 rounded-lg hover:bg-surface">
-                      Book These
-                    </button>
-                  </div>
+                <div className="flex items-center gap-4 my-2">
+                  <div className="h-px bg-border flex-1"></div>
+                  <span className="text-xs font-bold text-textTertiary uppercase tracking-widest">Other Options</span>
+                  <div className="h-px bg-border flex-1"></div>
                 </div>
 
-                {/* OPTION C: ANOTHER LAB */}
-                <div className="bg-background border border-border rounded-2xl p-4 flex justify-between items-center opacity-80">
-                  <div>
-                    <h3 className="font-bold text-textPrimary text-sm">City Health Lab</h3>
-                    <p className="text-[10px] text-textSecondary flex items-center gap-1"><Home size={10}/> Home Collection Available</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <p className="font-bold text-textPrimary">₹{totalIndividualPrice - 150}</p>
-                    <button onClick={() => setBookingItem({ name: 'Prescription Tests (City Lab)', price: totalIndividualPrice - 150 })} className="text-xs font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-4 py-1.5 rounded-lg">
-                      Book Alternative
-                    </button>
-                  </div>
+                {/* OTHER PROVIDERS */}
+                <div className="flex flex-col gap-3">
+                  {comparisonData.slice(1).map((provider, idx) => (
+                    <div key={idx} className="bg-card border border-border rounded-2xl p-4 flex justify-between items-center hover:border-border-light transition-colors">
+                      <div>
+                        <h3 className="font-bold text-textPrimary text-base">{provider.providerName}</h3>
+                        <p className="text-xs text-textSecondary mt-1">Standard Pricing</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-3">
+                        <p className="font-black text-textPrimary text-lg">₹{provider.price}</p>
+                        <button 
+                          onClick={() => window.open(provider.providerUrl, '_blank')}
+                          className="text-xs font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-5 py-2 rounded-xl active:scale-95 transition-transform flex items-center gap-1 hover:bg-[#3D91FF]/20"
+                        >
+                          Visit <ExternalLink size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -226,266 +198,98 @@ const LabPage: React.FC = () => {
               {ocrState === 'idle' && (
                 <button 
                   onClick={handleUploadPrescription}
-                  className="w-full bg-card border border-dashed border-[#3D91FF]/50 hover:border-[#3D91FF] hover:bg-[#3D91FF]/5 rounded-2xl p-4 flex items-center justify-center gap-3 mb-4 transition-all group"
+                  className="w-full bg-card border border-dashed border-[#3D91FF]/50 hover:border-[#3D91FF] hover:bg-[#3D91FF]/5 rounded-2xl p-5 flex items-center justify-center gap-4 mb-6 transition-all group shadow-sm"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#3D91FF]/10 flex items-center justify-center group-hover:bg-[#3D91FF]/20 transition-colors">
-                    <UploadCloud size={20} className="text-[#3D91FF]" />
+                  <div className="w-12 h-12 rounded-full bg-[#3D91FF]/10 flex items-center justify-center group-hover:bg-[#3D91FF]/20 transition-colors">
+                    <UploadCloud size={24} className="text-[#3D91FF]" />
                   </div>
-                  <div className="text-left">
-                    <h3 className="font-bold text-textPrimary text-sm">Upload Prescription</h3>
-                    <p className="text-xs text-textSecondary">AI will automatically find your tests</p>
+                  <div className="text-left flex-1">
+                    <h3 className="font-bold text-textPrimary text-base">Upload Prescription</h3>
+                    <p className="text-xs text-textSecondary mt-1">AI will extract tests and find the lowest prices</p>
                   </div>
                 </button>
               )}
 
               {ocrState === 'uploading' && (
-                <div className="w-full bg-card border border-[#3D91FF]/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 mb-4">
+                <div className="w-full bg-card border border-[#3D91FF]/30 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 mb-6">
                   <Activity size={32} className="text-[#3D91FF] animate-pulse" />
                   <p className="text-sm font-bold text-[#3D91FF]">Scanning prescription with AI...</p>
                 </div>
               )}
 
               {ocrState === 'detected' && (
-                <div className="w-full bg-gradient-to-br from-[#131F35] to-background border border-[#3D91FF]/50 rounded-2xl p-5 mb-6 shadow-[0_0_20px_rgba(61,145,255,0.1)]">
-                  <div className="flex items-start justify-between mb-4">
+                <div className="w-full bg-gradient-to-br from-[#131F35] to-background border border-[#3D91FF]/50 rounded-3xl p-6 mb-8 shadow-[0_0_30px_rgba(61,145,255,0.1)]">
+                  <div className="flex items-start justify-between mb-5">
                     <div>
-                      <h3 className="font-bold text-textPrimary flex items-center gap-2">
-                        <ShieldCheck size={18} className="text-[#3D91FF]" /> 
+                      <h3 className="font-bold text-textPrimary flex items-center gap-2 text-lg">
+                        <ShieldCheck size={20} className="text-[#3D91FF]" /> 
                         {detectedTests.length} tests detected
                       </h3>
-                      <p className="text-xs text-textSecondary mt-1">Please verify the tests detected from your prescription.</p>
+                      <p className="text-sm text-textSecondary mt-1">Please verify the tests before comparing prices.</p>
                     </div>
-                    <button onClick={() => setOcrState('idle')} className="text-textTertiary hover:text-textPrimary">✕</button>
+                    <button onClick={() => setOcrState('idle')} className="w-8 h-8 rounded-full bg-surface flex items-center justify-center text-textTertiary hover:text-textPrimary">✕</button>
                   </div>
                   
-                  <div className="space-y-2 mb-5">
+                  <div className="space-y-3 mb-6">
                     {detectedTests.map(test => (
-                      <div key={test.id} onClick={() => toggleTest(test.id)} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${test.selected ? 'bg-[#3D91FF]/10 border-[#3D91FF]/30' : 'bg-background border-border'}`}>
+                      <div key={test.id} onClick={() => toggleDetectedTest(test.id)} className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-colors ${test.selected ? 'bg-[#3D91FF]/10 border-[#3D91FF]/30' : 'bg-background border-border'}`}>
                         <div className="flex items-center gap-3">
-                          {test.selected ? <CheckSquare size={18} className="text-[#3D91FF]" /> : <Square size={18} className="text-textTertiary" />}
-                          <span className={`text-sm font-bold ${test.selected ? 'text-textPrimary' : 'text-textSecondary'}`}>{test.name}</span>
+                          {test.selected ? <CheckSquare size={20} className="text-[#3D91FF]" /> : <Square size={20} className="text-textTertiary" />}
+                          <span className={`text-base font-bold ${test.selected ? 'text-textPrimary' : 'text-textSecondary'}`}>{test.name}</span>
                         </div>
-                        <span className="text-xs text-textSecondary font-bold">₹{test.price}</span>
                       </div>
                     ))}
                   </div>
                   
                   <button 
-                    onClick={handleCompareTests}
+                    onClick={handleCompareOCR}
                     disabled={detectedTests.filter(t=>t.selected).length === 0}
-                    className="w-full bg-[#3D91FF] text-white font-bold py-3.5 rounded-xl active:scale-95 transition-transform flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(61,145,255,0.3)] disabled:opacity-50"
+                    className="w-full bg-[#3D91FF] text-white font-bold py-4 rounded-xl active:scale-95 transition-transform flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(61,145,255,0.3)] disabled:opacity-50"
                   >
-                    Compare All Tests <ChevronRight size={18} />
+                    Compare Prices <ChevronRight size={18} />
                   </button>
                 </div>
               )}
 
               {/* Search Bar */}
-              <div className="relative mb-6">
+              <div className="relative mb-8">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-textSecondary" size={20} />
                 <input 
                   className="w-full bg-card border border-border rounded-2xl py-4 pl-12 pr-4 text-textPrimary placeholder-slate-500 focus:outline-none focus:border-[#3D91FF]/60 focus:ring-1 focus:ring-[#3D91FF]/50 transition-all text-base shadow-inner"
-                  placeholder="Search manually (e.g., CBC)..."
+                  placeholder="Search for a test (e.g., CBC, Lipid Profile)..."
                   value={query} onChange={e => setQuery(e.target.value)}
                 />
               </div>
 
-              {!query && (
-            <>
-              <h3 className="text-lg font-bold text-textPrimary mb-3 px-1">Popular Health Packages</h3>
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide px-1" style={{ scrollSnapType: 'x mandatory' }}>
-                {HEALTH_PACKAGES.map(pkg => (
-                  <div key={pkg.id} className="min-w-[260px] bg-gradient-to-br from-[#131F35] to-background border border-border rounded-3xl p-5 flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center border border-border">
-                        {pkg.icon}
-                      </div>
-                      <div className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg border border-emerald-500/20">
-                        SAVE {Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)}%
-                      </div>
-                    </div>
-                    <h4 className="font-bold text-textPrimary text-lg mb-1">{pkg.name}</h4>
-                    <p className="text-xs font-medium text-[#3D91FF] mb-4">Includes {pkg.tests} Tests</p>
-                    
-                    <div className="flex items-center gap-4 text-xs text-textSecondary mb-4">
-                      <div className="flex items-center gap-1"><Clock size={12} /> Fasting: {pkg.fasting}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-border">
+              {/* TESTS LIST */}
+              <div>
+                <h3 className="text-lg font-bold text-textPrimary mb-4 px-1">{query ? 'Search Results' : 'Common Diagnostic Tests'}</h3>
+                <div className="flex flex-col gap-3">
+                  {filteredTests.map(test => (
+                    <div key={test.id} className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between hover:border-[#3D91FF]/30 transition-colors cursor-pointer" onClick={() => handleSelectIndividualTest(test)}>
                       <div>
-                        <span className="text-lg font-black text-textPrimary">₹{pkg.price}</span>
-                        <span className="text-[10px] text-textTertiary line-through ml-1">₹{pkg.originalPrice}</span>
+                        <h4 className="font-bold text-textPrimary text-base mb-1">{test.name}</h4>
+                        <p className="text-[10px] font-bold text-textTertiary uppercase tracking-wider">{test.category}</p>
                       </div>
                       <button 
-                        onClick={() => setBookingItem(pkg)}
-                        className="bg-[#3D91FF]/10 text-[#3D91FF] border border-[#3D91FF]/30 font-bold py-1.5 px-4 rounded-xl text-xs active:scale-95 transition-transform"
+                        className="text-sm font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-4 py-2 rounded-xl flex items-center gap-1 active:scale-95 transition-transform"
                       >
-                        Book
+                        Compare
                       </button>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* INDIVIDUAL TESTS LIST */}
-          <div className="mt-4">
-            <h3 className="text-lg font-bold text-textPrimary mb-3 px-1">{query ? 'Search Results' : 'Individual Tests'}</h3>
-            <div className="flex flex-col gap-3">
-              {filteredTests.map(test => (
-                <div key={test.id} className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between">
-                  <div>
-                    <h4 className="font-bold text-textPrimary text-sm mb-1">{test.name}</h4>
-                    <p className="text-[10px] font-bold text-textTertiary uppercase tracking-wider">{test.category}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span className="font-bold text-textPrimary">₹{test.price}</span>
-                    <button 
-                      onClick={() => setBookingItem(test)}
-                      className="text-xs font-bold text-[#3D91FF] bg-[#3D91FF]/10 px-3 py-1 rounded-lg border border-[#3D91FF]/20"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {filteredTests.length === 0 && (
-                <p className="text-center text-textTertiary text-sm py-4">No tests found matching "{query}"</p>
-              )}
-            </div>
-          </div>
-          </>
-          )}
-        </section>
-
-        {/* WIDGET 3: DIGITAL LAB REPORT VAULT */}
-        <section className="mt-4">
-          <h3 className="text-lg font-bold text-textPrimary mb-3 px-1">My Bookings & Reports</h3>
-          <div className="flex flex-col gap-3">
-            {myBookings.map((bk, i) => (
-              <div key={bk.id} className="bg-gradient-to-br from-[#131B2F] to-background border border-border rounded-3xl p-4 relative overflow-hidden group hover:border-border transition-colors">
-                {bk.isNew && <div className="absolute top-0 right-0 bg-emerald-500 text-black text-[9px] font-black px-2 py-0.5 rounded-bl-lg">NEW</div>}
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-inner ${
-                    bk.status === 'Completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-[#3D91FF]/10 border-[#3D91FF]/20 text-[#3D91FF]'
-                  }`}>
-                    {bk.status === 'Completed' ? <FileText size={18} /> : <Activity size={18} />}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-textPrimary text-sm leading-tight mb-0.5">{bk.itemName}</h4>
-                    <p className="text-xs text-textSecondary mb-2">{bk.date}</p>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                        bk.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
-                      }`}>
-                        {bk.status}
-                      </span>
+                  ))}
+                  {filteredTests.length === 0 && (
+                    <div className="text-center bg-surface border border-border rounded-2xl py-8">
+                      <p className="text-textSecondary text-sm font-bold">No tests found matching "{query}"</p>
+                      <p className="text-xs text-textTertiary mt-2">Try searching for generic names like "CBC" or "Thyroid"</p>
                     </div>
-                  </div>
-                  {bk.status === 'Completed' && (
-                    <button className="p-2 bg-surface rounded-xl text-textPrimary hover:bg-surface transition-colors">
-                      <Download size={16} />
-                    </button>
                   )}
                 </div>
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </section>
       </div>
-
-      {/* WIDGET 2: BOOKING MODAL/DRAWER */}
-      {bookingItem && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end animate-fade-in">
-          <div className="bg-card w-full rounded-t-3xl border-t border-border shadow-2xl pb-[env(safe-area-inset-bottom,20px)] flex flex-col max-h-[85vh]">
-            <div className="p-5 border-b border-border flex justify-between items-center sticky top-0 bg-card rounded-t-3xl z-10">
-              <div>
-                <h3 className="font-bold text-lg text-textPrimary leading-tight">{bookingItem.name}</h3>
-                <p className="text-sm font-black text-[#3D91FF]">₹{bookingItem.price}</p>
-              </div>
-              <button onClick={() => setBookingItem(null)} className="w-8 h-8 bg-surface rounded-full flex items-center justify-center text-textSecondary">✕</button>
-            </div>
-            
-            <div className="p-5 overflow-y-auto">
-              <h4 className="text-sm font-bold text-textPrimary mb-3">Collection Mode</h4>
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <button 
-                  onClick={() => setCollectionType('home')}
-                  className={`p-3 rounded-2xl border flex flex-col items-center gap-2 transition-all ${
-                    collectionType === 'home' 
-                      ? 'bg-[#3D91FF]/10 border-[#3D91FF] text-[#3D91FF] shadow-[0_0_15px_rgba(61,145,255,0.15)]' 
-                      : 'bg-background border-border text-textSecondary hover:border-border'
-                  }`}
-                >
-                  <Home size={20} />
-                  <span className="text-xs font-bold">Home Collection</span>
-                </button>
-                <button 
-                  onClick={() => setCollectionType('lab')}
-                  className={`p-3 rounded-2xl border flex flex-col items-center gap-2 transition-all ${
-                    collectionType === 'lab' 
-                      ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' 
-                      : 'bg-background border-border text-textSecondary hover:border-border'
-                  }`}
-                >
-                  <Building2 size={20} />
-                  <span className="text-xs font-bold">Visit Lab Center</span>
-                </button>
-              </div>
-
-              <h4 className="text-sm font-bold text-textPrimary mb-3">Select Date</h4>
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide mb-4">
-                {DATES.map(d => {
-                  const isSelected = selectedDate.getDate() === d.date.getDate();
-                  return (
-                    <button 
-                      key={d.dateStr}
-                      onClick={() => setSelectedDate(d.date)}
-                      className={`min-w-[60px] p-3 rounded-2xl border flex flex-col items-center justify-center transition-all ${
-                        isSelected 
-                          ? 'bg-white border-white text-black shadow-lg shadow-white/10' 
-                          : 'bg-background border-border text-textSecondary'
-                      }`}
-                    >
-                      <span className="text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">{d.dayStr}</span>
-                      <span className="text-xl font-black">{d.dateStr}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <h4 className="text-sm font-bold text-textPrimary mb-3">Select Time Slot</h4>
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                {TIME_SLOTS.map(t => (
-                  <button 
-                    key={t}
-                    onClick={() => setSelectedTime(t)}
-                    className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all ${
-                      selectedTime === t 
-                        ? 'bg-surface border-border text-textPrimary' 
-                        : 'bg-background border-border text-textSecondary'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-5 border-t border-border bg-card sticky bottom-0">
-              <button 
-                onClick={handleBook}
-                disabled={isBooking}
-                className="w-full bg-[#3D91FF] text-white font-bold py-3.5 rounded-2xl active:scale-95 transition-transform flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(61,145,255,0.3)] disabled:opacity-70 disabled:active:scale-100"
-              >
-                {isBooking ? <Activity className="animate-spin" size={18} /> : <Calendar size={18} />}
-                {isBooking ? 'Confirming...' : 'Confirm Booking'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
