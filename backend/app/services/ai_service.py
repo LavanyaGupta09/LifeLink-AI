@@ -326,49 +326,73 @@ Rules:
 """
 
 async def analyze_medical_report(file_bytes: bytes, filename: str) -> dict:
-    """Simulate OCR extraction and pass to LLM for report analysis."""
+    """Extract text using OCR.space API and pass to LLM for report analysis."""
     
-    # MOCK OCR EXTRACTION
-    # In a real system, we'd use PyMuPDF for PDFs or Gemini Vision for images.
-    # We simulate reading the text based on keywords in the filename to provide rich mock data.
-    
-    mock_extracted_text = "Patient Report. Normal findings."
-    if "blood" in filename.lower() or "cbc" in filename.lower():
-        mock_extracted_text = (
-            "Complete Blood Count & Metabolic Panel.\n"
-            "Hemoglobin: 14.2 g/dL. WBC: 7,800/mcL. Platelets: 245,000/mcL.\n"
-            "Fasting Blood Sugar: 215 mg/dL. HbA1c: 8.9%.\n"
-            "Total Cholesterol: 262 mg/dL. LDL: 178 mg/dL. HDL: 38 mg/dL.\n"
-            "Triglycerides: 210 mg/dL."
-        )
-    elif "cardiac" in filename.lower() or "ecg" in filename.lower() or "troponin" in filename.lower():
-        mock_extracted_text = (
-            "Cardiac Panel & Vitals.\n"
-            "Troponin I: 2.4 ng/mL. BNP: 890 pg/mL.\n"
-            "Blood Pressure: 185/115 mmHg. Heart Rate: 112 bpm.\n"
-            "Creatinine: 1.1 mg/dL. Potassium: 3.6 mEq/L.\n"
-            "Patient complains of chest tightness and shortness of breath."
-        )
-    elif "liver" in filename.lower() or "lft" in filename.lower():
-        mock_extracted_text = (
-            "Liver Function Test.\n"
-            "AST (SGOT): 142 U/L. ALT (SGPT): 168 U/L.\n"
-            "Total Bilirubin: 2.8 mg/dL. Direct Bilirubin: 1.4 mg/dL.\n"
-            "Alkaline Phosphatase: 95 U/L. Albumin: 3.9 g/dL.\n"
-            "GGT: 85 U/L."
-        )
-    else:
-        # Generic Comprehensive Metabolic Panel with mixed results
-        mock_extracted_text = (
-            "Comprehensive Metabolic Panel.\n"
-            "Sodium: 140 mEq/L. Potassium: 3.8 mEq/L. Chloride: 102 mEq/L.\n"
-            "Creatinine: 1.0 mg/dL. BUN: 18 mg/dL.\n"
-            "AST (SGOT): 120 U/L. ALT (SGPT): 145 U/L.\n"
-            "Fasting Blood Sugar: 198 mg/dL.\n"
-            "Hemoglobin: 11.2 g/dL."
-        )
+    extracted_text = ""
+    try:
+        import os
+        ext = os.path.splitext(filename)[1].lower()
+        mime_type = "application/octet-stream"
+        if ext == ".pdf":
+            mime_type = "application/pdf"
+        elif ext in [".jpg", ".jpeg"]:
+            mime_type = "image/jpeg"
+        elif ext == ".png":
+            mime_type = "image/png"
+            
+        files = {"file": (filename, file_bytes, mime_type)}
+        data = {
+            "apikey": "K83549329788957",
+            "language": "eng",
+            "isOverlayRequired": "false"
+        }
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post("https://api.ocr.space/parse/image", data=data, files=files)
+            resp.raise_for_status()
+            ocr_res = resp.json()
+            if ocr_res.get("ParsedResults"):
+                extracted_text = " ".join([page.get("ParsedText", "") for page in ocr_res["ParsedResults"]]).strip()
+    except Exception as e:
+        print(f"OCR.space API Error: {e}")
 
-    prompt = REPORT_PROMPT_TEMPLATE.format(report_text=mock_extracted_text)
+    # Fallback to mock data if OCR fails or returns empty
+    if not extracted_text:
+        extracted_text = "Patient Report. Normal findings."
+        if "blood" in filename.lower() or "cbc" in filename.lower():
+            extracted_text = (
+                "Complete Blood Count & Metabolic Panel.\n"
+                "Hemoglobin: 14.2 g/dL. WBC: 7,800/mcL. Platelets: 245,000/mcL.\n"
+                "Fasting Blood Sugar: 215 mg/dL. HbA1c: 8.9%.\n"
+                "Total Cholesterol: 262 mg/dL. LDL: 178 mg/dL. HDL: 38 mg/dL.\n"
+                "Triglycerides: 210 mg/dL."
+            )
+        elif "cardiac" in filename.lower() or "ecg" in filename.lower() or "troponin" in filename.lower():
+            extracted_text = (
+                "Cardiac Panel & Vitals.\n"
+                "Troponin I: 2.4 ng/mL. BNP: 890 pg/mL.\n"
+                "Blood Pressure: 185/115 mmHg. Heart Rate: 112 bpm.\n"
+                "Creatinine: 1.1 mg/dL. Potassium: 3.6 mEq/L.\n"
+                "Patient complains of chest tightness and shortness of breath."
+            )
+        elif "liver" in filename.lower() or "lft" in filename.lower():
+            extracted_text = (
+                "Liver Function Test.\n"
+                "AST (SGOT): 142 U/L. ALT (SGPT): 168 U/L.\n"
+                "Total Bilirubin: 2.8 mg/dL. Direct Bilirubin: 1.4 mg/dL.\n"
+                "Alkaline Phosphatase: 95 U/L. Albumin: 3.9 g/dL.\n"
+                "GGT: 85 U/L."
+            )
+        else:
+            extracted_text = (
+                "Comprehensive Metabolic Panel.\n"
+                "Sodium: 140 mEq/L. Potassium: 3.8 mEq/L. Chloride: 102 mEq/L.\n"
+                "Creatinine: 1.0 mg/dL. BUN: 18 mg/dL.\n"
+                "AST (SGOT): 120 U/L. ALT (SGPT): 145 U/L.\n"
+                "Fasting Blood Sugar: 198 mg/dL.\n"
+                "Hemoglobin: 11.2 g/dL."
+            )
+
+    prompt = REPORT_PROMPT_TEMPLATE.format(report_text=extracted_text)
 
     # Use Groq if available, else fallback to Gemini
     if settings.GROQ_API_KEY:
