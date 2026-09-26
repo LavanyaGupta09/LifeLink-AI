@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     ENCRYPTION_KEY: str = "lifelink-aes-key-32-bytes-padding!"
 
     # Agora RTC Video Calling
-    AGORA_APP_ID: str = ""
+    AGORA_APP_ID: str = "c02d1ae0967e47bbaa6fcece4b81acf6"
     AGORA_APP_CERTIFICATE: str = ""
     AGORA_TOKEN_EXPIRATION_SECONDS: int = 3600
 
