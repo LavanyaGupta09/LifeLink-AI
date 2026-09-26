@@ -16,4 +16,4 @@ services:
       - key: AGORA_APP_ID
         value: c02d1ae0967e47bbaa6fcece4b81acf6
       - key: AGORA_APP_CERTIFICATE
-        sync: false
+        value: d8737e96677e4ad3821e10bb3fd98efb
