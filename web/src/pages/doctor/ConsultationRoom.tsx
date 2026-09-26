@@ -23,7 +23,7 @@ export default function ConsultationRoom() {
     channel_id: 'consult_demo_channel'
   });
 
-  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string; uid?: number } | null>(null);
   const [callLoading, setCallLoading] = useState(true);
   const [agoraError, setAgoraError] = useState<string | null>(null);
 
@@ -31,21 +31,37 @@ export default function ConsultationRoom() {
     const fetchToken = async () => {
       try {
         const channelId = currentPatient.channel_id || `consult_${user?.id || 'demo'}`;
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/agora/token`, {
+        const userUid = Math.floor(Math.random() * 900000) + 100000;
+        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+        const res = await fetch(`${backendUrl}/api/agora/token`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ channel_name: channelId, uid: 0, role: 1 })
+          body: JSON.stringify({ channel_name: channelId, uid: userUid, role: 1 })
         });
-        if (!res.ok) throw new Error('Failed to fetch token');
-        const data = await res.json();
-        setAgoraConfig({ token: data.token, appId: data.app_id, channel: channelId });
-      } catch (err) {
-        console.error(err);
-        if (!import.meta.env.VITE_AGORA_APP_ID) {
-          setAgoraError("VITE_AGORA_APP_ID is not configured in .env.local");
-        } else {
-          setAgoraError("Failed to fetch Agora token. Please check backend configuration.");
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          console.error("Agora Token API Error:", res.status, errData);
+          throw new Error(errData.detail || `Failed to fetch Agora token (HTTP ${res.status}). Please check backend configuration.`);
         }
+
+        const data = await res.json();
+        const resolvedAppId = import.meta.env.VITE_AGORA_APP_ID || data.app_id;
+
+        if (!resolvedAppId) {
+          throw new Error("Agora App ID is missing. Please set VITE_AGORA_APP_ID in web/.env.local");
+        }
+
+        setAgoraConfig({
+          token: data.token,
+          appId: resolvedAppId,
+          channel: data.channel_name || channelId,
+          uid: data.uid || userUid,
+        });
+      } catch (err: any) {
+        console.error("Agora Consultation Room Error:", err);
+        setAgoraError(err.message || "Failed to fetch Agora token. Please check backend configuration.");
       } finally {
         setCallLoading(false);
       }
@@ -124,6 +140,7 @@ export default function ConsultationRoom() {
              channelName={agoraConfig.channel}
              token={agoraConfig.token}
              appId={agoraConfig.appId}
+             uid={agoraConfig.uid}
              onReadyToClose={endConsultation}
            />
         ) : null}

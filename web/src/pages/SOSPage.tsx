@@ -38,7 +38,7 @@ const SOSPage: React.FC = () => {
   };
   
   const [activeEmergencyRoom, setActiveEmergencyRoom] = useState<string | null>(null);
-  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string } | null>(null);
+  const [agoraConfig, setAgoraConfig] = useState<{ token: string | null; appId: string; channel: string; uid?: number } | null>(null);
   const [agoraError, setAgoraError] = useState<string | null>(null);
   
   const [chatProvider, setChatProvider] = useState<{name: string, eta: number | string} | null>(null);
@@ -47,23 +47,34 @@ const SOSPage: React.FC = () => {
   const joinAgoraRoom = async (channelId: string) => {
     setActiveEmergencyRoom(channelId);
     setAgoraError(null);
+    const userUid = Math.floor(Math.random() * 900000) + 100000;
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/agora/token`, {
+      const res = await fetch(`${backendUrl}/api/agora/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channel_name: channelId })
+        body: JSON.stringify({ channel_name: channelId, uid: userUid, role: 1 })
       });
-      const data = await res.json();
-      if (res.ok) {
-        setAgoraConfig({ token: data.token, appId: data.app_id, channel: channelId });
-        if (!import.meta.env.VITE_AGORA_APP_ID && !data.app_id) {
-          setAgoraError("Agora App ID is missing.");
-        }
-      } else {
-        setAgoraError(data.detail || "Failed to fetch Agora token.");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error("Agora Token API Error:", res.status, errData);
+        throw new Error(errData.detail || `Failed to fetch Agora token (HTTP ${res.status}). Please check backend configuration.`);
       }
-    } catch (err) {
-      setAgoraError("Network error while connecting to video server.");
+      const data = await res.json();
+      const resolvedAppId = import.meta.env.VITE_AGORA_APP_ID || data.app_id;
+      if (!resolvedAppId) {
+        throw new Error("Agora App ID is missing. Please set VITE_AGORA_APP_ID in web/.env.local");
+      }
+      setAgoraConfig({
+        token: data.token,
+        appId: resolvedAppId,
+        channel: data.channel_name || channelId,
+        uid: data.uid || userUid,
+      });
+    } catch (err: any) {
+      console.error("Agora SOS Room Error:", err);
+      setAgoraError(err.message || "Network error while connecting to video server.");
     }
   };
 
@@ -207,6 +218,7 @@ const SOSPage: React.FC = () => {
             channelName={agoraConfig.channel}
             token={agoraConfig.token}
             appId={agoraConfig.appId}
+            uid={agoraConfig.uid}
             onReadyToClose={() => {
               setActiveEmergencyRoom(null);
               setAgoraConfig(null);

@@ -5,6 +5,11 @@ Pydantic Settings for type-safe environment variables
 from pydantic_settings import BaseSettings
 from typing import List
 import json
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -62,6 +67,11 @@ class Settings(BaseSettings):
 
     # Encryption
     ENCRYPTION_KEY: str = "lifelink-aes-key-32-bytes-padding!"
+
+    # Agora RTC Video Calling
+    AGORA_APP_ID: str = ""
+    AGORA_APP_CERTIFICATE: str = ""
+    AGORA_TOKEN_EXPIRATION_SECONDS: int = 3600
 
     # Medicine APIs
     DRUGSETU_API_KEY: str = ""
