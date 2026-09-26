@@ -13,3 +13,7 @@ services:
         value: production
       - key: USE_MOCK_APIS
         value: "True"
+      - key: AGORA_APP_ID
+        value: c02d1ae0967e47bbaa6fcece4b81acf6
+      - key: AGORA_APP_CERTIFICATE
+        sync: false
