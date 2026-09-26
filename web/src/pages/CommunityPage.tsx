@@ -86,7 +86,7 @@ const CommunityPage: React.FC = () => {
   
   // AI Chat State
   // Local state for interactive mock posts
-  const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
+  const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
   
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
