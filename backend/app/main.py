@@ -27,6 +27,7 @@ from app.routers.verification import router as verification_router
 from app.routers.voice import router as voice_router
 from app.routers.proxy import router as proxy_router
 from app.routers.agora import agora_router
+from app.routers.telephony import router as telephony_router
 
 
 # ─────────────────────────────────────────────
@@ -131,6 +132,7 @@ app.include_router(verification_router)
 app.include_router(voice_router, prefix="/api/v1/voice", tags=["Voice AI"])
 app.include_router(proxy_router)
 app.include_router(agora_router)
+app.include_router(telephony_router)
 
 # Import and include insurance router inline to avoid circular imports at top
 from app.routers.insurance import router as insurance_router

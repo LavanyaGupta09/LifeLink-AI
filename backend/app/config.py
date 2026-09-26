@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: str = ""
     TWILIO_FROM_NUMBER: str = ""
     TWILIO_VERIFY_SERVICE_SID: str = ""
+    
+    # Generic Telephony (Fallback/Alias)
+    TELEPHONY_ACCOUNT_ID: str = ""
+    TELEPHONY_AUTH_TOKEN: str = ""
+    TELEPHONY_PHONE_NUMBER: str = ""
 
     # Firebase
     FIREBASE_CREDENTIALS_PATH: str = "./firebase-credentials.json"
