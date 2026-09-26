@@ -58,6 +58,7 @@ import B2BEquipmentDashboard from './pages/B2BEquipmentDashboard';
 import HomeCareHub from './pages/HomeCareHub';
 import UberRideFlow from './components/UberRideFlow';
 import AreaSelectionPage from './pages/AreaSelectionPage';
+import PhoneSimulatorPage from './pages/PhoneSimulatorPage';
 import RuralOnboarding from './pages/asha/RuralOnboarding';
 
 // ASHA Worker Module
@@ -185,6 +186,7 @@ const App: React.FC = () => {
       <Routes>
         {/* Mobile / Patient Routes */}
         <Route path="/" element={<ResponsiveLayout><SplashScreen /></ResponsiveLayout>} />
+        <Route path="/phone-simulator" element={<PhoneSimulatorPage />} />
         <Route path="/role-select" element={<ResponsiveLayout><RoleSelectionPage /></ResponsiveLayout>} />
         <Route path="/login" element={<ResponsiveLayout><AuthPage /></ResponsiveLayout>} />
         <Route path="/onboarding" element={<ResponsiveLayout><PatientOnboarding /></ResponsiveLayout>} />
