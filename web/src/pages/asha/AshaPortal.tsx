@@ -38,6 +38,14 @@ const AshaPortal: React.FC = () => {
       bgColor: '#8B5CF6',
       route: '/asha/soochna',
     },
+    {
+      title: 'कीपैड फोन फीचर टेस्ट',
+      subtitle: 'साधारण फोन से मदद का डेमो',
+      icon: Phone,
+      color: '#9333EA',
+      bgColor: '#9333EA',
+      route: '/phone-simulator',
+    },
   ];
 
   return (
