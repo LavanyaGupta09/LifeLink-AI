@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   HeartPulse, ShieldAlert, Pill, MapPin, CloudOff,
   Mic, UserRound, Building2, FileText, ChevronRight,
-  FlaskConical, Send, Stethoscope
+  FlaskConical, Send, Stethoscope, Phone
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useSOSStore } from '../../store/sosStore';
@@ -271,7 +271,7 @@ const RuralDashboard: React.FC = () => {
         {/* ═══════════════════════════════════════════
             5. OFFLINE HELP
         ═══════════════════════════════════════════ */}
-        <div className="px-4 mb-6">
+        <div className="px-4 mb-6 space-y-3">
           <button
             onClick={() => navigate('/asha/offline')}
             className="w-full bg-surface border border-border rounded-2xl px-4 py-4 flex items-center justify-between active:scale-[0.97] transition-transform"
@@ -286,6 +286,22 @@ const RuralDashboard: React.FC = () => {
               </div>
             </div>
             <ChevronRight size={18} className="text-textTertiary shrink-0" />
+          </button>
+          
+          <button
+            onClick={() => navigate('/phone-simulator')}
+            className="w-full bg-[#3D256B] border border-purple-500/30 rounded-2xl px-4 py-4 flex items-center justify-between active:scale-[0.97] transition-transform"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0">
+                <Phone size={18} className="text-purple-300" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-[14px] font-bold text-white leading-tight">कीपैड फोन फीचर टेस्ट</h3>
+                <p className="text-[11px] text-purple-300 mt-0.5">साधारण फोन से मदद का डेमो</p>
+              </div>
+            </div>
+            <ChevronRight size={18} className="text-purple-400 shrink-0" />
           </button>
         </div>
 
