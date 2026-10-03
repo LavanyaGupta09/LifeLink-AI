@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Star, Phone, MapPin, Tag, Navigation, PhoneCall, HeartPulse, Stethoscope, ChevronRight, AlertCircle, Clock, Bed } from 'lucide-react';
+import { ArrowLeft, Search, Star, Phone, MapPin, Tag, Navigation, PhoneCall, HeartPulse, Stethoscope, ChevronRight, AlertCircle, Clock, Bed, Ambulance } from 'lucide-react';
 import FreeMap from '../components/FreeMap';
 import { IsometricMapWrapper } from '../components/3d';
 import type { Hospital } from '../types/health.types';
