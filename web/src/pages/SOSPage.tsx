@@ -10,6 +10,7 @@ import { bloodAPI } from '../services/api';
 import FreeMap from '../components/FreeMap';
 import { fetchRoute, searchAddress, useDebounce } from '../utils/mapUtils';
 import AgoraVideoCall from '../components/telemedicine/AgoraVideoCall';
+import { FloatingSOSBeacon, Card3D, ParallaxSection } from '../components/3d';
 
 const SOSPage: React.FC = () => {
   const navigate = useNavigate();
@@ -192,19 +193,26 @@ const SOSPage: React.FC = () => {
 
   if (!gatewayPassed) {
     return (
-      <div className="app-shell sos-page flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-24 h-24 rounded-full border-4 border-[#FF4757] flex items-center justify-center mb-6 animate-pulse">
+      <div className="app-shell sos-page flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+        {/* 3D beacon in background during countdown */}
+        <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
+          <FloatingSOSBeacon className="w-full h-full" isCritical={true} />
+        </div>
+        
+        <div className="w-24 h-24 rounded-full border-4 border-[#FF4757] flex items-center justify-center mb-6 animate-pulse relative z-10 bg-background/50 backdrop-blur-md">
           <span className="text-4xl font-display font-bold text-textPrimary">{gatewayCountdown}</span>
         </div>
-        <h2 className="font-display text-2xl font-bold text-textPrimary mb-2">SOS Triggered</h2>
-        <p className="text-secondary text-sm mb-8">Emergency services will be dispatched in {gatewayCountdown} seconds unless cancelled.</p>
+        <h2 className="font-display text-2xl font-bold text-textPrimary mb-2 relative z-10">SOS Triggered</h2>
+        <p className="text-secondary text-sm mb-8 relative z-10">Emergency services will be dispatched in {gatewayCountdown} seconds unless cancelled.</p>
         
-        <button className="btn btn-primary btn-block mb-4 btn-lg" onClick={() => setGatewayPassed(true)}>
-          Yes, I Need Help Now
-        </button>
-        <button className="btn btn-danger btn-block btn-lg" style={{ background: 'transparent', border: '2px solid #FF4757', color: '#FF4757' }} onClick={handleCancel}>
-          Cancel (Mistake)
-        </button>
+        <div className="w-full relative z-10">
+          <button className="btn btn-primary btn-block mb-4 btn-lg" onClick={() => setGatewayPassed(true)}>
+            Yes, I Need Help Now
+          </button>
+          <button className="btn btn-danger btn-block btn-lg" style={{ background: 'transparent', border: '2px solid #FF4757', color: '#FF4757' }} onClick={handleCancel}>
+            Cancel (Mistake)
+          </button>
+        </div>
       </div>
     );
   }
@@ -244,10 +252,13 @@ const SOSPage: React.FC = () => {
   return (
     <div className="app-shell sos-page">
       {/* Pulsing danger header */}
-      <div className={`sos-header ${isCritical ? 'sos-critical' : 'sos-moderate'}`}>
+      <div className={`sos-header ${isCritical ? 'sos-critical' : 'sos-moderate'} relative overflow-hidden`}>
         <div className="sos-header-bg" />
-        <div className="sos-header-content">
-          <div className="sos-badge-row">
+        <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
+          <FloatingSOSBeacon className="w-full h-[120%]" isCritical={isCritical} />
+        </div>
+        <div className="sos-header-content relative z-10">
+          <div className="sos-badge-row backdrop-blur-md">
             <AlertTriangle size={20} fill="white" />
             <span>SOS ACTIVE</span>
             <div className="live-dot" />
@@ -259,7 +270,8 @@ const SOSPage: React.FC = () => {
       </div>
 
       {/* Status timeline */}
-      <div className="page-content">
+      <div className="page-content relative z-10">
+        <ParallaxSection speed={0.05} fadeIn>
         <div className="timeline animate-fade-in">
           <TimelineItem
             done={true}
@@ -291,8 +303,10 @@ const SOSPage: React.FC = () => {
             isLast
           />
         </div>
+        </ParallaxSection>
 
         {/* Manual Address Input */}
+        <ParallaxSection speed={0.04} fadeIn>
         <div className="card mb-4 mt-4">
           <label className="text-xs font-semibold text-secondary mb-1 block">Update Incident Location (Optional)</label>
           <input
@@ -304,6 +318,7 @@ const SOSPage: React.FC = () => {
           />
           {debouncedAddress !== manualAddress && <p className="text-xs text-amber-500 mt-1">Typing...</p>}
         </div>
+        </ParallaxSection>
 
         {/* Offline SMS Fallback */}
         {isOffline && (
@@ -327,7 +342,9 @@ const SOSPage: React.FC = () => {
 
         {/* Ambulance tracking card */}
         {ambulanceDispatched && (
-          <div className="card card-primary amb-card animate-fade-in">
+          <ParallaxSection speed={0.03} fadeIn>
+          <Card3D glowColor="rgba(255, 165, 2, 0.15)" intensity={0.3}>
+          <div className="card card-primary amb-card animate-fade-in relative z-10">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span style={{ fontSize: '1.5rem' }}>🚑</span>
@@ -380,11 +397,15 @@ const SOSPage: React.FC = () => {
               ))}
             </div>
           </div>
+          </Card3D>
+          </ParallaxSection>
         )}
 
         {/* Doctor on-call */}
         {doctorConnected && (
-          <div className="card doctor-call-card animate-fade-in">
+          <ParallaxSection speed={0.02} fadeIn>
+          <Card3D glowColor="rgba(0, 201, 167, 0.15)" intensity={0.3}>
+          <div className="card doctor-call-card animate-fade-in relative z-10">
             <div className="flex items-center gap-3 mb-4">
               <div className="doc-avatar">AK</div>
               <div className="flex-1">
@@ -407,11 +428,15 @@ const SOSPage: React.FC = () => {
               </p>
             </div>
           </div>
+          </Card3D>
+          </ParallaxSection>
         )}
 
         {/* Contacts notified list */}
         {contactsNotified && (
-          <div className="card animate-fade-in">
+          <ParallaxSection speed={0.01} fadeIn>
+          <Card3D glowColor="rgba(61, 145, 255, 0.1)" intensity={0.2}>
+          <div className="card animate-fade-in relative z-10">
             <p className="text-xs text-tertiary uppercase mb-3">Notified Contacts</p>
             {MOCK_EMERGENCY_CONTACTS.filter(c => c.notifyOnSOS).map((c, i) => (
               <div key={i} className="flex items-center gap-3 mb-3 last:mb-0">
@@ -437,6 +462,8 @@ const SOSPage: React.FC = () => {
               </div>
             ))}
           </div>
+          </Card3D>
+          </ParallaxSection>
         )}
 
         {/* Action buttons */}

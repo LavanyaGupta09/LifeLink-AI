@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, MessageCircle, Settings, Mic, Send, MapPin, Calendar, Activity, AlertTriangle,
@@ -12,6 +12,10 @@ import { useAshaStore } from '../store/ashaStore';
 import { useReminderStore } from '../store/reminderStore';
 import { api } from '../services/api';
 import LifeLinkAIAssistant from '../components/LifeLinkAIAssistant';
+import { Card3D, ParallaxSection } from '../components/3d';
+
+// Lazy-load the 3D scene to avoid blocking initial render / bundle bloat
+const FloatingMedicalScene = lazy(() => import('../components/3d/FloatingMedicalScene'));
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -176,9 +180,15 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* 2. AI ASSISTANT HERO CARD */}
+        {/* 2. AI ASSISTANT HERO CARD — with 3D scene background */}
         <div className="bg-card border border-border rounded-3xl p-5 md:p-6 shadow-sm relative overflow-hidden flex flex-col lg:flex-row items-center gap-6 mt-2">
-          <div className="flex items-center gap-4 flex-1 w-full">
+          {/* 3D Floating DNA scene — renders behind the card content */}
+          <div className="absolute inset-0 opacity-30 pointer-events-none z-0">
+            <Suspense fallback={null}>
+              <FloatingMedicalScene className="w-full h-full" />
+            </Suspense>
+          </div>
+          <div className="flex items-center gap-4 flex-1 w-full relative z-10">
             <div className="w-20 h-20 md:w-28 md:h-28 shrink-0 bg-surface rounded-full overflow-hidden flex items-center justify-center">
               <img src="/images/robot_assistant.jpg" className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" alt="AI Assistant" />
             </div>
@@ -217,7 +227,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex gap-4 w-full lg:w-auto">
+          <div className="flex gap-4 w-full lg:w-auto relative z-10">
             <div className="flex-1 flex flex-col gap-2 min-w-[200px]">
               <button onClick={() => navigate('/hospitals')} className="flex items-center justify-between px-5 py-3.5 bg-surface border border-border rounded-full w-full text-left hover:border-[#00C9A7]/50 transition-colors group">
                 <div className="flex items-center gap-3 text-textPrimary font-medium text-sm"><MapPin size={18} className="text-[#00C9A7]" /> Find nearest hospital</div>
@@ -252,25 +262,32 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* 3. QUICK ACTIONS */}
+        <ParallaxSection speed={0.05} fadeIn>
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-lg flex items-center gap-2 text-textPrimary"><span className="text-[#FFA502] text-xl">⚡</span> Quick Actions</h2>
             <button className="text-sm text-[#00C9A7] font-medium hover:underline">Edit</button>
           </div>
           <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-3 md:gap-4">
+            <Card3D glowColor="rgba(255, 71, 87, 0.15)" intensity={0.6}>
             <button onClick={() => navigate('/ambulance')} className="flex flex-col items-center justify-center bg-card border border-border hover:border-[#FF4757]/30 rounded-2xl p-4 transition-colors shadow-sm relative group active:scale-95">
               <div className="absolute -top-2 left-2 bg-[#FF4757] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">24/7</div>
               <div className="w-14 h-14 rounded-full bg-[#FF4757]/10 flex items-center justify-center text-[#FF4757] mb-2 group-hover:scale-110 transition-transform"><Ambulance size={24} /></div>
               <span className="text-sm font-semibold text-textPrimary">Ambulance</span>
             </button>
+            </Card3D>
+            <Card3D glowColor="rgba(0, 201, 167, 0.15)" intensity={0.6}>
             <button onClick={() => navigate('/hospitals')} className="flex flex-col items-center justify-center bg-card border border-border hover:border-[#00C9A7]/30 rounded-2xl p-4 transition-colors shadow-sm group active:scale-95">
               <div className="w-14 h-14 rounded-full bg-[#00C9A7]/10 flex items-center justify-center text-[#00C9A7] mb-2 group-hover:scale-110 transition-transform"><Building2 size={24} /></div>
               <span className="text-sm font-semibold text-textPrimary">Hospitals</span>
             </button>
+            </Card3D>
+            <Card3D glowColor="rgba(61, 145, 255, 0.15)" intensity={0.6}>
             <button onClick={() => navigate('/doctor')} className="flex flex-col items-center justify-center bg-card border border-border hover:border-[#3D91FF]/30 rounded-2xl p-4 transition-colors shadow-sm group active:scale-95">
               <div className="w-14 h-14 rounded-full bg-[#3D91FF]/10 flex items-center justify-center text-[#3D91FF] mb-2 group-hover:scale-110 transition-transform"><UserRound size={24} /></div>
               <span className="text-sm font-semibold text-textPrimary">Doctors</span>
             </button>
+            </Card3D>
             {areaType !== 'rural' && (
               <>
                 <button onClick={() => navigate('/pharmacy')} className="flex flex-col items-center justify-center bg-card border border-border hover:border-[#2ED573]/30 rounded-2xl p-4 transition-colors shadow-sm group active:scale-95">
@@ -297,12 +314,15 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </div>
+        </ParallaxSection>
 
         {/* 4. 3-COLUMN GRID (Appointments, Health Overview, Reminders) */}
         {areaType !== 'rural' && (
+          <ParallaxSection speed={0.04} fadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Appointments */}
+            <Card3D glowColor="rgba(61, 145, 255, 0.1)" intensity={0.4}>
             <div className="bg-card border border-border rounded-3xl p-5 shadow-sm flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-base flex items-center gap-2"><Calendar size={18} className="text-[#3D91FF]"/> Appointments</h3>
@@ -341,8 +361,10 @@ const Dashboard: React.FC = () => {
                 <Calendar size={16} className="text-textSecondary" /> Book New Appointment
               </button>
             </div>
+            </Card3D>
 
             {/* Health Overview */}
+            <Card3D glowColor="rgba(255, 71, 87, 0.1)" intensity={0.4}>
             <div className="bg-card border border-border rounded-3xl p-5 shadow-sm flex flex-col">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-bold text-base flex items-center gap-2"><Heart size={18} className="text-[#FF4757]"/> Health Overview</h3>
@@ -390,8 +412,10 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             </div>
+            </Card3D>
 
             {/* Reminders */}
+            <Card3D glowColor="rgba(139, 92, 246, 0.1)" intensity={0.4}>
             <div className="bg-card border border-border rounded-3xl p-5 shadow-sm flex flex-col">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-bold text-base flex items-center gap-2"><Bell size={18} className="text-[#A78BFA]"/> Reminders</h3>
@@ -437,12 +461,15 @@ const Dashboard: React.FC = () => {
                 <Bell size={16} className="text-textSecondary" /> All Reminders
               </button>
             </div>
+            </Card3D>
 
           </div>
+          </ParallaxSection>
         )}
 
         {/* 5. 2-COLUMN INSURANCE & VAULT */}
         {areaType !== 'rural' && (
+          <ParallaxSection speed={0.03} fadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Insurance Banner */}
@@ -503,9 +530,11 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
+          </ParallaxSection>
         )}
 
         {/* 6. HEALTHCARE SERVICES GRID */}
+        <ParallaxSection speed={0.03} fadeIn>
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-lg flex items-center gap-2 text-textPrimary">
@@ -568,8 +597,11 @@ const Dashboard: React.FC = () => {
             )}
           </div>
         </div>
+        </ParallaxSection>
 
         {/* 7. COMMUNITY BANNER */}
+        <ParallaxSection speed={0.02} fadeIn>
+        <Card3D glowColor="rgba(139, 92, 246, 0.12)" intensity={0.3}>
         <div className="bg-gradient-to-r from-card to-surface border border-border rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:border-[#8B5CF6]/50 transition-colors shadow-sm" onClick={() => navigate('/community')}>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-accent-purple border border-[#8B5CF6]/30 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
@@ -595,6 +627,8 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </div>
+        </Card3D>
+        </ParallaxSection>
 
       </div>
       <LifeLinkAIAssistant />
