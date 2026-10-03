@@ -264,6 +264,7 @@ const LiveTrackingPage: React.FC = () => {
               <MapPin size={24} className="text-[#3D91FF] drop-shadow-lg" fill="#3D91FF" />
               <div className="w-2 h-1 bg-black/50 rounded-full mt-1 blur-sm"></div>
             </div>
+            </div>
           </div>
           </IsometricMapWrapper>
 

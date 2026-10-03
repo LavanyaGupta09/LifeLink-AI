@@ -6,6 +6,7 @@ import {
   HeartPulse, Heart, X, CheckCircle2,
   Clock, Activity, AlertTriangle, Flame, UserPlus
 } from 'lucide-react';
+import { HillyTerrainMap, Card3D } from '../../components/3d';
 
 const RuralSOSPage: React.FC = () => {
   const navigate = useNavigate();
@@ -161,6 +162,13 @@ const RuralSOSPage: React.FC = () => {
           </div>
         )}
 
+        {/* 3D Topographic Hilly Terrain Rescue Map */}
+        <Card3D>
+          <div className="w-full h-[240px] rounded-2xl relative">
+            <HillyTerrainMap fallbackMode={isOffline} />
+          </div>
+        </Card3D>
+
         {/* Location Box */}
         <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
           <div className="w-12 h-12 bg-[#00C9A7]/10 rounded-full flex items-center justify-center shrink-0">
@@ -168,7 +176,7 @@ const RuralSOSPage: React.FC = () => {
           </div>
           <div>
             <h3 className="font-bold text-textSecondary text-sm">📍 आपकी जगह</h3>
-            <p className="text-lg font-bold text-[#00C9A7] mt-0.5">रामपुर गाँव</p>
+            <p className="text-lg font-bold text-[#00C9A7] mt-0.5">रामपुर गाँव (पहाड़ी क्षेत्र)</p>
           </div>
         </div>
 
