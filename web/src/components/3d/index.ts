@@ -7,4 +7,4 @@ export { default as FloatingMedicalScene } from './FloatingMedicalScene';
 export { default as Card3D } from './Card3D';
 export { default as ParallaxSection } from './ParallaxSection';
 export { default as FloatingSOSBeacon } from './FloatingSOSBeacon';
-
+export { default as IsometricMapWrapper } from './IsometricMapWrapper';

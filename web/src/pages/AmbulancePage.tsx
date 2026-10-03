@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Star, Phone, MapPin, Tag, Navigation, PhoneCall, HeartPulse, Stethoscope, ChevronRight, AlertCircle, Clock, Bed } from 'lucide-react';
 import FreeMap from '../components/FreeMap';
+import { IsometricMapWrapper } from '../components/3d';
 import type { Hospital } from '../types/health.types';
 import { useGeolocation } from '../hooks/useGeolocation';
 import LocationFallback from '../components/LocationFallback';
@@ -123,30 +124,32 @@ const AmbulancePage: React.FC = () => {
           <>
         {/* Real OpenStreetMap */}
         {location && (
-          <div style={{ height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '16px', border: '1px solid var(--border)' }} className="animate-fade-in">
-          <FreeMap
-            center={[location.lat, location.lng]}
-            zoom={14}
-            markers={[
-              { id: 'you', lat: location.lat, lng: location.lng, label: '📍 You' },
-              ...hospitals.map(h => ({
-                id: h.id,
-                lat: h.lat,
-                lng: h.lng,
-                label: `🏥 ${h.name}`,
-                popup: (
-                  <div>
-                    <strong>{h.name}</strong><br />
-                    <span>ER Beds: {h.erBedsAvailable}/{h.erBedsTotal}</span><br />
-                    <span>Wait: ~{h.erWaitMinutes} min</span>
-                  </div>
-                ),
-              })),
-              // Animated ambulance markers
-              { id: 'amb_1', lat: amb1[0], lng: amb1[1], label: '🚑 Unit A-12 (ALS)' },
-              { id: 'amb_2', lat: amb2[0], lng: amb2[1], label: '🚑 Unit A-07 (BLS)' },
-            ]}
-          />
+          <div style={{ height: '280px', marginBottom: '24px' }} className="animate-fade-in">
+          <IsometricMapWrapper>
+            <FreeMap
+              center={[location.lat, location.lng]}
+              zoom={14}
+              markers={[
+                { id: 'you', lat: location.lat, lng: location.lng, label: '📍 You' },
+                ...hospitals.map(h => ({
+                  id: h.id,
+                  lat: h.lat,
+                  lng: h.lng,
+                  label: `🏥 ${h.name}`,
+                  popup: (
+                    <div>
+                      <strong>{h.name}</strong><br />
+                      <span>ER Beds: {h.erBedsAvailable}/{h.erBedsTotal}</span><br />
+                      <span>Wait: ~{h.erWaitMinutes} min</span>
+                    </div>
+                  ),
+                })),
+                // Animated ambulance markers
+                { id: 'amb_1', lat: amb1[0], lng: amb1[1], label: '🚑 Unit A-12 (ALS)' },
+                { id: 'amb_2', lat: amb2[0], lng: amb2[1], label: '🚑 Unit A-07 (BLS)' },
+              ]}
+            />
+          </IsometricMapWrapper>
         </div>
         )}
 
